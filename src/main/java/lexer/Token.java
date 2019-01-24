@@ -24,9 +24,13 @@ public class Token {
     };
 
     private TokenType type;
+    private int lineNumber;
+    private String lexeme;
 
-    public Token(TokenType tokenType){
+    public Token(TokenType tokenType, String lexeme, int lineNumber){
         this.type = tokenType;
+        this.lexeme = lexeme;
+        this.lineNumber = lineNumber;
     }
 
     public TokenType getType() {
@@ -35,5 +39,21 @@ public class Token {
 
     public void setType(TokenType type) {
         this.type = type;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    public String getLexeme() {
+        return lexeme;
+    }
+
+    public void setLexeme(String lexeme) {
+        this.lexeme = lexeme;
     }
 }
