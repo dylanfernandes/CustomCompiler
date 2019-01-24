@@ -1,7 +1,8 @@
 package lexer;
 
-public class Tokenizer {
-    public enum Token
+public class Token {
+
+    public enum TokenType
     {
         ID,
         INT, FLO,
@@ -21,4 +22,18 @@ public class Tokenizer {
         INTEGER, FLOAT,
         READ, WRITE
     };
+
+    private TokenType type;
+
+    public Token(TokenType tokenType){
+        this.type = tokenType;
+    }
+
+    public TokenType getType() {
+        return type;
+    }
+
+    public void setType(TokenType type) {
+        this.type = type;
+    }
 }
