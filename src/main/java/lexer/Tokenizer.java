@@ -5,16 +5,19 @@ public class Tokenizer {
     private int currentLine;
     private String input;
     private int inputPosition;
+    private boolean endOfInput;
 
     public Tokenizer(String input) {
         this.input = input;
         this.currentLexeme = "";
         this.currentLine = 0;
         this.inputPosition = -1;
+        this.endOfInput = false;
     }
 
     public Character nextChar() {
-        if(input.length()-1 > inputPosition) {
+        //String index starts at 0, no next at input.length()
+        if(!isEndOfInput()) {
             inputPosition++;
             return input.charAt(inputPosition);
         }
@@ -30,10 +33,28 @@ public class Tokenizer {
         return false;
     }
 
+    private Token getNumericToken() {
+        //TODO Implement according to NUMERIC DFA
+        return  null;
+    }
+
+    private  Token getAlphaToken() {
+        //TODO Implement according to ID DFA
+        return  null;
+    }
+
     public Token nextToken() {
         Character current = nextChar();
+        char charValue;
         if(current != null) {
-            switch(current.charValue()){
+            charValue = current.charValue();
+            if(Character.isDigit(charValue)){
+                return getNumericToken();
+            }
+            if(Character.isLetter(charValue)) {
+                return getAlphaToken();
+            }
+            switch(charValue){
                 case '.':
                     currentLexeme = current.toString();
                     return createToken(Token.TokenType.POIN);
@@ -42,7 +63,7 @@ public class Tokenizer {
                     return createToken(Token.TokenType.COMM);
 
                 default:
-                    return null;
+                    return createToken(Token.TokenType.ERROR);
             }
         }
         else
@@ -86,4 +107,11 @@ public class Tokenizer {
     public void setInputPosition(int inputPosition) {
         this.inputPosition = inputPosition;
     }
+
+    public boolean isEndOfInput() {
+        //strin index starts at 0, last character at input.length()-1
+        endOfInput = input.length()-1 <= inputPosition;
+        return endOfInput;
+    }
+
 }

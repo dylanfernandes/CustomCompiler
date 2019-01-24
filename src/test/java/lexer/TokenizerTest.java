@@ -10,6 +10,7 @@ public class TokenizerTest {
     @Test
     public void NextCharTest () {
         Tokenizer tokenizer = new Tokenizer("Test \n");
+        assertEquals(false, tokenizer.isEndOfInput());
         assertEquals('T', tokenizer.nextChar().charValue());
         assertEquals('e', tokenizer.nextChar().charValue());
         assertEquals('s', tokenizer.nextChar().charValue());
@@ -17,6 +18,7 @@ public class TokenizerTest {
         assertEquals(' ', tokenizer.nextChar().charValue());
         assertEquals('\n', tokenizer.nextChar().charValue());
         assertEquals(null, tokenizer.nextChar());
+        assertEquals(true, tokenizer.isEndOfInput());
     }
 
     @Test
