@@ -1,23 +1,38 @@
 package lexer;
 
 public class Tokenizer {
-    private String backupChar;
+    private Character backupChar;
     private String currentLexeme;
     private int currentLine;
     private String input;
+    private int inputPosition;
 
     public Tokenizer(String input) {
         this.input = input;
         this.currentLexeme = "";
-        this.backupChar = "";
+        this.backupChar = null;
         this.currentLine = 0;
+        this.inputPosition = -1;
     }
 
-    public String getBackupChar() {
+    public Character nextChar()
+    {
+        if(input.length()-1 > inputPosition)
+        {
+            if(inputPosition > 0)
+            {
+                backupChar = input.charAt(inputPosition);
+            }
+            inputPosition++;
+            return input.charAt(inputPosition);
+        }
+        return null;
+    }
+    public Character getBackupChar() {
         return backupChar;
     }
 
-    public void setBackupChar(String backupChar) {
+    public void setBackupChar(Character backupChar) {
         this.backupChar = backupChar;
     }
 

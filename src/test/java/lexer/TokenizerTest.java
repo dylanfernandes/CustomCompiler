@@ -15,4 +15,15 @@ public class TokenizerTest {
         assertEquals("ELSE", tIf.getType().toString());
         assertFalse("IF" == tIf.getType().toString());
     }
+
+    @Test
+    public void NextCharTest () {
+        Tokenizer tokenizer = new Tokenizer("Test \n");
+        assertEquals('T', tokenizer.nextChar().charValue());
+        assertEquals('e', tokenizer.nextChar().charValue());
+        assertEquals('s', tokenizer.nextChar().charValue());
+        assertEquals('t', tokenizer.nextChar().charValue());
+        assertEquals(' ', tokenizer.nextChar().charValue());
+        assertEquals('\n', tokenizer.nextChar().charValue());
+    }
 }
