@@ -1,7 +1,6 @@
 package lexer;
 
 public class Tokenizer {
-    private Character backupChar;
     private String currentLexeme;
     private int currentLine;
     private String input;
@@ -10,30 +9,50 @@ public class Tokenizer {
     public Tokenizer(String input) {
         this.input = input;
         this.currentLexeme = "";
-        this.backupChar = null;
         this.currentLine = 0;
         this.inputPosition = -1;
     }
 
-    public Character nextChar()
-    {
-        if(input.length()-1 > inputPosition)
-        {
-            if(inputPosition > 0)
-            {
-                backupChar = input.charAt(inputPosition);
-            }
+    public Character nextChar() {
+        if(input.length()-1 > inputPosition) {
             inputPosition++;
             return input.charAt(inputPosition);
         }
         return null;
     }
-    public Character getBackupChar() {
-        return backupChar;
+
+    public boolean backupChar() {
+        if(inputPosition >= 0)
+        {
+            inputPosition--;
+            return true;
+        }
+        return false;
     }
 
-    public void setBackupChar(Character backupChar) {
-        this.backupChar = backupChar;
+    public Token nextToken() {
+        Character current = nextChar();
+        if(current != null) {
+            switch(current.charValue()){
+                case '.':
+                    currentLexeme = current.toString();
+                    return createToken(Token.TokenType.POIN);
+                case ',':
+                    currentLexeme = current.toString();
+                    return createToken(Token.TokenType.COMM);
+
+                default:
+                    return null;
+            }
+        }
+        else
+            return null;
+    }
+
+    public Token createToken(Token.TokenType tokenType){
+        Token current =  new Token(tokenType, this.currentLexeme, this.currentLine);
+        currentLexeme = "";
+        return  current;
     }
 
     public String getCurrentLexeme() {
@@ -58,5 +77,13 @@ public class Tokenizer {
 
     public void setInput(String input) {
         this.input = input;
+    }
+
+    public int getInputPosition() {
+        return inputPosition;
+    }
+
+    public void setInputPosition(int inputPosition) {
+        this.inputPosition = inputPosition;
     }
 }
