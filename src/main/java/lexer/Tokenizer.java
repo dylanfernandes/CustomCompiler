@@ -33,13 +33,14 @@ public class Tokenizer {
         return false;
     }
 
-    private Token getNumericToken() {
+    private Token getNumericToken(char firstDigit) {
         //TODO Implement according to NUMERIC DFA
         return  null;
     }
 
-    private  Token getAlphaToken() {
+    private  Token getAlphaToken(char firstChar) {
         //TODO Implement according to ID DFA
+
         return  null;
     }
 
@@ -48,11 +49,11 @@ public class Tokenizer {
         char charValue;
         if(current != null) {
             charValue = current.charValue();
-            if(Character.isDigit(charValue)){
-                return getNumericToken();
+            if(LexerMatcher.isNumeric(charValue)){
+                return getNumericToken(charValue);
             }
-            if(Character.isLetter(charValue)) {
-                return getAlphaToken();
+            if(LexerMatcher.isAlpaha(charValue)) {
+                return getAlphaToken(charValue);
             }
             switch(charValue){
                 case '.':
