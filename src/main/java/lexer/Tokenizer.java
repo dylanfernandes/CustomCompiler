@@ -1,6 +1,8 @@
 package lexer;
 
-import com.sun.deploy.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Tokenizer {
     private String currentLexeme;
@@ -8,13 +10,34 @@ public class Tokenizer {
     private String input;
     private int inputPosition;
     private boolean endOfInput;
+    private List<String> reservedWords;
 
     public Tokenizer(String input) {
+        resetTokenizer(input);
+        initializeReservedWords();
+    }
+
+    public void resetTokenizer(String input) {
         this.input = input;
         this.currentLexeme = "";
         this.currentLine = 0;
         this.inputPosition = -1;
         this.endOfInput = false;
+    }
+
+    private void initializeReservedWords() {
+        reservedWords = new ArrayList<String>();
+        this.reservedWords.add("if");
+        this.reservedWords.add("then");
+        this.reservedWords.add("else");
+        this.reservedWords.add("for");
+        this.reservedWords.add("class");
+        this.reservedWords.add("integer");
+        this.reservedWords.add("float");
+        this.reservedWords.add("read");
+        this.reservedWords.add("write");
+        this.reservedWords.add("return");
+        this.reservedWords.add("main");
     }
 
     public Character nextChar() {
@@ -37,7 +60,18 @@ public class Tokenizer {
 
     private Token getNumericToken(char firstDigit) {
         //TODO Implement according to NUMERIC DFA
-        return  null;
+        char current = firstDigit;
+        if(firstDigit != '0') {
+            while(LexerMatcher.isNumeric(current) && !isEndOfInput()) {
+                currentLexeme += current;
+                current = nextChar();
+            }
+        }
+
+        if(LexerMatcher.isNumeric(current)) {
+            currentLexeme += current;
+        }
+        return  createToken(Token.TokenType.INT);
     }
 
     private Token getAlphaToken(char firstChar) {
@@ -55,12 +89,18 @@ public class Tokenizer {
             //not alphaNum, backup for further tonkenizing
             backupChar();
         }
-        //TODO Implement Reserved Word check
-        //check if reserved word (all alpha and lowercase)
-        if(LexerMatcher.isAlpaha(currentLexeme) && currentLexeme == currentLexeme.toLowerCase())
-            return null;
+
+        if(isReservedWord()) {
+            Token.TokenType reservedToken = Token.TokenType.valueOf(currentLexeme.toUpperCase());
+            return createToken(reservedToken);
+        }
         else
             return createToken(Token.TokenType.ID);
+    }
+
+    private boolean isReservedWord() {
+        //check if reserved word (all alpha, all lowercase and in list of reserved words)
+        return (LexerMatcher.isAlpaha(currentLexeme) && currentLexeme == currentLexeme.toLowerCase() &&reservedWords.contains(currentLexeme));
     }
 
     public Token nextToken() {
