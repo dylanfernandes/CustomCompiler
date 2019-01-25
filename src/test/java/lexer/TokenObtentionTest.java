@@ -199,4 +199,13 @@ public class TokenObtentionTest {
         assertEquals("123435456", token1.getLexeme());
         assertEquals(0, token1.getLineNumber());
     }
+
+    @Test
+    public void Div_Test(){
+        Tokenizer tokenizer = new Tokenizer("/");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.DIV, token.getType());
+        assertEquals("/", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
 }

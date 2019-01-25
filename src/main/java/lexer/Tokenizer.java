@@ -98,6 +98,25 @@ public class Tokenizer {
             return createToken(Token.TokenType.ID);
     }
 
+    //Division or comment
+    private Token getSlashToken(){
+        currentLexeme += "/";
+        Character next = nextChar();
+        if(isEndOfInput()){
+            return createToken(Token.TokenType.DIV);
+        }
+
+        switch (next) {
+            case '/':
+                return null;
+            case '*':
+                return null;
+            default:
+                return createToken(Token.TokenType.DIV);
+
+        }
+    }
+
     private boolean isReservedWord() {
         //check if reserved word (all alpha, all lowercase and in list of reserved words)
         return (LexerMatcher.isAlpaha(currentLexeme) && currentLexeme == currentLexeme.toLowerCase() &&reservedWords.contains(currentLexeme));
@@ -108,13 +127,18 @@ public class Tokenizer {
         char charValue;
         if(current != null) {
             charValue = current.charValue();
+            //digits
             if(LexerMatcher.isNumeric(charValue)){
                 return getNumericToken(charValue);
             }
+            //ID's or reserved words
             if(LexerMatcher.isAlpaha(charValue)) {
                 return getAlphaToken(charValue);
             }
+
             switch(charValue){
+                case '/':
+                    return getSlashToken();
                 case '.':
                     currentLexeme = current.toString();
                     return createToken(Token.TokenType.POIN);
