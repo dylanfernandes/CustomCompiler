@@ -10,8 +10,11 @@ public class LexerMatcherTest {
     public void AlphaTest() {
         assertTrue(LexerMatcher.isAlpaha('a'));
         assertTrue(LexerMatcher.isAlpaha("abcx"));
+
         assertFalse(LexerMatcher.isAlpaha('\u00C6'));
         assertFalse(LexerMatcher.isAlpaha("123"));
+        assertFalse(LexerMatcher.isAlpaha("abctothe123"));
+        assertFalse(LexerMatcher.isAlpaha("abc_to_the_123"));
     }
 
     @Test
@@ -25,6 +28,7 @@ public class LexerMatcherTest {
     public void AlphaNumTest() {
         assertTrue(LexerMatcher.isAlphaNum("123123436758780"));
         assertTrue(LexerMatcher.isAlphaNum('1'));
+        assertTrue(LexerMatcher.isAlphaNum("If"));
         assertFalse(LexerMatcher.isAlpaha('\u00C6'));
         assertTrue(LexerMatcher.isAlphaNum("asd"));
         assertTrue(LexerMatcher.isAlphaNum("123123436758780_dfsdf"));
@@ -40,6 +44,7 @@ public class LexerMatcherTest {
         assertTrue(LexerMatcher.isTokenable(".,+*/!><=&|:{}[]()"));
 
         assertFalse(LexerMatcher.isTokenable('\u00C6'));
+        assertFalse(LexerMatcher.isTokenable('\n'));
     }
 
     @Test

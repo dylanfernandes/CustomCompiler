@@ -34,5 +34,24 @@ public class TokenizerTest {
         assertEquals(-1, tokenizer.getInputPosition());
     }
 
+    @Test
+    public void NewLinesTest() {
+        Tokenizer tokenizer = new Tokenizer("Test \n ,\r Else");
+
+        Token token1 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.ID, token1.getType());
+        assertEquals("Test", token1.getLexeme());
+        assertEquals(0, token1.getLineNumber());
+
+        Token token2 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.COMM, token2.getType());
+        assertEquals(",", token2.getLexeme());
+        assertEquals(1, token2.getLineNumber());
+
+        Token token3 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.ID, token3.getType());
+        assertEquals("Else", token3.getLexeme());
+        assertEquals(2, token3.getLineNumber());
+    }
 
 }

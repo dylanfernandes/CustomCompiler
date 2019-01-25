@@ -1,5 +1,7 @@
 package lexer;
 
+import com.sun.deploy.util.StringUtils;
+
 public class Tokenizer {
     private String currentLexeme;
     private int currentLine;
@@ -38,10 +40,27 @@ public class Tokenizer {
         return  null;
     }
 
-    private  Token getAlphaToken(char firstChar) {
-        //TODO Implement according to ID DFA
+    private Token getAlphaToken(char firstChar) {
+        char current = firstChar;
+        while (LexerMatcher.isAlphaNum(current) && !isEndOfInput()){
+            currentLexeme += current;
+            current = nextChar();
+        }
 
-        return  null;
+        //Reached end of string, last char valid
+        if(LexerMatcher.isAlphaNum(current)) {
+            currentLexeme += current;
+        }
+        else {
+            //not alphaNum, backup for further tonkenizing
+            backupChar();
+        }
+        //TODO Implement Reserved Word check
+        //check if reserved word (all alpha and lowercase)
+        if(LexerMatcher.isAlpaha(currentLexeme) && currentLexeme == currentLexeme.toLowerCase())
+            return null;
+        else
+            return createToken(Token.TokenType.ID);
     }
 
     public Token nextToken() {
@@ -62,11 +81,20 @@ public class Tokenizer {
                 case ',':
                     currentLexeme = current.toString();
                     return createToken(Token.TokenType.COMM);
-
+                //skip unrecognized characters
+                case '\n':
+                case '\r':
+                    //new line started in input
+                    currentLexeme = "";
+                    this.currentLine++;
+                    return nextToken();
                 default:
-                    return createToken(Token.TokenType.ERROR);
+                    //skip over character
+                    currentLexeme = "";
+                    return nextToken();
             }
         }
+        //No tokens left in string
         else
             return null;
     }

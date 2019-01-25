@@ -4,9 +4,9 @@ import java.util.regex.Pattern;
 
 public final class LexerMatcher {
 
-    private static String alpha = "^[a-zA-z]*$";
+    private static String alpha = "^[a-zA-Z]*$";
     private static String numeric = "^[0-9]*$";
-    private static String alphaNum = "^[0-9a-z0-9_]*$";
+    private static String alphaNum = "^[0-9a-zA-Z_]*$";
     private static String tokenable = "^[\\.,+-\\\\*/!><=&|:{}\\[\\]()]*$";
 
     private LexerMatcher() {
