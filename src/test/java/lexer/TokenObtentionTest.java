@@ -209,6 +209,9 @@ public class TokenObtentionTest {
         assertEquals(0, token.getLineNumber());
     }
 
+    /********************************
+     SINGLE COMMENT TEST
+     ********************************/
     @Test
     public void SingleCommentTest_Empty(){
         Tokenizer tokenizer = new Tokenizer("//");
@@ -225,5 +228,31 @@ public class TokenObtentionTest {
         assertEquals(Token.TokenType.CMT, token.getType());
         assertEquals("//thisisallongcomment", token.getLexeme());
         assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void SingleCommentTest_Repeat(){
+        Tokenizer tokenizer = new Tokenizer("//thisisallongcomment//\n");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.CMT, token.getType());
+        assertEquals("//thisisallongcomment//", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    /********************************
+     MULTI COMMENT TEST
+     ********************************/
+
+    @Test
+    public void MultiCommentTest_Empty(){
+        Tokenizer tokenizer = new Tokenizer("/*");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.DIV, token.getType());
+        assertEquals("/", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+
+        Token token1 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.MULT, token1.getType());
+        assertEquals("*", token1.getLexeme());
     }
 }

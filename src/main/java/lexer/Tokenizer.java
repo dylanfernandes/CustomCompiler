@@ -52,6 +52,19 @@ public class Tokenizer {
     public boolean backupChar() {
         if(inputPosition >= 0)
         {
+            //update current lexeme
+            if (currentLexeme != null && currentLexeme.length() > 0) {
+                currentLexeme = currentLexeme.substring(0, currentLexeme.length() - 1);
+            }
+            inputPosition--;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean backup() {
+        if(inputPosition >= 0)
+        {
             inputPosition--;
             return true;
         }
@@ -87,7 +100,7 @@ public class Tokenizer {
         }
         else {
             //not alphaNum, backup for further tonkenizing
-            backupChar();
+            backup();
         }
 
         if(isReservedWord()) {
@@ -107,6 +120,23 @@ public class Tokenizer {
         return createToken(Token.TokenType.CMT);
     }
 
+    private Token getMultiLineComment() {
+        Character next = nextChar();
+        int startPos;
+        //last chars of input is '/*'
+        if (next == null) {
+            backupChar();
+            return createToken(Token.TokenType.DIV);
+        }
+        startPos = inputPosition;
+//        while (next != null && next != '\n' && next != '\r') {
+//            currentLexeme += next;
+//            next = nextChar();
+//        }
+//        return createToken(Token.TokenType.CMT);
+        return null;
+    }
+
     //Division or comment
     private Token getSlashToken(){
         currentLexeme += "/";
@@ -119,7 +149,8 @@ public class Tokenizer {
                 currentLexeme += next;
                 return getSingleLineComment();
             case '*':
-                return null;
+                currentLexeme += next;
+                return getMultiLineComment();
             default:
                 return createToken(Token.TokenType.DIV);
 
@@ -154,6 +185,9 @@ public class Tokenizer {
                 case ',':
                     currentLexeme = current.toString();
                     return createToken(Token.TokenType.COMM);
+                case'*':
+                    currentLexeme = current.toString();
+                    return createToken(Token.TokenType.MULT);
                 //skip unrecognized characters
                 case '\n':
                 case '\r':

@@ -35,6 +35,16 @@ public class TokenizerTest {
     }
 
     @Test
+    public void BackupCharLexemeTest() {
+        Tokenizer tokenizer = new Tokenizer("Test \n");
+        tokenizer.setCurrentLexeme("Te");
+        tokenizer.setInputPosition(3);
+        assertEquals(true, tokenizer.backupChar());
+        assertEquals(2, tokenizer.getInputPosition());
+        assertEquals("T", tokenizer.getCurrentLexeme());
+    }
+
+    @Test
     public void NewLinesTest() {
         Tokenizer tokenizer = new Tokenizer("Test \n ,\r Else");
 
