@@ -201,11 +201,29 @@ public class TokenObtentionTest {
     }
 
     @Test
-    public void Div_Test(){
+    public void DivTest(){
         Tokenizer tokenizer = new Tokenizer("/");
         Token token = tokenizer.nextToken();
         assertEquals(Token.TokenType.DIV, token.getType());
         assertEquals("/", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void SingleCommentTest_Empty(){
+        Tokenizer tokenizer = new Tokenizer("//");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.CMT, token.getType());
+        assertEquals("//", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void SingleCommentTest_Long(){
+        Tokenizer tokenizer = new Tokenizer("//thisisallongcomment\n");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.CMT, token.getType());
+        assertEquals("//thisisallongcomment", token.getLexeme());
         assertEquals(0, token.getLineNumber());
     }
 }

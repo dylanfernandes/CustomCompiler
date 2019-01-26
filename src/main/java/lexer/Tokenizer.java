@@ -98,17 +98,26 @@ public class Tokenizer {
             return createToken(Token.TokenType.ID);
     }
 
+    private Token getSingleLineComment() {
+        Character next = nextChar();
+        while (next != null && next != '\n' && next != '\r') {
+            currentLexeme += next;
+            next = nextChar();
+        }
+        return createToken(Token.TokenType.CMT);
+    }
+
     //Division or comment
     private Token getSlashToken(){
         currentLexeme += "/";
-        Character next = nextChar();
         if(isEndOfInput()){
             return createToken(Token.TokenType.DIV);
         }
-
+        Character next = nextChar();
         switch (next) {
             case '/':
-                return null;
+                currentLexeme += next;
+                return getSingleLineComment();
             case '*':
                 return null;
             default:
