@@ -22,6 +22,29 @@ public class TokenizerTest {
     }
 
     @Test
+    public  void BackupTest() {
+        Tokenizer tokenizer = new Tokenizer("Test \n");
+        assertEquals(false, tokenizer.backup());
+        assertFalse(-2 == tokenizer.getInputPosition());
+        assertEquals(-1, tokenizer.getInputPosition());
+
+        assertEquals('T', tokenizer.nextChar().charValue());
+        assertEquals(0, tokenizer.getInputPosition());
+        assertEquals(true, tokenizer.backup());
+        assertEquals(-1, tokenizer.getInputPosition());
+    }
+
+    @Test
+    public void BackupLexemeTest() {
+        Tokenizer tokenizer = new Tokenizer("Test \n");
+        tokenizer.setCurrentLexeme("Te");
+        tokenizer.setInputPosition(3);
+        assertEquals(true, tokenizer.backup());
+        assertEquals(2, tokenizer.getInputPosition());
+        assertEquals("Te", tokenizer.getCurrentLexeme());
+    }
+
+    @Test
     public  void BackupCharTest() {
         Tokenizer tokenizer = new Tokenizer("Test \n");
         assertEquals(false, tokenizer.backupChar());

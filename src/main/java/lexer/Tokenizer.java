@@ -50,13 +50,12 @@ public class Tokenizer {
     }
 
     public boolean backupChar() {
-        if(inputPosition >= 0)
+        if(backup())
         {
             //update current lexeme
             if (currentLexeme != null && currentLexeme.length() > 0) {
                 currentLexeme = currentLexeme.substring(0, currentLexeme.length() - 1);
             }
-            inputPosition--;
             return true;
         }
         return false;
