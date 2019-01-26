@@ -71,8 +71,8 @@ public class Tokenizer {
     }
 
     private Token getNumericToken(char firstDigit) {
-        //TODO Implement according to NUMERIC DFA
-        char current = firstDigit;
+        Character current = firstDigit;
+        Character afterInt;
         if(firstDigit != '0') {
             while(LexerMatcher.isNumeric(current) && !isEndOfInput()) {
                 currentLexeme += current;
@@ -80,10 +80,41 @@ public class Tokenizer {
             }
         }
 
-        if(LexerMatcher.isNumeric(current)) {
+        if (LexerMatcher.isNumeric(current)) {
             currentLexeme += current;
+            afterInt = nextChar();
         }
+        else
+            afterInt = current;
+
+
+
+        if (afterInt != null && afterInt == '.') {
+            current = nextChar();
+            if(current == null || !LexerMatcher.isNumeric(current)) {
+                //int that ends before point
+                backup();
+
+            }
+            else {
+                return getFloat(current);
+            }
+        }
+        else
+            backup();
         return  createToken(Token.TokenType.INT);
+    }
+
+    private Token getFloat(char firstDigit) {
+        //TODO Implement float according to NUMERIC DFA
+        Character current = nextChar();
+        currentLexeme += "." + firstDigit;
+        if (firstDigit == '0') {
+            if(current == null || !LexerMatcher.isNumeric(current)) {
+                return createToken(Token.TokenType.FLOAT);
+            }
+        }
+        return null;
     }
 
     private Token getAlphaToken(char firstChar) {

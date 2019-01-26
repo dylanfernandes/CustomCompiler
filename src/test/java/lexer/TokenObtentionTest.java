@@ -201,11 +201,47 @@ public class TokenObtentionTest {
     }
 
     @Test
+    public void INTTest_Point(){
+        Tokenizer tokenizer = new Tokenizer("123435456.");
+        Token token0 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.INT, token0.getType());
+        assertEquals("123435456", token0.getLexeme());
+        assertEquals(0, token0.getLineNumber());
+
+        Token token1 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.POIN, token1.getType());
+        assertEquals(".", token1.getLexeme());
+        assertEquals(0, token1.getLineNumber());
+    }
+
+    @Test
     public void DivTest(){
         Tokenizer tokenizer = new Tokenizer("/");
         Token token = tokenizer.nextToken();
         assertEquals(Token.TokenType.DIV, token.getType());
         assertEquals("/", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    /********************************
+     FLOAT TEST
+     ********************************/
+
+    @Test
+    public void FLOATTest_Zero_Dot_Zero(){
+        Tokenizer tokenizer = new Tokenizer("0.0");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.FLOAT, token.getType());
+        assertEquals("0.0", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void FLOATTest_Num_Dot_Zero(){
+        Tokenizer tokenizer = new Tokenizer("2.0");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.FLOAT, token.getType());
+        assertEquals("2.0", token.getLexeme());
         assertEquals(0, token.getLineNumber());
     }
 
