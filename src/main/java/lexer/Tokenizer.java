@@ -120,20 +120,33 @@ public class Tokenizer {
     }
 
     private Token getMultiLineComment() {
+        //remember where comment started in case not properly closed
+        int startPos = inputPosition - 1;
         Character next = nextChar();
-        int startPos;
-        //last chars of input is '/*'
-        if (next == null) {
-            backupChar();
-            return createToken(Token.TokenType.DIV);
+        Character temp;
+
+        while (next != null) {
+            //check for multiline comment termination
+            if(next == '*') {
+                temp = nextChar();
+                if (temp != null) {
+                    if (temp == '/') {
+                        currentLexeme += next;
+                        currentLexeme += temp;
+                        return createToken(Token.TokenType.CMT);
+                    } else
+                        backup();
+                }
+            }
+            currentLexeme += next;
+            next = nextChar();
         }
-        startPos = inputPosition;
-//        while (next != null && next != '\n' && next != '\r') {
-//            currentLexeme += next;
-//            next = nextChar();
-//        }
-//        return createToken(Token.TokenType.CMT);
-        return null;
+
+        //Comment not properly closed
+        //reset start position, first token is division symbol
+        inputPosition = startPos;
+        currentLexeme = "/";
+        return createToken(Token.TokenType.DIV);
     }
 
     //Division or comment

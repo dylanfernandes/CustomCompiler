@@ -255,4 +255,58 @@ public class TokenObtentionTest {
         assertEquals(Token.TokenType.MULT, token1.getType());
         assertEquals("*", token1.getLexeme());
     }
+
+    @Test
+    public void MultiCommentTest_Good(){
+        Tokenizer tokenizer = new Tokenizer("/*This is a multiline comment*/");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.CMT, token.getType());
+        assertEquals("/*This is a multiline comment*/", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void MultiCommentTest_Incomplete(){
+        Tokenizer tokenizer = new Tokenizer("/*Test");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.DIV, token.getType());
+        assertEquals("/", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+
+        Token token1 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.MULT, token1.getType());
+        assertEquals("*", token1.getLexeme());
+        assertEquals(0, token1.getLineNumber());
+
+        Token token2 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.ID, token2.getType());
+        assertEquals("Test", token2.getLexeme());
+        assertEquals(0, token2.getLineNumber());
+    }
+
+    @Test
+    public void MultiCommentTest_IncompleteStar(){
+        Tokenizer tokenizer = new Tokenizer("/*Test*");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.DIV, token.getType());
+        assertEquals("/", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+
+        Token token1 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.MULT, token1.getType());
+        assertEquals("*", token1.getLexeme());
+        assertEquals(0, token1.getLineNumber());
+
+        Token token2 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.ID, token2.getType());
+        assertEquals("Test", token2.getLexeme());
+        assertEquals(0, token2.getLineNumber());
+
+        Token token3 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.MULT, token3.getType());
+        assertEquals("*", token3.getLexeme());
+        assertEquals(0, token3.getLineNumber());
+    }
+
+
 }
