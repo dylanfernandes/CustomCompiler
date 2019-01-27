@@ -110,24 +110,59 @@ public class Tokenizer {
         Character current = nextChar();
         currentLexeme += "." + firstDigit;
         if (firstDigit == '0') {
-            if(current == null || !LexerMatcher.isNumeric(current)) {
-                return createToken(Token.TokenType.FLO);
-            }
-            else {
-                while (current != null && LexerMatcher.isNumeric(current)){
-                    currentLexeme += current;
-                    current = nextChar();
-                }
-                if (current != null && current == 'e') {
-                    return null;
-                }
-                else {
-                    backup();
-                }
+            if (current == null || !LexerMatcher.isNumeric(current)) {
                 return createToken(Token.TokenType.FLO);
             }
         }
-        return null;
+
+        while (current != null && LexerMatcher.isNumeric(current)){
+            currentLexeme += current;
+            current = nextChar();
+        }
+        //float with exponential notation
+        if (current != null && current == 'e') {
+            return getExponent();
+        }
+        else if (currentLexeme.charAt(currentLexeme.length()-1) == '0') {
+            //remove 0 from float
+            backupChar();
+        }
+        else {
+            backup();
+        }
+        return createToken(Token.TokenType.FLO);
+
+    }
+
+    private Token getExponent() {
+        Character current = nextChar();
+        Character sign = null;
+
+        if(current != null && (current == '+' || current == '-')) {
+            sign = current;
+            current = nextChar();
+        }
+        //character not part of float
+        if (current == null  || !LexerMatcher.isNumeric(current)) {
+            //extra backup for sign
+            if (sign != null) {
+                backup();
+            }
+            backup();
+            return createToken(Token.TokenType.FLO);
+        }
+
+        currentLexeme += "e";
+
+        if(sign != null) {
+            currentLexeme += sign;
+        }
+
+        while (current != null && LexerMatcher.isNumeric(current)){
+            currentLexeme += current;
+            current = nextChar();
+        }
+        return createToken(Token.TokenType.FLO);
     }
 
     private Token getAlphaToken(char firstChar) {
@@ -244,6 +279,12 @@ public class Tokenizer {
                 case'*':
                     currentLexeme = current.toString();
                     return createToken(Token.TokenType.MULT);
+                case'+':
+                    currentLexeme = current.toString();
+                    return createToken(Token.TokenType.ADD);
+                case'-':
+                    currentLexeme = current.toString();
+                    return createToken(Token.TokenType.SUB);
                 //skip unrecognized characters
                 case '\n':
                 case '\r':
