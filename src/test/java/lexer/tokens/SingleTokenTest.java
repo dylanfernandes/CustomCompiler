@@ -140,4 +140,103 @@ public class SingleTokenTest {
         assertEquals("]", token.getLexeme());
         assertEquals(0, token.getLineNumber());
     }
+
+    @Test
+    public void AssignTest(){
+        Tokenizer tokenizer = new Tokenizer("=");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.ASSGN, token.getType());
+        assertEquals("=", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void EqTest(){
+        Tokenizer tokenizer = new Tokenizer("==");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.EQ, token.getType());
+        assertEquals("==", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void OrTest(){
+        Tokenizer tokenizer = new Tokenizer("||");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.OR, token.getType());
+        assertEquals("||", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void AndTest(){
+        Tokenizer tokenizer = new Tokenizer("&&");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.AND, token.getType());
+        assertEquals("&&", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void GREThanTest(){
+        Tokenizer tokenizer = new Tokenizer(">");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.GRE, token.getType());
+        assertEquals(">", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void GREEQThanTest(){
+        Tokenizer tokenizer = new Tokenizer(">=");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.GREEQ, token.getType());
+        assertEquals(">=", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void ColonThanTest(){
+        Tokenizer tokenizer = new Tokenizer(":");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.COLO, token.getType());
+        assertEquals(":", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void DColonThanTest(){
+        Tokenizer tokenizer = new Tokenizer("::");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.DCOLO, token.getType());
+        assertEquals("::", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void LESThanTest(){
+        Tokenizer tokenizer = new Tokenizer("<");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.LES, token.getType());
+        assertEquals("<", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void LESSEQThanTest(){
+        Tokenizer tokenizer = new Tokenizer("<=");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.LESSEQ, token.getType());
+        assertEquals("<=", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void NEQThanTest(){
+        Tokenizer tokenizer = new Tokenizer("<>");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.NEQ, token.getType());
+        assertEquals("<>", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
 }

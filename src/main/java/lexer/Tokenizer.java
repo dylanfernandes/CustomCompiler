@@ -106,7 +106,6 @@ public class Tokenizer {
     }
 
     private Token getFloat(char firstDigit) {
-        //TODO Implement float according to NUMERIC DFA
         Character current = nextChar();
         currentLexeme += "." + firstDigit;
         if (firstDigit == '0') {
@@ -309,6 +308,62 @@ public class Tokenizer {
                 case ']':
                     currentLexeme = current.toString();
                     return createToken(Token.TokenType.CSBRA);
+                case '=':
+                    currentLexeme = current.toString();
+                    current = nextChar();
+                    if (current != null && current == '=') {
+                        currentLexeme += current;
+                        return createToken(Token.TokenType.EQ);
+                    }
+                    backup();
+                    return createToken(Token.TokenType.ASSGN);
+                case '>':
+                    currentLexeme = current.toString();
+                    current = nextChar();
+                    if (current != null && current == '=') {
+                        currentLexeme += current;
+                        return createToken(Token.TokenType.GREEQ);
+                    }
+                    backup();
+                    return createToken(Token.TokenType.GRE);
+                case '<':
+                    currentLexeme = current.toString();
+                    current = nextChar();
+                    if (current != null && (current == '=' || current == '>')) {
+                        currentLexeme += current;
+                        if (current == '=')
+                            return createToken(Token.TokenType.LESSEQ);
+                        else
+                            return createToken(Token.TokenType.NEQ);
+                    }
+                    backup();
+                    return createToken(Token.TokenType.LES);
+                case ':':
+                    currentLexeme = current.toString();
+                    current = nextChar();
+                    if (current != null && current == ':') {
+                        currentLexeme += current;
+                        return createToken(Token.TokenType.DCOLO);
+                    }
+                    backup();
+                    return createToken(Token.TokenType.COLO);
+                case '|':
+                    currentLexeme = current.toString();
+                    current = nextChar();
+                    if (current != null && current == '|') {
+                        currentLexeme += current;
+                        return createToken(Token.TokenType.OR);
+                    }
+                    return createToken(Token.TokenType.ERROR);
+                case '&':
+                    currentLexeme = current.toString();
+                    current = nextChar();
+                    if (current != null && current == '&') {
+                        currentLexeme += current;
+                        return createToken(Token.TokenType.AND);
+                    }
+                    return createToken(Token.TokenType.ERROR);
+
 
                 //skip unrecognized characters
                 case '\n':
