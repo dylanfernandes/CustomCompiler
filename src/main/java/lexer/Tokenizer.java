@@ -285,6 +285,31 @@ public class Tokenizer {
                 case'-':
                     currentLexeme = current.toString();
                     return createToken(Token.TokenType.SUB);
+                case '!':
+                    currentLexeme = current.toString();
+                    return createToken(Token.TokenType.NOT);
+                case ';':
+                    currentLexeme = current.toString();
+                    return createToken(Token.TokenType.SEMI);
+                case '(':
+                    currentLexeme = current.toString();
+                    return createToken(Token.TokenType.OPAR);
+                case ')':
+                    currentLexeme = current.toString();
+                    return createToken(Token.TokenType.CPAR);
+                case '{':
+                    currentLexeme = current.toString();
+                    return createToken(Token.TokenType.OBRA);
+                case '}':
+                    currentLexeme = current.toString();
+                    return createToken(Token.TokenType.CBRA);
+                case '[':
+                    currentLexeme = current.toString();
+                    return createToken(Token.TokenType.OSBRA);
+                case ']':
+                    currentLexeme = current.toString();
+                    return createToken(Token.TokenType.CSBRA);
+
                 //skip unrecognized characters
                 case '\n':
                 case '\r':
@@ -342,7 +367,7 @@ public class Tokenizer {
     }
 
     public boolean isEndOfInput() {
-        //strin index starts at 0, last character at input.length()-1
+        //string index starts at 0, last character at input.length()-1
         endOfInput = input.length()-1 <= inputPosition;
         return endOfInput;
     }

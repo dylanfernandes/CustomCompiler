@@ -9,7 +9,7 @@ public class Token {
         CMT,
         ERROR,
         POIN, COMM, SEMI, COLO,
-        ADD, SUB, MULT, DIV,
+        ADD, SUB, MULT, DIV, NOT,
         ASSGN,GRE, LES,
         EQ, NEQ, LESSEQ, GREEQ,
         AND, OR,
