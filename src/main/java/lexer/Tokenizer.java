@@ -111,7 +111,20 @@ public class Tokenizer {
         currentLexeme += "." + firstDigit;
         if (firstDigit == '0') {
             if(current == null || !LexerMatcher.isNumeric(current)) {
-                return createToken(Token.TokenType.FLOAT);
+                return createToken(Token.TokenType.FLO);
+            }
+            else {
+                while (current != null && LexerMatcher.isNumeric(current)){
+                    currentLexeme += current;
+                    current = nextChar();
+                }
+                if (current != null && current == 'e') {
+                    return null;
+                }
+                else {
+                    backup();
+                }
+                return createToken(Token.TokenType.FLO);
             }
         }
         return null;

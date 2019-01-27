@@ -231,7 +231,7 @@ public class TokenObtentionTest {
     public void FLOATTest_Zero_Dot_Zero(){
         Tokenizer tokenizer = new Tokenizer("0.0");
         Token token = tokenizer.nextToken();
-        assertEquals(Token.TokenType.FLOAT, token.getType());
+        assertEquals(Token.TokenType.FLO, token.getType());
         assertEquals("0.0", token.getLexeme());
         assertEquals(0, token.getLineNumber());
     }
@@ -240,8 +240,17 @@ public class TokenObtentionTest {
     public void FLOATTest_Num_Dot_Zero(){
         Tokenizer tokenizer = new Tokenizer("2.0");
         Token token = tokenizer.nextToken();
-        assertEquals(Token.TokenType.FLOAT, token.getType());
+        assertEquals(Token.TokenType.FLO, token.getType());
         assertEquals("2.0", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void FLOATTest_Num_Dot_ZeroNum(){
+        Tokenizer tokenizer = new Tokenizer("3.014159");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.FLO, token.getType());
+        assertEquals("3.014159", token.getLexeme());
         assertEquals(0, token.getLineNumber());
     }
 
