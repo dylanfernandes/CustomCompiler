@@ -10,6 +10,9 @@ public class LexerDriver {
     public LexerDriver() {
     }
 
+    public LexerDriver(String location) {
+        inputLocation = location;
+    }
     public void start(String input) throws FileNotFoundException {
         inputLocation = input;
         start();

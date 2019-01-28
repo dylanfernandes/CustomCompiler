@@ -11,7 +11,7 @@ public class LexerDriverTest {
 
     @Test
     public void getInputTest() throws FileNotFoundException {
-        LexerDriver lex = new LexerDriver();
+        LexerDriver lex = new LexerDriver("src/test/java/lexer/input/testInput.txt");
         assertEquals("Test" , lex.getInput());
     }
 
