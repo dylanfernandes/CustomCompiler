@@ -386,7 +386,7 @@ public class Tokenizer {
                 default:
                     //skip over character
                     currentLexeme += current;
-                    return createErrorToken("Invalid character: " + current);
+                    return createErrorToken("Invalid character: '" + current + "'");
             }
         }
         //No tokens left in string

@@ -8,7 +8,7 @@ public class LexerError extends Token {
     }
 
     public String getErrorMessage() {
-        return errorMessage;
+        return errorMessage + ":" + getLineNumber();
     }
 
     public void setErrorMessage(String errorMessage) {

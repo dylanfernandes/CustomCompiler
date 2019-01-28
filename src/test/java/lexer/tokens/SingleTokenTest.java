@@ -249,7 +249,7 @@ public class SingleTokenTest {
         assertEquals(Token.TokenType.ERROR, token.getType());
         assertEquals("\u00C6", token.getLexeme());
         assertEquals(0, token.getLineNumber());
-        assertEquals("Invalid character: \u00C6", token.getErrorMessage());
+        assertEquals("Invalid character: '\u00C6':0", token.getErrorMessage());
     }
 
     @Test
@@ -259,6 +259,6 @@ public class SingleTokenTest {
         assertEquals(Token.TokenType.ERROR, token.getType());
         assertEquals("_", token.getLexeme());
         assertEquals(0, token.getLineNumber());
-        assertEquals("'_' can only be used within ID's after the frist character", token.getErrorMessage());
+        assertEquals("'_' can only be used within ID's after the frist character:0", token.getErrorMessage());
     }
 }
