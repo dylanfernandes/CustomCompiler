@@ -161,6 +161,7 @@ public class Tokenizer {
             currentLexeme += current;
             current = nextChar();
         }
+        backup();
         return createToken(Token.TokenType.FLO);
     }
 

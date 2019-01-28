@@ -40,7 +40,18 @@ public class LexerDriver {
     }
 
     String getInput() throws FileNotFoundException {
-        String content = new Scanner(new File(inputLocation)).useDelimiter("\\Z").next();
+        Scanner scanner = new Scanner(new FileReader(inputLocation));
+        String content = "";
+        String temp;
+        while ( (temp = scanner.nextLine()) != null) {
+            // No need to convert to char array before printing
+            content += temp;
+            if (scanner.hasNext()) {
+                content += '\n';
+            }
+            else
+                break;
+        }
         return content;
     }
 
