@@ -7,7 +7,7 @@ public class Token {
         ID,
         INT, FLO,
         CMT,
-        ERROR,
+        ERROR, NEWLINE,
         POIN, COMM, SEMI, COLO,
         ADD, SUB, MULT, DIV, NOT,
         ASSGN,GRE, LES,

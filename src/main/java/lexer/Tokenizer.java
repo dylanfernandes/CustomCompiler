@@ -255,6 +255,7 @@ public class Tokenizer {
 
     public Token nextToken() {
         Character current = nextChar();
+        Token temp;
         char charValue;
         if(current != null) {
             charValue = current.charValue();
@@ -370,9 +371,10 @@ public class Tokenizer {
                 case '\n':
                 case '\r':
                     //new line started in input
-                    currentLexeme = "";
+                    currentLexeme = "\n";
+                    temp = createToken(Token.TokenType.NEWLINE);
                     this.currentLine++;
-                    return nextToken();
+                    return temp;
                 default:
                     //skip over character
                     currentLexeme = "";

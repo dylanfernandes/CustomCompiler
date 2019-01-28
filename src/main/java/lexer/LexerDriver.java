@@ -7,6 +7,8 @@ public class LexerDriver {
 
     private String inputLocation = "src/input/input.txt";
     private String outputLocation = "src/output/output.txt";
+    private String AtoCCLocation = "src/output/AtoCCOutput.txt";
+
     public LexerDriver() {
     }
 
@@ -22,11 +24,20 @@ public class LexerDriver {
         Tokenizer tokenizer = new Tokenizer(getInput());
         Token token;
         String output = "";
+        String AtoCCOutput = "";
         while (!tokenizer.isEndOfInput()){
             token = tokenizer.nextToken();
-            output += printTokenContent(token);
+            if(token.getType() == Token.TokenType.NEWLINE) {
+                output += '\n';
+                AtoCCOutput += '\n';
+            }
+            else {
+                output += printTokenContent(token);
+                AtoCCOutput += printAtoCC(token) + " ";
+            }
         }
-        writeOutput(output);
+        writeOutput(output, outputLocation);
+        writeOutput(AtoCCOutput, AtoCCLocation);
     }
 
     String printTokenContent (Token token) {
@@ -37,6 +48,19 @@ public class LexerDriver {
         content += token.getLexeme();
         content += "]";
         return content;
+    }
+
+    String printAtoCC (Token token) {
+        Token.TokenType tokenType= token.getType();
+        switch (tokenType) {
+            case FLO:
+            case INT:
+            case ID:
+            case CMT:
+                return tokenType.toString();
+            default:
+                return token.getLexeme();
+        }
     }
 
     String getInput() throws FileNotFoundException {
@@ -55,12 +79,12 @@ public class LexerDriver {
         return content;
     }
 
-    boolean writeOutput(String content) {
+    boolean writeOutput(String content, String output) {
         Writer writer = null;
 
         try {
             writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(outputLocation), "utf-8"));
+                    new FileOutputStream(output), "utf-8"));
             writer.write(content);
         } catch (IOException ex) {
             // Report

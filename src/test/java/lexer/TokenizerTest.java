@@ -76,10 +76,20 @@ public class TokenizerTest {
         assertEquals("Test", token1.getLexeme());
         assertEquals(0, token1.getLineNumber());
 
+        Token tokenNew = tokenizer.nextToken();
+        assertEquals(Token.TokenType.NEWLINE, tokenNew.getType());
+        assertEquals("\n", tokenNew.getLexeme());
+        assertEquals(0, tokenNew.getLineNumber());
+
         Token token2 = tokenizer.nextToken();
         assertEquals(Token.TokenType.COMM, token2.getType());
         assertEquals(",", token2.getLexeme());
         assertEquals(1, token2.getLineNumber());
+
+        Token tokenNew2 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.NEWLINE, tokenNew2.getType());
+        assertEquals("\n", tokenNew2.getLexeme());
+        assertEquals(1, tokenNew2.getLineNumber());
 
         Token token3 = tokenizer.nextToken();
         assertEquals(Token.TokenType.ID, token3.getType());
