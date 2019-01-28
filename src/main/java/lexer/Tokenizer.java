@@ -11,6 +11,7 @@ public class Tokenizer {
     private int inputPosition;
     private boolean endOfInput;
     private List<String> reservedWords;
+    private List<LexerError> errorList;
 
     public Tokenizer(String input) {
         resetTokenizer(input);
@@ -23,6 +24,7 @@ public class Tokenizer {
         this.currentLine = 0;
         this.inputPosition = -1;
         this.endOfInput = false;
+        errorList = new ArrayList<LexerError>();
     }
 
     private void initializeReservedWords() {
@@ -382,11 +384,15 @@ public class Tokenizer {
                     return nextToken();
                 case '_':
                     currentLexeme += current;
-                    return createErrorToken("'_' can only be used within ID's after the frist character");
+                    temp = createErrorToken("'_' can only be used within ID's after the frist character");
+                    errorList.add((LexerError) temp);
+                    return temp;
                 default:
                     //skip over character
                     currentLexeme += current;
-                    return createErrorToken("Invalid character: '" + current + "'");
+                    temp = createErrorToken("Invalid character: '" + current + "'");
+                    errorList.add((LexerError) temp);
+                    return temp;
             }
         }
         //No tokens left in string
@@ -414,22 +420,6 @@ public class Tokenizer {
         this.currentLexeme = currentLexeme;
     }
 
-    public int getCurrentLine() {
-        return currentLine;
-    }
-
-    public void setCurrentLine(int currentLine) {
-        this.currentLine = currentLine;
-    }
-
-    public String getInput() {
-        return input;
-    }
-
-    public void setInput(String input) {
-        this.input = input;
-    }
-
     public int getInputPosition() {
         return inputPosition;
     }
@@ -444,4 +434,7 @@ public class Tokenizer {
         return endOfInput;
     }
 
+    public List<LexerError> getErrorList() {
+        return errorList;
+    }
 }

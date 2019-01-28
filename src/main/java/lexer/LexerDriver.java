@@ -1,6 +1,7 @@
 package lexer;
 
 import java.io.*;
+import java.util.List;
 import java.util.Scanner;
 
 public class LexerDriver {
@@ -8,6 +9,7 @@ public class LexerDriver {
     private String inputLocation = "src/input/input.txt";
     private String outputLocation = "src/output/output.txt";
     private String AtoCCLocation = "src/output/AtoCCOutput.txt";
+    private String errorLocation = "src/output/error.txt";
 
     public LexerDriver() {
     }
@@ -36,6 +38,7 @@ public class LexerDriver {
                 AtoCCOutput += printAtoCC(token) + " ";
             }
         }
+        writeErrorList(tokenizer.getErrorList());
         writeOutput(output, outputLocation);
         writeOutput(AtoCCOutput, AtoCCLocation);
     }
@@ -62,6 +65,19 @@ public class LexerDriver {
             default:
                 return token.getLexeme();
         }
+    }
+
+    private void writeErrorList(List<LexerError> errorList) {
+        String errorContent = "";
+        if (errorList.size() == 0 ) {
+            errorContent = "No errors!";
+        }
+        else {
+            for (int i = 0; i <errorList.size();i++) {
+                errorContent += errorList.get(i).getErrorMessage() + "\n";
+            }
+        }
+        writeOutput(errorContent, errorLocation);
     }
 
     String getInput() throws FileNotFoundException {
