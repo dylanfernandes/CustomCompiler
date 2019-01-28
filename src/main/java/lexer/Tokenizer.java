@@ -380,6 +380,9 @@ public class Tokenizer {
                 case '\f':
                     currentLexeme = "";
                     return nextToken();
+                case '_':
+                    currentLexeme += current;
+                    return createErrorToken("'_' can only be used within ID's after the frist character");
                 default:
                     //skip over character
                     currentLexeme += current;

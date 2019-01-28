@@ -4,8 +4,7 @@ import org.junit.Test;
 
 import java.io.FileNotFoundException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class LexerDriverTest {
 
@@ -19,5 +18,17 @@ public class LexerDriverTest {
     public void getOutputTest() {
         LexerDriver lex = new LexerDriver();
         assertTrue("Test" , lex.writeOutput("Test", "src/test/java/lexer/output/testOutput.txt"));
+    }
+
+    @Test
+    public void printContentTest () {
+        Token token = new Token(Token.TokenType.INT, "123", 55);
+        assertEquals("[55:INT:123]",LexerDriver.printTokenContent(token));
+    }
+
+    @Test
+    public void printAtoCCTest () {
+        Token token = new Token(Token.TokenType.ID, "Test", 12);
+        assertEquals("ID",LexerDriver.printAtoCC(token));
     }
 }

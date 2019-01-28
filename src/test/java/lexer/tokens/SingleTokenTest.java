@@ -251,4 +251,14 @@ public class SingleTokenTest {
         assertEquals(0, token.getLineNumber());
         assertEquals("Invalid character: \u00C6", token.getErrorMessage());
     }
+
+    @Test
+    public void ErrorTest_Underscore(){
+        Tokenizer tokenizer = new Tokenizer("_");
+        LexerError token = (LexerError) tokenizer.nextToken();
+        assertEquals(Token.TokenType.ERROR, token.getType());
+        assertEquals("_", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+        assertEquals("'_' can only be used within ID's after the frist character", token.getErrorMessage());
+    }
 }

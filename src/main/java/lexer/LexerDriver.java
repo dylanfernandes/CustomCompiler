@@ -40,7 +40,7 @@ public class LexerDriver {
         writeOutput(AtoCCOutput, AtoCCLocation);
     }
 
-    String printTokenContent (Token token) {
+    public static String printTokenContent (Token token) {
         String content;
         content = "[";
         content += token.getLineNumber() + ":";
@@ -50,7 +50,7 @@ public class LexerDriver {
         return content;
     }
 
-    String printAtoCC (Token token) {
+    public static String printAtoCC (Token token) {
         Token.TokenType tokenType= token.getType();
         switch (tokenType) {
             case FLO:
