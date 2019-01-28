@@ -1,10 +1,12 @@
 package lexer.tokens;
 
+import lexer.LexerError;
 import lexer.Token;
 import lexer.Tokenizer;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SingleTokenTest {
 
@@ -238,5 +240,15 @@ public class SingleTokenTest {
         assertEquals(Token.TokenType.NEQ, token.getType());
         assertEquals("<>", token.getLexeme());
         assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void ErrorTest(){
+        Tokenizer tokenizer = new Tokenizer("\u00C6");
+        LexerError token = (LexerError) tokenizer.nextToken();
+        assertEquals(Token.TokenType.ERROR, token.getType());
+        assertEquals("\u00C6", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+        assertEquals("Invalid character: \u00C6", token.getErrorMessage());
     }
 }

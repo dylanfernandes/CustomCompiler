@@ -57,6 +57,7 @@ public class LexerDriver {
             case INT:
             case ID:
             case CMT:
+            case ERROR:
                 return tokenType.toString();
             default:
                 return token.getLexeme();

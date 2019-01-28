@@ -365,9 +365,7 @@ public class Tokenizer {
                         return createToken(Token.TokenType.AND);
                     }
                     return createToken(Token.TokenType.ERROR);
-
-
-                //skip unrecognized characters
+                //new line characters
                 case '\n':
                 case '\r':
                     //new line started in input
@@ -375,15 +373,28 @@ public class Tokenizer {
                     temp = createToken(Token.TokenType.NEWLINE);
                     this.currentLine++;
                     return temp;
-                default:
-                    //skip over character
+                //space characters
+                case ' ':
+                case '\t':
+                case '\b':
+                case '\f':
                     currentLexeme = "";
                     return nextToken();
+                default:
+                    //skip over character
+                    currentLexeme += current;
+                    return createErrorToken("Invalid character: " + current);
             }
         }
         //No tokens left in string
         else
             return null;
+    }
+
+    public Token createErrorToken(String message) {
+        LexerError lexerError = new LexerError(this.currentLexeme, this.currentLine, message);
+        currentLexeme = "";
+        return lexerError;
     }
 
     public Token createToken(Token.TokenType tokenType){
