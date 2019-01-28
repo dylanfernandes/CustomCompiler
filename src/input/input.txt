@@ -1,2 +1,4 @@
-Test
-test
+integer main() {
+//test comment
+float a = 5;
+}

@@ -1,0 +1,1 @@
+[0:INTEGER:integer][0:MAIN:main][0:OPAR:(][0:CPAR:)][0:OBRA:{][2:CMT://test comment][3:FLOAT:float][3:ID:a][3:ASSGN:=][3:INT:5][3:SEMI:;][5:CBRA:}]
