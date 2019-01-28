@@ -113,4 +113,29 @@ public class FLOTokenTest {
         assertEquals(0, token1.getLineNumber());
     }
 
+    @Test
+    public void FLOATTest_ZerosDecimal(){
+        Tokenizer tokenizer = new Tokenizer("3.10000");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.FLO, token.getType());
+        assertEquals("3.1", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+
+        Token token1 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.INT, token1.getType());
+        assertEquals("0", token1.getLexeme());
+
+        Token token2 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.INT, token2.getType());
+        assertEquals("0", token2.getLexeme());
+
+        Token token3 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.INT, token3.getType());
+        assertEquals("0", token3.getLexeme());
+
+        Token token4 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.INT, token4.getType());
+        assertEquals("0", token4.getLexeme());
+    }
+
 }

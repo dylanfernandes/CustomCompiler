@@ -160,6 +160,12 @@ public class Tokenizer {
             currentLexeme += sign;
         }
 
+        //exponent is integer 0
+        if(current != null && current == '0') {
+            currentLexeme += current;
+            return createToken(Token.TokenType.FLO);
+        }
+
         while (current != null && LexerMatcher.isNumeric(current)){
             currentLexeme += current;
             current = nextChar();
