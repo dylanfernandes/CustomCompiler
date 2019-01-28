@@ -1,6 +1,6 @@
 package lexer.tokens;
 
-import lexer.LexerError;
+import lexer.TokenError;
 import lexer.Token;
 import lexer.Tokenizer;
 import org.junit.Test;
@@ -245,7 +245,7 @@ public class SingleTokenTest {
     @Test
     public void ErrorTest(){
         Tokenizer tokenizer = new Tokenizer("\u00C6");
-        LexerError token = (LexerError) tokenizer.nextToken();
+        TokenError token = (TokenError) tokenizer.nextToken();
         assertEquals(Token.TokenType.ERROR, token.getType());
         assertEquals("\u00C6", token.getLexeme());
         assertEquals(0, token.getLineNumber());
@@ -255,7 +255,7 @@ public class SingleTokenTest {
     @Test
     public void ErrorTest_Underscore(){
         Tokenizer tokenizer = new Tokenizer("_");
-        LexerError token = (LexerError) tokenizer.nextToken();
+        TokenError token = (TokenError) tokenizer.nextToken();
         assertEquals(Token.TokenType.ERROR, token.getType());
         assertEquals("_", token.getLexeme());
         assertEquals(0, token.getLineNumber());

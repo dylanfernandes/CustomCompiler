@@ -1,8 +1,8 @@
 package lexer;
 
-public class LexerError extends Token {
+public class TokenError extends Token {
     private String errorMessage;
-    public LexerError( String lexeme, int lineNumber, String errorMessage) {
+    public TokenError(String lexeme, int lineNumber, String errorMessage) {
         super(TokenType.ERROR, lexeme, lineNumber);
         this.errorMessage = errorMessage;
     }

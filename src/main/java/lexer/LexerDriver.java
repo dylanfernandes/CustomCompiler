@@ -67,7 +67,7 @@ public class LexerDriver {
         }
     }
 
-    private void writeErrorList(List<LexerError> errorList) {
+    private void writeErrorList(List<TokenError> errorList) {
         String errorContent = "";
         if (errorList.size() == 0 ) {
             errorContent = "No errors!";

@@ -11,7 +11,7 @@ public class Tokenizer {
     private int inputPosition;
     private boolean endOfInput;
     private List<String> reservedWords;
-    private List<LexerError> errorList;
+    private List<TokenError> errorList;
 
     public Tokenizer(String input) {
         resetTokenizer(input);
@@ -24,7 +24,7 @@ public class Tokenizer {
         this.currentLine = 0;
         this.inputPosition = -1;
         this.endOfInput = false;
-        errorList = new ArrayList<LexerError>();
+        errorList = new ArrayList<TokenError>();
     }
 
     private void initializeReservedWords() {
@@ -126,7 +126,8 @@ public class Tokenizer {
         }
         else if (currentLexeme.charAt(currentLexeme.length()-1) == '0') {
             //remove 0 from float
-            backupChar();
+            while(currentLexeme.charAt(currentLexeme.length()-1) == '0')
+                backupChar();
         }
         else {
             backup();
@@ -385,13 +386,13 @@ public class Tokenizer {
                 case '_':
                     currentLexeme += current;
                     temp = createErrorToken("'_' can only be used within ID's after the frist character");
-                    errorList.add((LexerError) temp);
+                    errorList.add((TokenError) temp);
                     return temp;
                 default:
                     //skip over character
                     currentLexeme += current;
                     temp = createErrorToken("Invalid character: '" + current + "'");
-                    errorList.add((LexerError) temp);
+                    errorList.add((TokenError) temp);
                     return temp;
             }
         }
@@ -401,9 +402,9 @@ public class Tokenizer {
     }
 
     public Token createErrorToken(String message) {
-        LexerError lexerError = new LexerError(this.currentLexeme, this.currentLine, message);
+        TokenError tokenError = new TokenError(this.currentLexeme, this.currentLine, message);
         currentLexeme = "";
-        return lexerError;
+        return tokenError;
     }
 
     public Token createToken(Token.TokenType tokenType){
@@ -434,7 +435,7 @@ public class Tokenizer {
         return endOfInput;
     }
 
-    public List<LexerError> getErrorList() {
+    public List<TokenError> getErrorList() {
         return errorList;
     }
 }
