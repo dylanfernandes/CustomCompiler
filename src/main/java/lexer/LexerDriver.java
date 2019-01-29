@@ -80,7 +80,7 @@ public class LexerDriver {
         writeOutput(errorContent, errorLocation);
     }
 
-    String getInput() throws FileNotFoundException {
+    public String getInput() throws FileNotFoundException {
         Scanner scanner = new Scanner(new FileReader(inputLocation));
         String content = "";
         String temp;
@@ -96,7 +96,7 @@ public class LexerDriver {
         return content;
     }
 
-    boolean writeOutput(String content, String output) {
+    public boolean writeOutput(String content, String output) {
         Writer writer = null;
 
         try {
