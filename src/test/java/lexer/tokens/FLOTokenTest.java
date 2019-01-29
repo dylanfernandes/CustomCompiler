@@ -138,4 +138,21 @@ public class FLOTokenTest {
         assertEquals("0", token4.getLexeme());
     }
 
+    @Test
+    public void FLOATTest_ManyZerosDecimal(){
+        Tokenizer tokenizer = new Tokenizer("15.2300000000000\n");
+        int numZero = 11;
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.FLO, token.getType());
+        assertEquals("15.23", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+
+        for (int i = 0;i < numZero; i++) {
+            token = tokenizer.nextToken();
+            assertEquals(Token.TokenType.INT, token.getType());
+            assertEquals("0", token.getLexeme());
+        }
+
+    }
+
 }

@@ -38,4 +38,18 @@ public class IDTokenTest {
         assertEquals("aToken", token.getLexeme());
         assertEquals(0, token.getLineNumber());
     }
+
+    @Test
+    public void IDTest_NewLine (){
+        Tokenizer tokenizer = new Tokenizer("aToken\n");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.ID, token.getType());
+        assertEquals("aToken", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+
+        token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.NEWLINE, token.getType());
+        assertEquals("\n", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
 }

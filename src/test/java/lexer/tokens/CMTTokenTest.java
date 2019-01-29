@@ -88,6 +88,20 @@ public class CMTTokenTest {
     }
 
     @Test
+    public void MultiCommentTest_NewLine(){
+        Tokenizer tokenizer = new Tokenizer("/**/\n");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.CMT, token.getType());
+        assertEquals("/**/", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+
+        token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.NEWLINE, token.getType());
+        assertEquals("\n", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
     public void MultiCommentTest_Incomplete(){
         Tokenizer tokenizer = new Tokenizer("/*Test");
         Token token = tokenizer.nextToken();

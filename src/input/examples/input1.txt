@@ -1,0 +1,4 @@
+integer main () {
+//comment
+a = 2.3e-10
+}

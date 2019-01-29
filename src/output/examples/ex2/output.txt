@@ -1,0 +1,7 @@
+[0:ID:void][0:ID:test][0:OPAR:(][0:CPAR:)]
+[1:OBRA:{]
+[2:ID:id_0][2:ASSGN:=][2:INT:5][2:SEMI:;]
+[3:IF:if][3:OPAR:(][3:INT:5][3:EQ:==][3:ID:id_0][3:CPAR:)]
+[4:RETURN:return][4:ID:id_0][4:SEMI:;]
+[5:RETURN:return][5:FLO:3.14][5:SEMI:;]
+[6:CBRA:}]

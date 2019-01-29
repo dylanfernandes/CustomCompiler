@@ -58,5 +58,21 @@ public class INTTokenTest {
         assertEquals(0, token1.getLineNumber());
     }
 
+    @Test
+    public void INTTest_NewLine(){
+        Tokenizer tokenizer = new Tokenizer("123435456\n");
+        Token token0 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.INT, token0.getType());
+        assertEquals("123435456", token0.getLexeme());
+        assertEquals(0, token0.getLineNumber());
+
+        Token token1 = tokenizer.nextToken();
+        assertEquals(Token.TokenType.NEWLINE, token1.getType());
+        assertEquals("\n", token1.getLexeme());
+        assertEquals(0, token1.getLineNumber());
+    }
+
+
+
 
 }

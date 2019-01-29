@@ -1,0 +1,7 @@
+ID ID ( ) 
+{ 
+ID = INT ; 
+if ( INT == ID ) 
+return ID ; 
+return FLO ; 
+} 

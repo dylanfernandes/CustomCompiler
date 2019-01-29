@@ -102,7 +102,7 @@ public class Tokenizer {
                 return getFloat(current);
             }
         }
-        else
+        else if (afterInt != null)
             backup();
         return  createToken(Token.TokenType.INT);
     }
@@ -120,6 +120,7 @@ public class Tokenizer {
             currentLexeme += current;
             current = nextChar();
         }
+
         //float with exponential notation
         if (current != null && current == 'e') {
             return getExponent();
@@ -128,6 +129,9 @@ public class Tokenizer {
             //remove 0 from float
             while(currentLexeme.charAt(currentLexeme.length()-1) == '0')
                 backupChar();
+            if(current != null) {
+                backup();
+            }
         }
         else {
             backup();

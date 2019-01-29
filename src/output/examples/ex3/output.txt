@@ -1,0 +1,5 @@
+[0:ERROR:_][0:ID:blob][0:ASSGN:=][0:ID:t][0:ERROR:ë][0:ID:st]
+[1:CMT:/*Ę Foo bsrr ćç*/]
+[2:FLO:15.23][2:INT:0][2:INT:0][2:INT:0][2:INT:0][2:INT:0][2:INT:0][2:INT:0][2:INT:0][2:INT:0][2:INT:0][2:INT:0]
+[3:ID:Integer][3:INTEGER:integer]
+[4:CMT://*//]

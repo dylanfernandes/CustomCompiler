@@ -1,0 +1,7 @@
+void test ()
+{
+id_0 = 5;
+if (5==id_0)
+   return id_0;
+return 3.14;
+}

@@ -1,0 +1,5 @@
+_blob = tëst
+/*Ę Foo bsrr ćç*/
+15.2300000000000
+Integer integer
+//*//
