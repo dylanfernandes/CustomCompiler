@@ -31,6 +31,44 @@ public class FLOTokenTest {
     }
 
     @Test
+    public void FLOATTest_ValidFraction(){
+        Tokenizer tokenizer = new Tokenizer("2.0e-25");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.FLO, token.getType());
+        assertEquals("2.0e-25", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
+    public void FLOATTest_InvalidFraction(){
+        Tokenizer tokenizer = new Tokenizer("2.00e+20");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.FLO, token.getType());
+        assertEquals("2.0", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+
+        token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.INT, token.getType());
+        assertEquals("0", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+
+        token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.ID, token.getType());
+        assertEquals("e", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+
+        token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.ADD, token.getType());
+        assertEquals("+", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+
+        token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.INT, token.getType());
+        assertEquals("20", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
     public void FLOATTest_Num_Dot_ZeroNum(){
         Tokenizer tokenizer = new Tokenizer("3.014159");
         Token token = tokenizer.nextToken();

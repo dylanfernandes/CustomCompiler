@@ -109,29 +109,41 @@ public class Tokenizer {
 
     private Token getFloat(char firstDigit) {
         Character current = nextChar();
+        int zeroSequenceStart = -1;
+        int start = getInputPosition();
         currentLexeme += "." + firstDigit;
         if (firstDigit == '0') {
-            if (current == null || !LexerMatcher.isNumeric(current)) {
+            if (current == null || (!LexerMatcher.isNumeric(current) && current != 'e')) {
                 return createToken(Token.TokenType.FLO);
             }
         }
 
         while (current != null && LexerMatcher.isNumeric(current)){
+            if(current == '0' && zeroSequenceStart == -1) {
+                zeroSequenceStart = getInputPosition();
+            }
+            //end of zero sequence
+            else if(current != '0' && zeroSequenceStart != -1) {
+                zeroSequenceStart = -1;
+            }
             currentLexeme += current;
             current = nextChar();
         }
 
+        if(current != null)
+            backup();
+        //fraction ended in sequence of 0's
+        if (zeroSequenceStart != -1) {
+            while(zeroSequenceStart <= getInputPosition())
+                backupChar();
+            return createToken(Token.TokenType.FLO);
+        }
+
+
         //float with exponential notation
+        current = nextChar();
         if (current != null && current == 'e') {
             return getExponent();
-        }
-        else if (currentLexeme.charAt(currentLexeme.length()-1) == '0') {
-            //remove 0 from float
-            while(currentLexeme.charAt(currentLexeme.length()-1) == '0')
-                backupChar();
-            if(current != null) {
-                backup();
-            }
         }
         else {
             backup();
