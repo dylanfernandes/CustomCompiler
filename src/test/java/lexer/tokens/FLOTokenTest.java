@@ -22,6 +22,20 @@ public class FLOTokenTest {
     }
 
     @Test
+    public void FLOATTest_Zero_Float(){
+        Tokenizer tokenizer = new Tokenizer("00.0");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.INT, token.getType());
+        assertEquals("0", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+
+        token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.FLO, token.getType());
+        assertEquals("0.0", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
     public void FLOATTest_Num_Dot_Zero(){
         Tokenizer tokenizer = new Tokenizer("2.0");
         Token token = tokenizer.nextToken();
