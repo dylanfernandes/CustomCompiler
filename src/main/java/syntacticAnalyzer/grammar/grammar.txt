@@ -1,0 +1,20 @@
+prog -> classDeclOpt funcDefopt 'main' funcBody ';'
+classDeclOpt -> classDecl classDeclOpt 
+classDeclOpt -> EPSILON
+funcDefopt -> funcDef funcDefopt
+funcDefopt -> EPSILON
+
+
+classDecl -> 'class' 'id' classEx '{' varDeclOpt funcDeclOpt '}' ';'
+
+classEx ->  ':' 'id' classExMore
+classEx -> EPSILON
+
+classExMore -> ',' 'id' classExMore
+classExMore -> EPSILON
+
+varDeclOpt -> varDecl varDeclOpt
+varDeclOpt -> EPSILON
+
+funcDeclOpt -> funcDecl funcDeclOpt
+funcDeclOpt -> EPSILON
