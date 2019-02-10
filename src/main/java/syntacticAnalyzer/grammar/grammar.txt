@@ -1,20 +1,27 @@
-prog -> classDeclOpt funcDefopt 'main' funcBody ';'
-classDeclOpt -> classDecl classDeclOpt 
-classDeclOpt -> EPSILON
-funcDefopt -> funcDef funcDefopt
-funcDefopt -> EPSILON
+prog -> classDeclRep funcDefRep 'main' funcBody ';'
+
+classDeclRep -> classDecl classDeclRep
+classDeclRep -> EPSILON
+funcDefRep -> funcDef funcDefRep
+funcDefRep -> EPSILON
 
 
-classDecl -> 'class' 'id' classEx '{' varDeclOpt funcDeclOpt '}' ';'
+classDecl -> 'class' 'id' classExOpt '{' varDeclRep funcDeclRep '}' ';'
 
-classEx ->  ':' 'id' classExMore
-classEx -> EPSILON
+classExOpt ->  ':' 'id' classExMoreRep
+classExOpt -> EPSILON
 
-classExMore -> ',' 'id' classExMore
-classExMore -> EPSILON
+classExMoreRep -> ',' 'id' classExMoreRep
+classExMoreRep -> EPSILON
 
-varDeclOpt -> varDecl varDeclOpt
-varDeclOpt -> EPSILON
+varDeclRep -> varDecl varDeclRep
+varDeclRep -> EPSILON
 
-funcDeclOpt -> funcDecl funcDeclOpt
-funcDeclOpt -> EPSILON
+funcDeclRep -> funcDecl funcDeclRep
+funcDeclRep -> EPSILON
+
+
+funcDecl -> type 'id' '(' fParams ')' ';' 
+funcHead -> type 'id' funcHead'
+funcHead' -> 'sr' 'id' '(' fParams ')'
+           | '(' fParams ')'
