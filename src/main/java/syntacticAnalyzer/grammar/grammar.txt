@@ -55,7 +55,14 @@ statement -> assignStat ';'
  
  statBlock -> '{' statementRep '}' | statement | EPSILON 
  
- expr -> arithExpr | relExpr
+expr -> arithExpr exprNext 
+exprNext -> relExpr | arithExpr
+relExpr -> relOp arithExpr
+arithExpr -> addOp term | term 
+ 
+
+
+ 
 
  
 
