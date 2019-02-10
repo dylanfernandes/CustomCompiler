@@ -6,7 +6,10 @@ funcDefRep -> funcDef funcDefRep
 funcDefRep -> EPSILON
 
 
-classDecl -> 'class' 'id' classExOpt '{' varDeclRep funcDeclRep '}' ';'
+classDecl -> 'class' 'id' classExOpt '{' varOrFuncCheck '}' ';'
+
+varOrFuncCheck -> type 'id' varCheckNext | EPSILON
+varCheckNext -> arraySizeRep varOrFuncCheck  | '(' fParams ')' ';' funcDeclRep
 
 classExOpt ->  ':' 'id' classExMoreRep
 classExOpt -> EPSILON
@@ -22,6 +25,24 @@ funcDeclRep -> EPSILON
 
 
 funcDecl -> type 'id' '(' fParams ')' ';' 
-funcHead -> type 'id' funcHead'
-funcHead' -> 'sr' 'id' '(' fParams ')'
-           | '(' fParams ')'
+funcHead -> type 'id' funcHeadChoice
+funcHeadChoice -> 'sr' 'id' '(' fParams ')'
+               | '(' fParams ')'
+           
+funcDef -> funcHead funcBody ';'
+
+funcBody -> '{' varDeclFuncRep statementRep '}' 
+
+varDeclFuncRep -> varDecl varDeclFuncRep
+varDeclFuncRep -> EPSILON
+
+statementRep -> statement statementRep
+statementRep -> EPSILON
+
+varDecl -> type 'id' arraySizeRep ';' 
+
+arraySizeRep -> arraySize arraySizeRep
+arraySizeRep -> EPSILON
+
+
+
