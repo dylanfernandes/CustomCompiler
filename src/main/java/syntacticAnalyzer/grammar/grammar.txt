@@ -58,11 +58,38 @@ statement -> assignStat ';'
 expr -> arithExpr exprNext 
 exprNext -> relExpr | arithExpr
 relExpr -> relOp arithExpr
-arithExpr -> addOp term | term 
+arithExpr -> addOp term  | term
  
+ sign -> '+' | '-'
+
+term -> factor termPrime
+termPrime -> multOp factor termPrime
+       | EPSILON
+
+factor -> varOrFuncCall
+ | 'intNum' | 'floatNum'
+ |  arithExprorFun
+ | 'not' factor
+ | sign factor
+
+varOrFuncCall -> idnestRep 'id' varOrFuncCallNext
+varOrFuncCallNext -> indiceRep 
+
+variable -> idnestRep 'id' indiceRep 
+ 
+idnestRep -> idnest idnestRep
+idnestRep -> EPSILON
+
+indiceRep -> indice indiceRep
+indiceRep -> EPSILON
 
 
- 
+arithExprorFun -> '(' arithExprorFunNext
+arithExprorFunNext -> functionCall | arithExpr ')' 
+
+functionCall -> aParams ')'
+
+
 
  
 
