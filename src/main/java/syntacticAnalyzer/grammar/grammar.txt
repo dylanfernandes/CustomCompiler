@@ -9,7 +9,7 @@ funcDefRep -> EPSILON
 classDecl -> 'class' 'id' classExOpt '{' varOrFuncCheck '}' ';'
 
 varOrFuncCheck -> type 'id' varCheckNext | EPSILON
-varCheckNext -> arraySizeRep varOrFuncCheck  | '(' fParams ')' ';' funcDeclRep 
+varCheckNext -> arraySizeRep varOrFuncCheck  ';' | '(' fParams ')' ';' funcDeclRep 
 
 classExOpt ->  ':' 'id' classExMoreRep
 classExOpt -> EPSILON
@@ -55,10 +55,11 @@ statement -> assignStat ';'
  
  statBlock -> '{' statementRep '}' | statement | EPSILON 
  
-expr -> arithExpr exprNext 
-exprNext -> relExpr | arithExpr
-relExpr -> relOp arithExpr
-arithExpr -> addOp term  | term
+expr -> arithExpr | relExpr 
+
+relExpr -> EPSILON | relOp arithExpr relExpr
+arithExpr -> term arithExprPrime
+arithExprPrime -> EPSILON | addOp term arithExprPrime
  
  sign -> '+' | '-'
 
@@ -92,5 +93,6 @@ functionCall -> aParams ')'
 
 
  
+
 
 
