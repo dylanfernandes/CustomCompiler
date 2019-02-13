@@ -69,30 +69,32 @@ termPrime -> multOp factor termPrime
 
 factor -> varOrFuncCall
  | 'intNum' | 'floatNum'
- |  arithExprorFun
+ | '(' arithExpr ')'
  | 'not' factor
  | sign factor
 
 varOrFuncCall -> idnestRep 'id' varOrFuncCallNext
-varOrFuncCallNext -> indiceRep 
+varOrFuncCallNext -> indiceRep | '(' aParams ')'
 
-variable -> idnestRep 'id' indiceRep 
- 
+variable -> idnestRep 'id' indiceRep
+
 idnestRep -> idnest idnestRep
 idnestRep -> EPSILON
 
 indiceRep -> indice indiceRep
 indiceRep -> EPSILON
 
+indice -> '[' arithExpr ']'
 
-arithExprorFun -> '(' arithExprorFunNext
-arithExprorFunNext -> functionCall | arithExpr ')' 
-
-functionCall -> aParams ')'
+arraySize -> '[' 'intNum' ']'
 
 
 
- 
+
+
+
+
+
 
 
 
