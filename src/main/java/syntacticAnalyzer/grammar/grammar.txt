@@ -95,6 +95,18 @@ fParams -> type 'id' arraySizeRep fParamsTailRep | EPSILON
 fParamsTailRep -> fParamsTail fParamsTailRep
 fParamsTailRep -> EPSILON
 
+aParams -> expr aParamsTailRep
+
+aParamsTailRep -> aParamsTail aParamsTailRep
+aParamsTailRep -> EPSILON
+
+fParamsTail -> ',' type 'id' arraySizeRep 
+
+aParamsTail -> ',' expr
+assignOp -> '='
+relOp -> 'eq' | 'neq' | 'lt' | 'gt' | 'leq' | 'geq'
+addOp -> '+' | '-' | 'or'
+multOp -> '*' | '/' | 'and' 
 
 
 
