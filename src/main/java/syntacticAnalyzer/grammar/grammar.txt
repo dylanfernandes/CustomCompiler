@@ -31,18 +31,28 @@ funcHeadChoice -> 'sr' 'id' '(' fParams ')'
            
 funcDef -> funcHead funcBody ';'
 
-funcBody -> '{' varDeclFuncRep statementRep '}' 
+funcBody -> '{' varDeclFuncRep statementRegRep '}' 
 
 varDeclFuncRep -> varDecl varDeclFuncRep
 varDeclFuncRep -> EPSILON
 
+statementRegRep -> statementReg statementRep 
+statementRegRep -> EPSILON
+
 statementRep -> statement statementRep
 statementRep -> EPSILON
 
-varDecl -> 'my 'type 'id' arraySizeRep ';' 
+varDecl -> type 'id' arraySizeRep ';' 
 
 arraySizeRep -> arraySize arraySizeRep
 arraySizeRep -> EPSILON
+
+
+statementReg -> 'if' '(' expr ')' 'then' statBlock 'else' statBlock ';'
+ | 'for' '(' type 'id' assignOp expr ';' relExpr ';' assignStat ')' statBlock ';'
+ | 'read' '(' variable ')' ';'
+ | 'write' '(' expr ')' ';'
+ | 'return' '(' expr ')' ';'
 
 statement -> assignStat ';'
  | 'if' '(' expr ')' 'then' statBlock 'else' statBlock ';'
