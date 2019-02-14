@@ -31,18 +31,29 @@ funcHeadChoice -> 'sr' 'id' '(' fParams ')'
            
 funcDef -> funcHead funcBody ';'
 
-funcBody -> '{' varDeclFuncRep statementRegRep '}' 
+funcBody -> '{' varDeclFuncRep '}' 
 
-varDeclFuncRep -> varDecl varDeclFuncRep
+varDeclFuncRep -> varOrState varDeclFuncRep
 varDeclFuncRep -> EPSILON
 
 statementRegRep -> statementReg statementRep 
-statementRegRep -> EPSILON
+statementRegRep -> statementRep
 
 statementRep -> statement statementRep
 statementRep -> EPSILON
 
+varOrState -> 'integer' varDeclEnd | 'float' varDeclEnd | 'id' declOrVar | statementRegRep | idnest idnestRep 'id' varEnd
+
+declOrVar -> varDeclEnd | varEnd
+varEnd -> indiceRep assignEnd statementRep
+
+assignEnd -> assignOp expr ';'
+
+varDeclEnd -> 'id' arraySizeRep ';'
+
 varDecl -> type 'id' arraySizeRep ';' 
+
+variable -> idnestRep 'id' indiceRep
 
 arraySizeRep -> arraySize arraySizeRep
 arraySizeRep -> EPSILON
@@ -86,7 +97,6 @@ factor -> varOrFuncCall
 varOrFuncCall -> idnestRep 'id' varOrFuncCallNext
 varOrFuncCallNext -> indiceRep | '(' aParams ')'
 
-variable -> idnestRep 'id' indiceRep
 
 idnestRep -> idnest idnestRep
 idnestRep -> EPSILON
