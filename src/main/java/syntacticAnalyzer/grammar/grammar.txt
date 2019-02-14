@@ -39,7 +39,7 @@ varDeclFuncRep -> EPSILON
 statementRep -> statement statementRep
 statementRep -> EPSILON
 
-varDecl -> type 'id' arraySizeRep ';' 
+varDecl -> 'my 'type 'id' arraySizeRep ';' 
 
 arraySizeRep -> arraySize arraySizeRep
 arraySizeRep -> EPSILON
@@ -88,8 +88,12 @@ indice -> '[' arithExpr ']'
 
 arraySize -> '[' 'intNum' ']'
 
+type -> 'integer' | 'float' | 'id' 
 
+fParams -> type 'id' arraySizeRep fParamsTailRep | EPSILON 
 
+fParamsTailRep -> fParamsTail fParamsTailRep
+fParamsTailRep -> EPSILON
 
 
 
