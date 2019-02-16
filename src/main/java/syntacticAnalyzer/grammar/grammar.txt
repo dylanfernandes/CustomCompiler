@@ -89,6 +89,13 @@ factor -> varOrFuncCall
  | 'not' factor
  | sign factor
  
+ varOrFuncCall -> 'id' varOrFuncCallNext
+ varOrFuncCallNext -> varIndice | '(' varFuncParams | '.' varStart | EPSILON
+ varFuncParams ->  aParams ')' varFuncParamsNext
+ varFuncParamsNext -> '.' varOrFuncCall | EPSILON
+ varFuncIndice -> indice varIndiceNext
+ varFuncIndiceNext -> varIndice | varIndiceNextNext
+ varFuncIndiceNextNext -> '.' varStart | EPSILON
 
  variable -> varStart
  varStart -> 'id' varNext
