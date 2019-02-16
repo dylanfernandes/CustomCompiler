@@ -1,16 +1,16 @@
-funcBody -> '{' varDeclFuncRep '}'
+funcBody -> '{' varDeclStatFuncRep '}'
 
 varDeclStatFuncRep -> varDeclNotId varDeclStatFuncRep 
 | idProd varDeclStatFuncRep
-| idneste idProd varDeclStatFuncRep
 | statement varDeclStatFuncRep
 
 varDeclStatFuncRep -> EPSILON
 
 idProd -> 'id' idProdNext
-idProdNext -> varDeclId | oldVarEnd
+idProdNext -> varDeclId | oldVarEndNest | '(' aParams ')' '.' idProd 
 
-oldVarEnd -> indiceRep assignStatEnd 
+oldVarEndNest -> indiceRep oldVarEndNestNext 
+oldVarEndNestNext -> assignStatEnd | '.' idProd
 
 varDeclId -> 'id' varDeclNext
 
