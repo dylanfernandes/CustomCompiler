@@ -2,7 +2,7 @@ funcBody -> '{' varDeclFuncRep '}'
 
 varDeclStatFuncRep -> varDeclNotId varDeclStatFuncRep 
 | idProd varDeclStatFuncRep
-| idnest idProd varDeclStatFuncRep
+| idneste idProd varDeclStatFuncRep
 | statement varDeclStatFuncRep
 
 varDeclStatFuncRep -> EPSILON
@@ -33,7 +33,13 @@ statement -> 'if' '(' expr ')' 'then' statBlock 'else' statBlock ';'
  
  assignStat -> variable assignOp expr
  
- variable -> idnestRep 'id' indiceRep
+ variable -> varStart
+ varStart -> 'id' varNext
+ varNext -> varIndice | '(' varAParams | '.' varStart | EPSILON
+ varIndice -> indice varIndiceNext
+ varIndiceNext -> varIndice | varIndiceNextNext
+ varIndiceNextNext -> '.' varStart | EPSILON
+ varAParams ->  aParams ')' '.' varStart
  
  type -> typeNotId | 'id'
  typeNotId -> 'integer' | 'float' 
@@ -43,5 +49,8 @@ idnestRep -> EPSILON
 
 indiceRep -> indice indiceRep
 indiceRep -> EPSILON
+
+idnest -> 'id' idnestTwo 
+idnestTwo -> indiceRep '.' | '(' aParams ')' '.' 
 
  
