@@ -31,7 +31,9 @@ funcHeadChoice -> 'sr' 'id' '(' fParams ')'
            
 funcDef -> funcHead funcBody ';'
 
+
 funcBody -> '{' varDeclStatFuncRep '}'
+
 
 varDeclStatFuncRep -> varDeclNotId varDeclStatFuncRep 
 | idProd varDeclStatFuncRep
@@ -52,6 +54,7 @@ assignStatEnd -> assignOp expr ';'
 varDecl -> type 'id' varDeclNext 
 varDeclNotId -> typeNotId 'id' varDeclNext 
 varDeclNext -> arraySizeRep ';'
+
 
 arraySizeRep -> arraySize arraySizeRep
 arraySizeRep -> EPSILON
