@@ -1,3 +1,36 @@
+prog -> classDeclRep funcDefRep 'main' funcBody ';'
+
+classDeclRep -> classDecl classDeclRep
+classDeclRep -> EPSILON
+funcDefRep -> funcDef funcDefRep
+funcDefRep -> EPSILON
+
+
+classDecl -> 'class' 'id' classExOpt '{' varOrFuncCheck '}' ';'
+
+varOrFuncCheck -> type 'id' varCheckNext | EPSILON
+varCheckNext -> arraySizeRep varOrFuncCheck  ';' | '(' fParams ')' ';' funcDeclRep 
+
+classExOpt ->  ':' 'id' classExMoreRep
+classExOpt -> EPSILON
+
+classExMoreRep -> ',' 'id' classExMoreRep
+classExMoreRep -> EPSILON
+
+varDeclRep -> varDecl varDeclRep
+varDeclRep -> EPSILON
+
+funcDeclRep -> funcDecl funcDeclRep
+funcDeclRep -> EPSILON
+
+
+funcDecl -> type 'id' '(' fParams ')' ';' 
+funcHead -> type 'id' funcHeadChoice
+funcHeadChoice -> 'sr' 'id' '(' fParams ')'
+               | '(' fParams ')'
+           
+funcDef -> funcHead funcBody ';'
+
 funcBody -> '{' varDeclStatFuncRep '}'
 
 varDeclStatFuncRep -> varDeclNotId varDeclStatFuncRep 
@@ -29,10 +62,34 @@ statement -> 'if' '(' expr ')' 'then' statBlock 'else' statBlock ';'
  | 'write' '(' expr ')' ';'
  | 'return' '(' expr ')' ';' 
  
+ statementRep -> statement statementRep
+statementRep -> EPSILON
+ 
  arraySize -> '[' 'intNum' ']'
  
  assignStat -> variable assignOp expr
  
+ statBlock -> '{' statementRep '}' | statement | EPSILON 
+ 
+ expr -> arithExpr | relExpr 
+
+relExpr -> EPSILON | relOp arithExpr relExpr
+arithExpr -> term arithExprPrime
+arithExprPrime -> EPSILON | addOp term arithExprPrime
+
+sign -> '+' | '-'
+
+term -> factor termPrime
+termPrime -> multOp factor termPrime
+       | EPSILON
+       
+factor -> varOrFuncCall
+ | 'intNum' | 'floatNum'
+ | '(' arithExpr ')'
+ | 'not' factor
+ | sign factor
+ 
+
  variable -> varStart
  varStart -> 'id' varNext
  varNext -> varIndice | '(' varAParams | '.' varStart | EPSILON
@@ -52,5 +109,28 @@ indiceRep -> EPSILON
 
 idnest -> 'id' idnestTwo 
 idnestTwo -> indiceRep '.' | '(' aParams ')' '.' 
+
+indice -> '[' arithExpr ']'
+
+arraySize -> '[' 'intNum' ']'
+
+fParams -> type 'id' arraySizeRep fParamsTailRep | EPSILON 
+
+fParamsTailRep -> fParamsTail fParamsTailRep
+fParamsTailRep -> EPSILON
+
+aParams -> expr aParamsTailRep
+
+aParamsTailRep -> aParamsTail aParamsTailRep
+aParamsTailRep -> EPSILON
+
+fParamsTail -> ',' type 'id' arraySizeRep 
+
+aParamsTail -> ',' expr
+assignOp -> '='
+relOp -> 'eq' | 'neq' | 'lt' | 'gt' | 'leq' | 'geq'
+addOp -> '+' | '-' | 'or'
+multOp -> '*' | '/' | 'and' 
+
 
  
