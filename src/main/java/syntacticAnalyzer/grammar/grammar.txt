@@ -31,74 +31,98 @@ funcHeadChoice -> 'sr' 'id' '(' fParams ')'
            
 funcDef -> funcHead funcBody ';'
 
-funcBody -> '{' varDeclFuncRep statementRegRep '}' 
 
-varDeclFuncRep -> varDecl varDeclFuncRep
-varDeclFuncRep -> EPSILON
+funcBody -> '{' varDeclStatFuncRep '}'
 
-statementRegRep -> statementReg statementRep 
-statementRegRep -> EPSILON
 
-statementRep -> statement statementRep
-statementRep -> EPSILON
+varDeclStatFuncRep -> varDeclNotId varDeclStatFuncRep 
+| idProd varDeclStatFuncRep
+| statement varDeclStatFuncRep
 
-varDecl -> type 'id' arraySizeRep ';' 
+varDeclStatFuncRep -> EPSILON
+
+idProd -> 'id' idProdNext
+idProdNext -> varDeclId | oldVarEndNest | '(' aParams ')' '.' idProd 
+
+oldVarEndNest -> indiceRep oldVarEndNestNext 
+oldVarEndNestNext -> assignStatEnd | '.' idProd
+
+varDeclId -> 'id' varDeclNext
+
+assignStatEnd -> assignOp expr ';'
+
+varDecl -> type 'id' varDeclNext 
+varDeclNotId -> typeNotId 'id' varDeclNext 
+varDeclNext -> arraySizeRep ';'
+
 
 arraySizeRep -> arraySize arraySizeRep
 arraySizeRep -> EPSILON
 
-
-statementReg -> 'if' '(' expr ')' 'then' statBlock 'else' statBlock ';'
- | 'for' '(' type 'id' assignOp expr ';' relExpr ';' assignStat ')' statBlock ';'
- | 'read' '(' variable ')' ';'
- | 'write' '(' expr ')' ';'
- | 'return' '(' expr ')' ';'
-
-statement -> assignStat ';'
- | 'if' '(' expr ')' 'then' statBlock 'else' statBlock ';'
+statement -> 'if' '(' expr ')' 'then' statBlock 'else' statBlock ';'
  | 'for' '(' type 'id' assignOp expr ';' relExpr ';' assignStat ')' statBlock ';'
  | 'read' '(' variable ')' ';'
  | 'write' '(' expr ')' ';'
  | 'return' '(' expr ')' ';' 
  
+ statementRep -> statement statementRep
+statementRep -> EPSILON
+ 
+ arraySize -> '[' 'intNum' ']'
+ 
  assignStat -> variable assignOp expr
  
  statBlock -> '{' statementRep '}' | statement | EPSILON 
  
-expr -> arithExpr | relExpr 
+ expr -> arithExpr | relExpr 
 
 relExpr -> EPSILON | relOp arithExpr relExpr
 arithExpr -> term arithExprPrime
 arithExprPrime -> EPSILON | addOp term arithExprPrime
- 
- sign -> '+' | '-'
+
+sign -> '+' | '-'
 
 term -> factor termPrime
 termPrime -> multOp factor termPrime
        | EPSILON
-
+       
 factor -> varOrFuncCall
  | 'intNum' | 'floatNum'
  | '(' arithExpr ')'
  | 'not' factor
  | sign factor
+ 
+ varOrFuncCall -> 'id' varOrFuncCallNext
+ varOrFuncCallNext -> varIndice | '(' varFuncParams | '.' varStart | EPSILON
+ varFuncParams ->  aParams ')' varFuncParamsNext
+ varFuncParamsNext -> '.' varOrFuncCall | EPSILON
+ varFuncIndice -> indice varIndiceNext
+ varFuncIndiceNext -> varIndice | varIndiceNextNext
+ varFuncIndiceNextNext -> '.' varStart | EPSILON
 
-varOrFuncCall -> idnestRep 'id' varOrFuncCallNext
-varOrFuncCallNext -> indiceRep | '(' aParams ')'
-
-variable -> idnestRep 'id' indiceRep
-
-idnestRep -> idnest idnestRep
+ variable -> varStart
+ varStart -> 'id' varNext
+ varNext -> varIndice | '(' varAParams | '.' varStart | EPSILON
+ varIndice -> indice varIndiceNext
+ varIndiceNext -> varIndice | varIndiceNextNext
+ varIndiceNextNext -> '.' varStart | EPSILON
+ varAParams ->  aParams ')' '.' varStart
+ 
+ type -> typeNotId | 'id'
+ typeNotId -> 'integer' | 'float' 
+ 
+ idnestRep -> idnest idnestRep
 idnestRep -> EPSILON
 
 indiceRep -> indice indiceRep
 indiceRep -> EPSILON
 
+idnest -> 'id' idnestTwo 
+idnestTwo -> indiceRep '.' | '(' aParams ')' '.' 
+
 indice -> '[' arithExpr ']'
 
 arraySize -> '[' 'intNum' ']'
-
-type -> 'integer' | 'float' | 'id' 
 
 fParams -> type 'id' arraySizeRep fParamsTailRep | EPSILON 
 
@@ -119,8 +143,4 @@ addOp -> '+' | '-' | 'or'
 multOp -> '*' | '/' | 'and' 
 
 
-
-
-
-
-
+ 
