@@ -3,6 +3,7 @@ package lexer;
 import utils.FileIOUtils;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,16 +13,38 @@ public class LexerDriver {
     private String outputLocation = "src/output/output.txt";
     private String AtoCCLocation = "src/output/AtoCCOutput.txt";
     private String errorLocation = "src/output/error.txt";
+    private List<Token> tokens;
+    private  boolean hasTokens;
 
     public LexerDriver() {
+        new LexerDriver(inputLocation);
     }
 
     public LexerDriver(String location) {
         inputLocation = location;
+        tokens = new ArrayList<Token>();
+        hasTokens= false;
     }
+
     public void start(String input) throws FileNotFoundException {
         inputLocation = input;
         start();
+    }
+
+    public String getInputLocation() {
+        return inputLocation;
+    }
+
+    public void setInputLocation(String inputLocation) {
+        this.inputLocation = inputLocation;
+    }
+
+    public List<Token> getTokens() {
+        return tokens;
+    }
+
+    public boolean hasTokens() {
+        return tokens.size() > 0;
     }
 
     public void start() throws FileNotFoundException {
@@ -82,11 +105,4 @@ public class LexerDriver {
         FileIOUtils.writeOutput(errorContent, errorLocation);
     }
 
-    public String getInputLocation() {
-        return inputLocation;
-    }
-
-    public void setInputLocation(String inputLocation) {
-        this.inputLocation = inputLocation;
-    }
 }
