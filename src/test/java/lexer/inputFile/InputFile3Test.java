@@ -4,6 +4,7 @@ import lexer.LexerDriver;
 import lexer.Token;
 import lexer.Tokenizer;
 import org.junit.Test;
+import utils.FileIOUtils;
 
 import java.io.FileNotFoundException;
 
@@ -15,7 +16,7 @@ public class InputFile3Test {
     public void testTokenRetriveal() throws FileNotFoundException {
         LexerDriver lexerDriver = new LexerDriver("src/input/examples/input3.txt");
         int numZero = 11;
-        String input = lexerDriver.getInput();
+        String input = FileIOUtils.getInput(lexerDriver.getInputLocation());
         Tokenizer tokenizer = new Tokenizer(input);
 
         Token token = tokenizer.nextToken();

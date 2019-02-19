@@ -1,5 +1,7 @@
 package lexer;
 
+import utils.FileIOUtils;
+
 import java.io.*;
 import java.util.List;
 import java.util.Scanner;
@@ -23,7 +25,7 @@ public class LexerDriver {
     }
 
     public void start() throws FileNotFoundException {
-        Tokenizer tokenizer = new Tokenizer(getInput());
+        Tokenizer tokenizer = new Tokenizer(FileIOUtils.getInput(inputLocation));
         Token token;
         String output = "";
         String AtoCCOutput = "";
@@ -39,8 +41,8 @@ public class LexerDriver {
             }
         }
         writeErrorList(tokenizer.getErrorList());
-        writeOutput(output, outputLocation);
-        writeOutput(AtoCCOutput, AtoCCLocation);
+        FileIOUtils.writeOutput(output, outputLocation);
+        FileIOUtils.writeOutput(AtoCCOutput, AtoCCLocation);
     }
 
     public static String printTokenContent (Token token) {
@@ -77,37 +79,14 @@ public class LexerDriver {
                 errorContent += errorList.get(i).getErrorMessage() + "\n";
             }
         }
-        writeOutput(errorContent, errorLocation);
+        FileIOUtils.writeOutput(errorContent, errorLocation);
     }
 
-    public String getInput() throws FileNotFoundException {
-        Scanner scanner = new Scanner(new FileReader(inputLocation));
-        String content = "";
-        String temp;
-        while ( (temp = scanner.nextLine()) != null) {
-            // No need to convert to char array before printing
-            content += temp;
-            if (scanner.hasNext()) {
-                content += '\n';
-            }
-            else
-                break;
-        }
-        return content;
+    public String getInputLocation() {
+        return inputLocation;
     }
 
-    public boolean writeOutput(String content, String output) {
-        Writer writer = null;
-
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(output), "utf-8"));
-            writer.write(content);
-        } catch (IOException ex) {
-            // Report
-        } finally {
-            try {writer.close();} catch (Exception ex) {/*ignore*/}
-        }
-        return true;
+    public void setInputLocation(String inputLocation) {
+        this.inputLocation = inputLocation;
     }
 }
