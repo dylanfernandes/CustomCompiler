@@ -49,6 +49,25 @@ public class Parser {
         return null;
     }
 
+    public boolean skipErrors(List<Token.TokenType> first, List<Token.TokenType> follow) {
+        if(lookahead != null) {
+            if (first.contains(lookahead.getType()) || (first.contains(Token.TokenType.EPSILON) && follow.contains(lookahead.getType()))) {
+                return true;
+            } else {
+                addToSyntax("Syntax error at line: " + lookahead.getLineNumber());
+                while (lookahead != null && (!first.contains(lookahead.getType()) || !follow.contains(lookahead.getType()))) {
+                    lookahead = nextToken();
+                    //production not properly completed
+                    if (first.contains(Token.TokenType.EPSILON) && follow.contains(lookahead.getType()))
+                        return false;
+                }
+                if(lookahead != null)
+                    return true;
+            }
+        }
+        return false;
+    }
+
     public boolean match( Token.TokenType expectedTokenType) {
         if(lookahead != null && lookahead.getType() == expectedTokenType) {
             lookahead = nextToken();

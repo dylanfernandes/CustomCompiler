@@ -20,7 +20,8 @@ public class Token {
         IF, THEN, ELSE, FOR, RETURN,
         CLASS, MAIN,
         INTEGER, FLOAT,
-        READ, WRITE
+        READ, WRITE,
+        EPSILON
     };
 
     private TokenType type;
