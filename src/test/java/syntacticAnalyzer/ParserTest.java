@@ -22,9 +22,11 @@ public class ParserTest {
     public void nextTokenValid() {
         List<Token> tokens = new ArrayList<Token>();
         Token aToken = new Token(Token.TokenType.ID, "test", 1);
+        Token aToken2 = new Token(Token.TokenType.INT, "12", 1);
         tokens.add(aToken);
+        tokens.add(aToken2);
         Parser parser = new Parser(tokens);
-        assertEquals(aToken, parser.nextToken());
+        assertEquals(aToken2, parser.nextToken());
     }
 
     @Test

@@ -14,7 +14,10 @@ public class Parser {
 
     public Parser(List<Token> tokens) {
         tokenList = tokens;
-        position = -1;
+        if(tokenList.size() > 0) {
+            lookahead = tokenList.get(0);
+        }
+        position = 0;
         syntax = "";
 
     }
@@ -41,8 +44,11 @@ public class Parser {
     }
 
     public boolean match( Token.TokenType expectedTokenType) {
-        lookahead = nextToken();
-        return  lookahead != null && lookahead.getType() == expectedTokenType;
+        if(lookahead != null && lookahead.getType() == expectedTokenType) {
+            lookahead = nextToken();
+            return true;
+        }
+        return  false;
     }
 
     public boolean peekMatch(Token.TokenType expectedTokenType) {
@@ -73,6 +79,18 @@ public class Parser {
     }
 
     private boolean funcDefRep() {
+        if(funcDef() && funcDefRep()) {
+            addToSyntax("funcDefRep -> funcDef funcDefRep");
+            return true;
+        }
+        else if(peekMatch(Token.TokenType.MAIN)) {
+            addToSyntax("funcDefRep -> EPSILON");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean funcDef() {
         return false;
     }
 
@@ -89,6 +107,52 @@ public class Parser {
     }
 
     private boolean classDecl() {
+        if(match(Token.TokenType.CLASS) && match(Token.TokenType.ID) && classExOpt() && match(Token.TokenType.OBRA) && varOrFuncCheck() && match(Token.TokenType.CBRA) && match(Token.TokenType.SEMI)) {
+            addToSyntax("classDecl -> 'class' 'id' classExOpt '{' varOrFuncCheck '}' ';'");
+        }
+        return false;
+    }
+
+    private boolean varOrFuncCheck() {
+        if(type() && match(Token.TokenType.ID) && varCheckNext()) {
+            addToSyntax("varOrFuncCheck -> type 'id' varCheckNext");
+            return true;
+        } else if(peekMatch(Token.TokenType.CBRA) || peekMatch(Token.TokenType.SEMI)) {
+            addToSyntax("varOrFuncCheck -> EPSILON");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean type() {
+        if(typeNotId()) {
+            addToSyntax("type -> typeNotId");
+            return true;
+        }
+        else if(match(Token.TokenType.ID)) {
+            addToSyntax("type -> 'id'");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean typeNotId() {
+        if(match(Token.TokenType.INTEGER)) {
+            addToSyntax("typeNotId -> 'integer'");
+            return true;
+        }
+        else if(match(Token.TokenType.FLO)) {
+            addToSyntax("typeNotId -> 'float' ");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean varCheckNext() {
+        return false;
+    }
+
+    private boolean classExOpt() {
         return false;
     }
 
