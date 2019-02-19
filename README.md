@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/dylanfernandes/CustomCompiler.svg?token=SRva9iadjhaMC6UyPMJe&branch=master)](https://travis-ci.com/dylanfernandes/CustomCompiler)
 # CustomCompiler
 Custom compiler written in Java
 
