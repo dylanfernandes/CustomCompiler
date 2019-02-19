@@ -155,6 +155,42 @@ public class Parser {
     }
 
     private boolean varCheckNext() {
+        if(arraySizeRep() && varOrFuncCheck() && match(Token.TokenType.SEMI)) {
+            addToSyntax("varCheckNext -> arraySizeRep varOrFuncCheck  ';'");
+            return true;
+        }
+        else if(match(Token.TokenType.OPAR) && fParams() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI) && funcDeclRep()) {
+            addToSyntax("varCheckNext -> '(' fParams ')' ';' funcDeclRep ");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean fParams() {
+        return false;
+    }
+
+    private boolean funcDeclRep() {
+        if(funcDecl() && funcDeclRep()) {
+            addToSyntax("funcDeclRep -> funcDecl funcDeclRep");
+            return true;
+        }
+        else if(peekMatch(Token.TokenType.CBRA) || peekMatch(Token.TokenType.SEMI)) {
+            addToSyntax("funcDeclRep -> EPSILON");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean funcDecl() {
+        if(type() && match(Token.TokenType.ID) && match(Token.TokenType.OPAR) && fParams() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI)) {
+            addToSyntax("funcDecl -> type 'id' '(' fParams ')' ';' ");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean arraySizeRep() {
         return false;
     }
 
