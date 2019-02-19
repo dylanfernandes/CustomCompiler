@@ -100,7 +100,7 @@ public class Parser {
         return false;
     }
 
-    private boolean classDeclRep() {
+    public boolean classDeclRep() {
         if(classDecl() && classDeclRep()) {
             addToSyntax("classDeclRep -> classDecl classDeclRep");
             return true;
@@ -112,7 +112,7 @@ public class Parser {
         return false;
     }
 
-    private boolean classDecl() {
+    public boolean classDecl() {
         if(match(Token.TokenType.CLASS) && match(Token.TokenType.ID) && classExOpt() && match(Token.TokenType.OBRA) && varOrFuncCheck() && match(Token.TokenType.CBRA) && match(Token.TokenType.SEMI)) {
             addToSyntax("classDecl -> 'class' 'id' classExOpt '{' varOrFuncCheck '}' ';'");
         }
@@ -159,6 +159,25 @@ public class Parser {
     }
 
     private boolean classExOpt() {
+        if(match(Token.TokenType.COLO) && match(Token.TokenType.ID) && classExMoreRep()) {
+            addToSyntax("classExOpt ->  ':' 'id' classExMoreRep");
+            return true;
+        }
+        else if(peekMatch(Token.TokenType.OPAR)) {
+            addToSyntax("classExOpt -> EPSILON");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean classExMoreRep() {
+        if(match(Token.TokenType.COMM) && match(Token.TokenType.ID) && classExMoreRep()) {
+            return true;
+        }
+        else if(peekMatch(Token.TokenType.OPAR)) {
+            addToSyntax("classExMoreRep -> EPSILON");
+            return true;
+        }
         return false;
     }
 

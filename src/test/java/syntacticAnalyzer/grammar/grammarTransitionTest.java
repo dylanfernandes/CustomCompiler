@@ -28,5 +28,7 @@ public class grammarTransitionTest {
         parser .setTokenList(tokens);
         parser.parse();
         Mockito.verify(parser, times(1)).prog();
+        Mockito.verify(parser, times(1)).classDeclRep();
+        Mockito.verify(parser, times(1)).classDecl();
     }
 }
