@@ -20,21 +20,34 @@ public class Parser {
     }
 
     private boolean hasNextToken() {
-        return position < tokenList.size();
+        return position + 1 < tokenList.size();
     }
 
     public Token nextToken() {
         Token token;
         if(hasNextToken()) {
             token = tokenList.get(position);
+            position++;
             return  token;
         }
         return  null;
     }
 
+    public Token peekToken() {
+        if(hasNextToken()) {
+            return tokenList.get(position+1);
+        }
+        return null;
+    }
+
     public boolean match( Token.TokenType expectedTokenType) {
         lookahead = nextToken();
         return  lookahead != null && lookahead.getType() == expectedTokenType;
+    }
+
+    public boolean peekMatch(Token.TokenType expectedTokenType) {
+        lookahead = peekToken();
+        return lookahead != null && lookahead.getType() == expectedTokenType;
     }
 
     public String parse() {
@@ -44,12 +57,9 @@ public class Parser {
 
 
     public boolean prog() {
-        lookahead = nextToken();
-        if(lookahead != null) {
-            if(classDeclRep() && funcDefRep() && match(Token.TokenType.MAIN) && funcBody() && match(Token.TokenType.SEMI)) {
-                addToSyntax("prog -> classDeclRep funcDefRep 'main' funcBody ';'");
-                return true;
-            }
+        if(classDeclRep() && funcDefRep() && match(Token.TokenType.MAIN) && funcBody() && match(Token.TokenType.SEMI)) {
+            addToSyntax("prog -> classDeclRep funcDefRep 'main' funcBody ';'");
+            return true;
         }
         return false;
     }
@@ -67,6 +77,18 @@ public class Parser {
     }
 
     private boolean classDeclRep() {
+        if(classDecl() && classDeclRep()) {
+            addToSyntax("classDeclRep -> classDecl classDeclRep");
+            return true;
+        }
+        else if(peekMatch(Token.TokenType.ID) || peekMatch(Token.TokenType.FLOAT) || peekMatch(Token.TokenType.INTEGER) || peekMatch(Token.TokenType.MAIN)){
+            addToSyntax("classDeclRep -> EPSILON");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean classDecl() {
         return false;
     }
 
