@@ -11,15 +11,21 @@ public class Parser {
     private Token lookahead;
     private String syntax;
 
+    public Parser() {
+        position = 0;
+        syntax = "";
+    }
 
     public Parser(List<Token> tokens) {
+        new Parser();
         tokenList = tokens;
         if(tokenList.size() > 0) {
             lookahead = tokenList.get(0);
         }
-        position = 0;
-        syntax = "";
+    }
 
+    public void setTokenList(List<Token> tokenList) {
+        this.tokenList = tokenList;
     }
 
     private boolean hasNextToken() {
