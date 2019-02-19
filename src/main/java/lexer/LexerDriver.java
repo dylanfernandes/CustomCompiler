@@ -17,13 +17,13 @@ public class LexerDriver {
     private  boolean hasTokens;
 
     public LexerDriver() {
-        new LexerDriver(inputLocation);
+        tokens = new ArrayList<Token>();
+        hasTokens= false;
     }
 
     public LexerDriver(String location) {
+        new LexerDriver();
         inputLocation = location;
-        tokens = new ArrayList<Token>();
-        hasTokens= false;
     }
 
     public void start(String input) throws FileNotFoundException {
@@ -43,6 +43,19 @@ public class LexerDriver {
         return tokens;
     }
 
+    public List<Token> getTokensFromInput(String input) {
+        Tokenizer tokenizer = new Tokenizer(input);
+        tokens.clear();
+        Token token;
+        while (!tokenizer.isEndOfInput()) {
+            token = tokenizer.nextToken();
+            if(token.getType() != Token.TokenType.NEWLINE) {
+                tokens.add(token);
+            }
+        }
+        return tokens;
+    }
+
     public boolean hasTokens() {
         return tokens.size() > 0;
     }
@@ -52,6 +65,8 @@ public class LexerDriver {
         Token token;
         String output = "";
         String AtoCCOutput = "";
+        tokens.clear();
+
         while (!tokenizer.isEndOfInput()){
             token = tokenizer.nextToken();
             if(token.getType() == Token.TokenType.NEWLINE) {
@@ -59,6 +74,7 @@ public class LexerDriver {
                 AtoCCOutput += '\n';
             }
             else {
+                tokens.add(token);
                 output += printTokenContent(token);
                 AtoCCOutput += printAtoCC(token) + " ";
             }
