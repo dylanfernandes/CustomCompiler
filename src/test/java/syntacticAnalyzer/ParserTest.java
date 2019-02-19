@@ -15,6 +15,7 @@ public class ParserTest {
         List<Token> tokens = new ArrayList<Token>();
         Parser parser = new Parser(tokens);
         assertEquals(null, parser.nextToken());
+        assertFalse(parser.match(Token.TokenType.ID));
     }
 
     @Test
@@ -28,7 +29,10 @@ public class ParserTest {
 
     @Test
     public void match() {
+        List<Token> tokens = new ArrayList<Token>();
         Token aToken = new Token(Token.TokenType.ID, "test", 1);
-        assertTrue(Parser.match(aToken, Token.TokenType.ID));
+        tokens.add(aToken);
+        Parser parser = new Parser(tokens);
+        assertTrue(parser.match(Token.TokenType.ID));
     }
 }
