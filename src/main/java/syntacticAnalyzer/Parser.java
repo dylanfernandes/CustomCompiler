@@ -14,7 +14,7 @@ public class Parser {
 
     public Parser(List<Token> tokens) {
         tokenList = tokens;
-        position = 0;
+        position = -1;
         syntax = "";
 
     }
@@ -26,8 +26,8 @@ public class Parser {
     public Token nextToken() {
         Token token;
         if(hasNextToken()) {
-            token = tokenList.get(position);
             position++;
+            token = tokenList.get(position);
             return  token;
         }
         return  null;
