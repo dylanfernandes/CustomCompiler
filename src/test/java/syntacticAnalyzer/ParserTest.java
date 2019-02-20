@@ -37,4 +37,67 @@ public class ParserTest {
         Parser parser = new Parser(tokens);
         assertTrue(parser.match(Token.TokenType.ID));
     }
+
+    @Test
+    public void skipErrorsFirst() {
+        List<Token> tokens = new ArrayList<Token>();
+        Token aToken = new Token(Token.TokenType.ID, "test", 1);
+        tokens.add(aToken);
+        List<Token.TokenType> first = new ArrayList<Token.TokenType>();
+        first.add(Token.TokenType.ID);
+        Parser parser = new Parser(tokens);
+        assertTrue(parser.skipErrors(first, null));
+    }
+
+    @Test
+    public void skipErrorsFollow() {
+        List<Token> tokens = new ArrayList<Token>();
+        Token aToken = new Token(Token.TokenType.ID, "test", 1);
+        tokens.add(aToken);
+
+        Token aToken2 = new Token(Token.TokenType.INTEGER, "test", 1);
+        tokens.add(aToken);
+
+
+        List<Token.TokenType> first = new ArrayList<Token.TokenType>();
+        first.add(Token.TokenType.INTEGER);
+
+        List<Token.TokenType> follow = new ArrayList<Token.TokenType>();
+        first.add(Token.TokenType.ID);
+
+        Parser parser = new Parser(tokens);
+        assertTrue(parser.skipErrors(first, follow));
+    }
+
+    @Test
+    public void skipErrorsInvalid() {
+        List<Token> tokens = new ArrayList<Token>();
+        Token aToken = new Token(Token.TokenType.NEQ, "test", 1);
+        tokens.add(aToken);
+
+        List<Token.TokenType> first = new ArrayList<Token.TokenType>();
+        first.add(Token.TokenType.INTEGER);
+
+        List<Token.TokenType> follow = new ArrayList<Token.TokenType>();
+        first.add(Token.TokenType.ID);
+
+        Parser parser = new Parser(tokens);
+        assertFalse(parser.skipErrors(first, follow));
+    }
+
+    @Test
+    public void skipErrorsFollowIndirect() {
+        List<Token> tokens = new ArrayList<Token>();
+        Token aToken = new Token(Token.TokenType.ID, "test", 1);
+        tokens.add(aToken);
+
+        List<Token.TokenType> first = new ArrayList<Token.TokenType>();
+        first.add(Token.TokenType.INTEGER);
+
+        List<Token.TokenType> follow = new ArrayList<Token.TokenType>();
+        first.add(Token.TokenType.ID);
+
+        Parser parser = new Parser(tokens);
+        assertTrue(parser.skipErrors(first, follow));
+    }
 }

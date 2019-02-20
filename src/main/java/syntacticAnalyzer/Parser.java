@@ -55,8 +55,11 @@ public class Parser {
                 return true;
             } else {
                 addToSyntax("Syntax error at line: " + lookahead.getLineNumber());
-                while (lookahead != null && (!first.contains(lookahead.getType()) || !follow.contains(lookahead.getType()))) {
+                //if in follow, current production not good, can get epsilon if in first in parse method
+                while (!first.contains(lookahead.getType()) && !follow.contains(lookahead.getType())) {
                     lookahead = nextToken();
+                    if(lookahead == null)
+                        break;
                     //production not properly completed
                     if (first.contains(Token.TokenType.EPSILON) && follow.contains(lookahead.getType()))
                         return false;
