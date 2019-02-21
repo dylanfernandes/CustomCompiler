@@ -2,6 +2,7 @@ package syntacticAnalyzer;
 
 import lexer.Token;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
@@ -10,10 +11,14 @@ public class Parser {
     private int position;
     private Token lookahead;
     private String syntax;
+    private List<Token.TokenType> firstSet;
+    private List<Token.TokenType> followSet;
 
     public Parser() {
         position = 0;
         syntax = "";
+        firstSet = new ArrayList<Token.TokenType>();
+        followSet = new ArrayList<Token.TokenType>();
     }
 
     public Parser(List<Token> tokens) {
@@ -22,6 +27,21 @@ public class Parser {
         if(tokenList.size() > 0) {
             lookahead = tokenList.get(0);
         }
+    }
+
+    public List<Token.TokenType> getFirstSet() {
+        return firstSet;
+    }
+
+    public List<Token.TokenType> getFollowSet() {
+        return followSet;
+    }
+
+    public void populateSets(List<Token.TokenType> first, List<Token.TokenType> follow) {
+        firstSet.clear();
+        followSet.clear();
+        firstSet = first;
+        followSet = follow;
     }
 
     public void setTokenList(List<Token> tokenList) {

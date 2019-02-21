@@ -4,6 +4,7 @@ import lexer.Token;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -99,5 +100,25 @@ public class ParserTest {
 
         Parser parser = new Parser(tokens);
         assertTrue(parser.skipErrors(first, follow));
+    }
+
+    @Test
+    public void populateSets() {
+        Parser parser = new Parser();
+        List<Token.TokenType> first;
+        List<Token.TokenType> follow;
+
+        parser.populateSets(Arrays.asList(Token.TokenType.ID, Token.TokenType.INT), Arrays.asList(Token.TokenType.EPSILON));
+
+        first = parser.getFirstSet();
+        follow = parser.getFollowSet();
+
+        assertTrue(first.size() == 2);
+        assertTrue(follow.size() == 1);
+
+        assertEquals(first.get(0), Token.TokenType.ID);
+        assertEquals(first.get(1), Token.TokenType.INT);
+
+        assertEquals(follow.get(0), Token.TokenType.EPSILON);
     }
 }
