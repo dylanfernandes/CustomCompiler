@@ -100,10 +100,12 @@ public class Parser {
 
     public boolean prog() {
         if(!skipErrors(Arrays.asList(Token.TokenType.INTEGER, Token.TokenType.FLOAT, Token.TokenType.CLASS, Token.TokenType.ID, Token.TokenType.MAIN), Collections.<Token.TokenType>emptyList())) {
-            if (classDeclRep() && funcDefRep() && match(Token.TokenType.MAIN) && funcBody() && match(Token.TokenType.SEMI)) {
-                addToSyntax("prog -> classDeclRep funcDefRep 'main' funcBody ';'");
-                return true;
-            }
+            return false;
+        }
+
+        if (classDeclRep() && funcDefRep() && match(Token.TokenType.MAIN) && funcBody() && match(Token.TokenType.SEMI)) {
+            addToSyntax("prog -> classDeclRep funcDefRep 'main' funcBody ';'");
+            return true;
         }
         return false;
     }
@@ -130,6 +132,10 @@ public class Parser {
     }
 
     public boolean classDeclRep() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.CLASS), Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.MAIN))) {
+            return false;
+        }
+
         if(classDecl() && classDeclRep()) {
             addToSyntax("classDeclRep -> classDecl classDeclRep");
             return true;
@@ -200,11 +206,10 @@ public class Parser {
     }
 
     private boolean funcDeclRep() {
-        if(funcDecl() && funcDeclRep()) {
+        if (funcDecl() && funcDeclRep()) {
             addToSyntax("funcDeclRep -> funcDecl funcDeclRep");
             return true;
-        }
-        else if(peekMatch(Token.TokenType.CBRA) || peekMatch(Token.TokenType.SEMI)) {
+        } else if (peekMatch(Token.TokenType.CBRA) || peekMatch(Token.TokenType.SEMI)) {
             addToSyntax("funcDeclRep -> EPSILON");
             return true;
         }
