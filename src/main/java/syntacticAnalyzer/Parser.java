@@ -30,6 +30,7 @@ public class Parser {
 
     public void setTokenList(List<Token> tokenList) {
         this.tokenList = tokenList;
+        lookahead = tokenList.get(0);
     }
 
     private boolean hasNextToken() {
