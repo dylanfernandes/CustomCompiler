@@ -3,6 +3,8 @@ package syntacticAnalyzer;
 import lexer.Token;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Parser {
@@ -11,14 +13,10 @@ public class Parser {
     private int position;
     private Token lookahead;
     private String syntax;
-    private List<Token.TokenType> firstSet;
-    private List<Token.TokenType> followSet;
 
     public Parser() {
         position = 0;
         syntax = "";
-        firstSet = new ArrayList<Token.TokenType>();
-        followSet = new ArrayList<Token.TokenType>();
     }
 
     public Parser(List<Token> tokens) {
@@ -29,20 +27,6 @@ public class Parser {
         }
     }
 
-    public List<Token.TokenType> getFirstSet() {
-        return firstSet;
-    }
-
-    public List<Token.TokenType> getFollowSet() {
-        return followSet;
-    }
-
-    public void populateSets(List<Token.TokenType> first, List<Token.TokenType> follow) {
-        firstSet.clear();
-        followSet.clear();
-        firstSet = first;
-        followSet = follow;
-    }
 
     public void setTokenList(List<Token> tokenList) {
         this.tokenList = tokenList;
@@ -104,6 +88,10 @@ public class Parser {
         return lookahead != null && lookahead.getType() == expectedTokenType;
     }
 
+    public void addToSyntax(String newSyntax) {
+        syntax = newSyntax + "\n" + syntax;
+    }
+
     public String parse() {
         prog();
         return syntax;
@@ -111,16 +99,15 @@ public class Parser {
 
 
     public boolean prog() {
-        if(classDeclRep() && funcDefRep() && match(Token.TokenType.MAIN) && funcBody() && match(Token.TokenType.SEMI)) {
-            addToSyntax("prog -> classDeclRep funcDefRep 'main' funcBody ';'");
-            return true;
+        if(!skipErrors(Arrays.asList(Token.TokenType.INTEGER, Token.TokenType.FLOAT, Token.TokenType.CLASS, Token.TokenType.ID, Token.TokenType.MAIN), Collections.<Token.TokenType>emptyList())) {
+            if (classDeclRep() && funcDefRep() && match(Token.TokenType.MAIN) && funcBody() && match(Token.TokenType.SEMI)) {
+                addToSyntax("prog -> classDeclRep funcDefRep 'main' funcBody ';'");
+                return true;
+            }
         }
         return false;
     }
 
-    public void addToSyntax(String newSyntax) {
-        syntax = newSyntax + "\n" + syntax;
-    }
 
     private boolean funcBody() {
         return false;
