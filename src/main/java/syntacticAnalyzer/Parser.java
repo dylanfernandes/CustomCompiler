@@ -258,7 +258,10 @@ public class Parser {
         return false;
     }
 
-    private boolean classExMoreRep() {
+    public boolean classExMoreRep() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.COMM, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.OBRA))) {
+            return false;
+        }
         if(match(Token.TokenType.COMM) && match(Token.TokenType.ID) && classExMoreRep()) {
             return true;
         }

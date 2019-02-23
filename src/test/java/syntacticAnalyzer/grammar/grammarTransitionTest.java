@@ -22,7 +22,7 @@ public class grammarTransitionTest {
     @Spy
     Parser parser = new Parser();
     @Test
-    public void testClassDeclRepTest() {
+    public void classDeclRepTest() {
         LexerDriver lexerDriver = new LexerDriver();
         List<Token> tokens = lexerDriver.getTokensFromInput("class temp {");
         parser .setTokenList(tokens);
@@ -31,6 +31,21 @@ public class grammarTransitionTest {
         Mockito.verify(parser, times(1)).classDeclRep();
         Mockito.verify(parser, times(1)).classDecl();
         Mockito.verify(parser, times(1)).classExOpt();
+        Mockito.verify(parser, times(0)).classExMoreRep();
+        Mockito.verify(parser, times(1)).varOrFuncCheck();
+    }
+
+    @Test
+    public void classDeclExtRepTest() {
+        LexerDriver lexerDriver = new LexerDriver();
+        List<Token> tokens = lexerDriver.getTokensFromInput("class temp : blob {");
+        parser .setTokenList(tokens);
+        parser.parse();
+        Mockito.verify(parser, times(1)).prog();
+        Mockito.verify(parser, times(1)).classDeclRep();
+        Mockito.verify(parser, times(1)).classDecl();
+        Mockito.verify(parser, times(1)).classExOpt();
+        Mockito.verify(parser, times(1)).classExMoreRep();
         Mockito.verify(parser, times(1)).varOrFuncCheck();
     }
 
