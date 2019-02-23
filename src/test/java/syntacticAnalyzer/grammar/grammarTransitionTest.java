@@ -10,7 +10,7 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import syntacticAnalyzer.Parser;
 
-import java.util.ArrayList;
+import static org.junit.Assert.*;
 import java.util.List;
 
 import static org.mockito.Mockito.times;
@@ -24,11 +24,26 @@ public class grammarTransitionTest {
     @Test
     public void testClassDeclRepTest() {
         LexerDriver lexerDriver = new LexerDriver();
-        List<Token> tokens = lexerDriver.getTokensFromInput("class temp");
+        List<Token> tokens = lexerDriver.getTokensFromInput("class temp {");
         parser .setTokenList(tokens);
         parser.parse();
         Mockito.verify(parser, times(1)).prog();
         Mockito.verify(parser, times(1)).classDeclRep();
         Mockito.verify(parser, times(1)).classDecl();
+        Mockito.verify(parser, times(1)).classExOpt();
+        Mockito.verify(parser, times(1)).varOrFuncCheck();
     }
+
+    @Test
+    public void invalidClassDeclTest() {
+        LexerDriver lexerDriver = new LexerDriver();
+        List<Token> tokens = lexerDriver.getTokensFromInput("{ }");
+        parser .setTokenList(tokens);
+        parser.parse();
+        Mockito.verify(parser, times(1)).prog();
+        Mockito.verify(parser, times(0)).classDeclRep();
+        assertFalse(parser.isParseGood());
+    }
+
+
 }

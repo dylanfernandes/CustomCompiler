@@ -13,10 +13,12 @@ public class Parser {
     private int position;
     private Token lookahead;
     private String syntax;
+    boolean parseGood;
 
     public Parser() {
         position = 0;
         syntax = "";
+        parseGood = false;
     }
 
     public Parser(List<Token> tokens) {
@@ -31,6 +33,10 @@ public class Parser {
     public void setTokenList(List<Token> tokenList) {
         this.tokenList = tokenList;
         lookahead = tokenList.get(0);
+    }
+
+    public boolean isParseGood() {
+        return parseGood;
     }
 
     private boolean hasNextToken() {
@@ -85,7 +91,6 @@ public class Parser {
     }
 
     public boolean peekMatch(Token.TokenType expectedTokenType) {
-        lookahead = peekToken();
         return lookahead != null && lookahead.getType() == expectedTokenType;
     }
 
@@ -94,7 +99,7 @@ public class Parser {
     }
 
     public String parse() {
-        prog();
+        parseGood = prog();
         return syntax;
     }
 
@@ -117,6 +122,9 @@ public class Parser {
     }
 
     private boolean funcDefRep() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.ID, Token.TokenType.INTEGER, Token.TokenType.FLOAT), Arrays.asList(Token.TokenType.MAIN))){
+            return false;
+        }
         if(funcDef() && funcDefRep()) {
             addToSyntax("funcDefRep -> funcDef funcDefRep");
             return true;
@@ -149,13 +157,19 @@ public class Parser {
     }
 
     public boolean classDecl() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.CLASS), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
         if(match(Token.TokenType.CLASS) && match(Token.TokenType.ID) && classExOpt() && match(Token.TokenType.OBRA) && varOrFuncCheck() && match(Token.TokenType.CBRA) && match(Token.TokenType.SEMI)) {
             addToSyntax("classDecl -> 'class' 'id' classExOpt '{' varOrFuncCheck '}' ';'");
         }
         return false;
     }
 
-    private boolean varOrFuncCheck() {
+    public boolean varOrFuncCheck() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER), Arrays.asList(Token.TokenType.CBRA, Token.TokenType.SEMI))) {
+            return false;
+        }
         if(type() && match(Token.TokenType.ID) && varCheckNext()) {
             addToSyntax("varOrFuncCheck -> type 'id' varCheckNext");
             return true;
@@ -229,12 +243,15 @@ public class Parser {
         return false;
     }
 
-    private boolean classExOpt() {
+    public boolean classExOpt() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.COLO, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.OBRA))) {
+            return false;
+        }
         if(match(Token.TokenType.COLO) && match(Token.TokenType.ID) && classExMoreRep()) {
             addToSyntax("classExOpt ->  ':' 'id' classExMoreRep");
             return true;
         }
-        else if(peekMatch(Token.TokenType.OPAR)) {
+        else if(peekMatch(Token.TokenType.OBRA)) {
             addToSyntax("classExOpt -> EPSILON");
             return true;
         }
