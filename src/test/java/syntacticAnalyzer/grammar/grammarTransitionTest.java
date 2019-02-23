@@ -24,7 +24,7 @@ public class grammarTransitionTest {
     @Test
     public void classDeclRepTest() {
         LexerDriver lexerDriver = new LexerDriver();
-        List<Token> tokens = lexerDriver.getTokensFromInput("class temp {");
+        List<Token> tokens = lexerDriver.getTokensFromInput("class temp { Blob");
         parser .setTokenList(tokens);
         parser.parse();
         Mockito.verify(parser, times(1)).prog();
@@ -33,6 +33,24 @@ public class grammarTransitionTest {
         Mockito.verify(parser, times(1)).classExOpt();
         Mockito.verify(parser, times(0)).classExMoreRep();
         Mockito.verify(parser, times(1)).varOrFuncCheck();
+        Mockito.verify(parser, times(1)).type();
+        Mockito.verify(parser, times(0)).typeNotId();
+    }
+
+    @Test
+    public void classDeclRepTestInt() {
+        LexerDriver lexerDriver = new LexerDriver();
+        List<Token> tokens = lexerDriver.getTokensFromInput("class temp { integer");
+        parser .setTokenList(tokens);
+        parser.parse();
+        Mockito.verify(parser, times(1)).prog();
+        Mockito.verify(parser, times(1)).classDeclRep();
+        Mockito.verify(parser, times(1)).classDecl();
+        Mockito.verify(parser, times(1)).classExOpt();
+        Mockito.verify(parser, times(0)).classExMoreRep();
+        Mockito.verify(parser, times(1)).varOrFuncCheck();
+        Mockito.verify(parser, times(1)).type();
+        Mockito.verify(parser, times(1)).typeNotId();
     }
 
     @Test

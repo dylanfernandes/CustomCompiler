@@ -103,6 +103,10 @@ public class Parser {
         return syntax;
     }
 
+    /******************************************************************
+         Start of grammar production implementation
+     *******************************************************************/
+
 
     public boolean prog() {
         if(!skipErrors(Arrays.asList(Token.TokenType.INTEGER, Token.TokenType.FLOAT, Token.TokenType.CLASS, Token.TokenType.ID, Token.TokenType.MAIN), Collections.<Token.TokenType>emptyList())) {
@@ -162,6 +166,7 @@ public class Parser {
         }
         if(match(Token.TokenType.CLASS) && match(Token.TokenType.ID) && classExOpt() && match(Token.TokenType.OBRA) && varOrFuncCheck() && match(Token.TokenType.CBRA) && match(Token.TokenType.SEMI)) {
             addToSyntax("classDecl -> 'class' 'id' classExOpt '{' varOrFuncCheck '}' ';'");
+            return true;
         }
         return false;
     }
@@ -170,29 +175,35 @@ public class Parser {
         if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER), Arrays.asList(Token.TokenType.CBRA, Token.TokenType.SEMI))) {
             return false;
         }
-        if(type() && match(Token.TokenType.ID) && varCheckNext()) {
-            addToSyntax("varOrFuncCheck -> type 'id' varCheckNext");
-            return true;
-        } else if(peekMatch(Token.TokenType.CBRA) || peekMatch(Token.TokenType.SEMI)) {
+         if(peekMatch(Token.TokenType.CBRA) || peekMatch(Token.TokenType.SEMI)) {
             addToSyntax("varOrFuncCheck -> EPSILON");
+            return true;
+        } else if(type() && match(Token.TokenType.ID) && varCheckNext()) {
+            addToSyntax("varOrFuncCheck -> type 'id' varCheckNext");
             return true;
         }
         return false;
     }
 
-    private boolean type() {
-        if(typeNotId()) {
+    public boolean type() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.ID), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(match(Token.TokenType.ID)) {
+            addToSyntax("type -> 'id'");
+            return true;
+        } else if(typeNotId()) {
             addToSyntax("type -> typeNotId");
             return true;
         }
-        else if(match(Token.TokenType.ID)) {
-            addToSyntax("type -> 'id'");
-            return true;
-        }
         return false;
     }
 
-    private boolean typeNotId() {
+    public boolean typeNotId() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.FLOAT, Token.TokenType.INTEGER), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
         if(match(Token.TokenType.INTEGER)) {
             addToSyntax("typeNotId -> 'integer'");
             return true;
