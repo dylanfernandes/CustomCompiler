@@ -53,13 +53,6 @@ public class Parser {
         return  null;
     }
 
-    public Token peekToken() {
-        if(hasNextToken()) {
-            return tokenList.get(position+1);
-        }
-        return null;
-    }
-
     public boolean skipErrors(List<Token.TokenType> first, List<Token.TokenType> follow) {
         if(lookahead != null) {
             if (first.contains(lookahead.getType()) || (first.contains(Token.TokenType.EPSILON) && follow.contains(lookahead.getType()))) {
@@ -88,6 +81,10 @@ public class Parser {
             return true;
         }
         return  false;
+    }
+
+    public boolean peekListMatch(List<Token.TokenType> tokenTypes) {
+        return lookahead != null && tokenTypes.contains(lookahead.getType());
     }
 
     public boolean peekMatch(Token.TokenType expectedTokenType) {
@@ -231,11 +228,32 @@ public class Parser {
         return false;
     }
 
-    private boolean fParams() {
+    public boolean fParams() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.CPAR))) {
+            return  false;
+        }
+
+        if(peekMatch(Token.TokenType.CPAR)) {
+            addToSyntax("fParams -> EPSILON");
+            return true;
+        }
+        else if(type() && match(Token.TokenType.ID) && arraySizeRep() && fParamsTailRep()) {
+            addToSyntax("fParams -> type 'id' arraySizeRep fParamsTailRep");
+            return true;
+        }
         return false;
     }
 
+    private boolean fParamsTailRep() {
+        return false;
+    }
+
+
     private boolean funcDeclRep() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.CBRA, Token.TokenType.SEMI))) {
+            return false;
+        }
+
         if (funcDecl() && funcDeclRep()) {
             addToSyntax("funcDeclRep -> funcDecl funcDeclRep");
             return true;
@@ -255,6 +273,21 @@ public class Parser {
     }
 
     private boolean arraySizeRep() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM))) {
+            return false;
+        }
+
+        if(peekListMatch(Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM))) {
+            addToSyntax("arraySizeRep -> EPSILON");
+            return true;
+        } else  if (arraySize() && arraySizeRep()) {
+            addToSyntax("arraySizeRep -> arraySize arraySizeRep");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean arraySize() {
         return false;
     }
 

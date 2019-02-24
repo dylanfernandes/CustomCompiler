@@ -4,6 +4,7 @@ import lexer.Token;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -36,6 +37,30 @@ public class ParserTest {
         tokens.add(aToken);
         Parser parser = new Parser(tokens);
         assertTrue(parser.match(Token.TokenType.ID));
+        //increases position
+        assertFalse(parser.match(Token.TokenType.ID));
+    }
+
+    @Test
+    public void peekMatch() {
+        List<Token> tokens = new ArrayList<Token>();
+        Token aToken = new Token(Token.TokenType.ID, "test", 1);
+        tokens.add(aToken);
+        Parser parser = new Parser(tokens);
+        assertTrue(parser.peekMatch(Token.TokenType.ID));
+        //position doesn't change
+        assertTrue(parser.peekMatch(Token.TokenType.ID));
+    }
+
+    @Test
+    public void peekListMatch() {
+        List<Token> tokens = new ArrayList<Token>();
+        Token aToken = new Token(Token.TokenType.INTEGER, "integer", 1);
+        tokens.add(aToken);
+        Parser parser = new Parser(tokens);
+        assertFalse(parser.peekListMatch(Arrays.asList(Token.TokenType.ID)));
+        //position doesn't change
+        assertTrue(parser.peekListMatch(Arrays.asList(Token.TokenType.INTEGER)));
     }
 
     @Test
