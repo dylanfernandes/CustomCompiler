@@ -3,6 +3,7 @@ package syntacticAnalyzer.grammar;
 import lexer.LexerDriver;
 import lexer.Token;
 import lexer.Tokenizer;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -21,10 +22,17 @@ public class grammarTransitionTest {
 
     @Spy
     Parser parser = new Parser();
+
+    LexerDriver lexerDriver;
+
+    @Before
+    public void setup() {
+        lexerDriver = new LexerDriver();
+    }
+
     @Test
     public void classDeclRepTest() {
-        LexerDriver lexerDriver = new LexerDriver();
-        List<Token> tokens = lexerDriver.getTokensFromInput("class temp { Blob");
+        List<Token> tokens = lexerDriver.getTokensFromInput("class temp { Blob blob");
         parser .setTokenList(tokens);
         parser.parse();
         Mockito.verify(parser, times(1)).prog();
@@ -35,12 +43,12 @@ public class grammarTransitionTest {
         Mockito.verify(parser, times(1)).varOrFuncCheck();
         Mockito.verify(parser, times(1)).type();
         Mockito.verify(parser, times(0)).typeNotId();
+        Mockito.verify(parser, times(1)).varCheckNext();
     }
 
     @Test
     public void classDeclRepTestInt() {
-        LexerDriver lexerDriver = new LexerDriver();
-        List<Token> tokens = lexerDriver.getTokensFromInput("class temp { integer");
+        List<Token> tokens = lexerDriver.getTokensFromInput("class temp { integer blob");
         parser .setTokenList(tokens);
         parser.parse();
         Mockito.verify(parser, times(1)).prog();
@@ -51,11 +59,11 @@ public class grammarTransitionTest {
         Mockito.verify(parser, times(1)).varOrFuncCheck();
         Mockito.verify(parser, times(1)).type();
         Mockito.verify(parser, times(1)).typeNotId();
+        Mockito.verify(parser, times(1)).varCheckNext();
     }
 
     @Test
     public void classDeclExtRepTest() {
-        LexerDriver lexerDriver = new LexerDriver();
         List<Token> tokens = lexerDriver.getTokensFromInput("class temp : blob {");
         parser .setTokenList(tokens);
         parser.parse();
@@ -69,7 +77,6 @@ public class grammarTransitionTest {
 
     @Test
     public void invalidClassDeclTest() {
-        LexerDriver lexerDriver = new LexerDriver();
         List<Token> tokens = lexerDriver.getTokensFromInput("{ }");
         parser .setTokenList(tokens);
         parser.parse();

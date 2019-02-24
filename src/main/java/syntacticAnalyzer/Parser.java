@@ -215,7 +215,11 @@ public class Parser {
         return false;
     }
 
-    private boolean varCheckNext() {
+    public boolean varCheckNext() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.SEMI, Token.TokenType.OPAR), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
         if(arraySizeRep() && varOrFuncCheck() && match(Token.TokenType.SEMI)) {
             addToSyntax("varCheckNext -> arraySizeRep varOrFuncCheck  ';'");
             return true;
