@@ -138,8 +138,44 @@ public class Parser {
     }
 
     private boolean funcDef() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(funcHead() && funcBody() && match(Token.TokenType.SEMI)) {
+            addToSyntax("funcDef -> funcHead funcBody ';'");
+            return true;
+        }
         return false;
     }
+
+    private boolean funcHead() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(type() && match(Token.TokenType.ID) && funcHeadChoice()) {
+            addToSyntax("funcHead -> type 'id' funcHeadChoice");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean funcHeadChoice() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OPAR, Token.TokenType.DCOLO), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(match(Token.TokenType.DCOLO) && match(Token.TokenType.ID) && match(Token.TokenType.OPAR) && fParams() && match(Token.TokenType.CPAR)) {
+            addToSyntax("funcHeadChoice -> 'sr' 'id' '(' fParams ')'");
+            return true;
+        } else if (match(Token.TokenType.OPAR) && fParams() && match(Token.TokenType.CPAR)) {
+            addToSyntax("funcHeadChoice -> '(' fParams ')'");
+            return true;
+        }
+        return false;
+    }
+
 
     public boolean classDeclRep() {
         if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.CLASS), Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.MAIN))) {
@@ -265,6 +301,10 @@ public class Parser {
     }
 
     private boolean funcDecl() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.EPSILON), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
         if(type() && match(Token.TokenType.ID) && match(Token.TokenType.OPAR) && fParams() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI)) {
             addToSyntax("funcDecl -> type 'id' '(' fParams ')' ';' ");
             return true;
@@ -288,6 +328,14 @@ public class Parser {
     }
 
     private boolean arraySize() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(match(Token.TokenType.OSBRA) && match(Token.TokenType.INT) && match(Token.TokenType.CSBRA)) {
+            addToSyntax(" arraySize -> '[' 'intNum' ']'");
+            return true;
+        }
         return false;
     }
 
