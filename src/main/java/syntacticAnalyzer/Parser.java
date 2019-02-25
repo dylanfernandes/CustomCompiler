@@ -185,7 +185,7 @@ public class Parser {
     }
 
     private boolean idProdNext() {
-        if(!skipErrors(Arrays.asList(Token.TokenType.ID, Token.TokenType.OSBRA, Token.TokenType.POIN, Token.TokenType.EQ, Token.TokenType.OPAR), Collections.<Token.TokenType>emptyList())) {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID, Token.TokenType.OSBRA, Token.TokenType.POIN, Token.TokenType.ASSGN, Token.TokenType.OPAR), Collections.<Token.TokenType>emptyList())) {
             return false;
         }
 
@@ -204,6 +204,61 @@ public class Parser {
     }
 
     private boolean oldVarEndNest() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.POIN, Token.TokenType.ASSGN), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(indiceRep() && oldVarEndNestNext()){
+            addToSyntax("oldVarEndNest -> indiceRep oldVarEndNestNext");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean oldVarEndNestNext() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ASSGN, Token.TokenType.POIN), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(match(Token.TokenType.POIN) && idProd()) {
+            addToSyntax("oldVarEndNestNext -> '.' idProd");
+            return true;
+        } else if (assignStatEnd()) {
+            addToSyntax("oldVarEndNestNext -> assignStatEnd");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean assignStatEnd() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ASSGN), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(assignOp() && expr() && match(Token.TokenType.SEMI)) {
+            addToSyntax("assignStatEnd -> assignOp expr ';'");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean expr() {
+        return false;
+    }
+
+    private boolean assignOp() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ASSGN), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(match(Token.TokenType.ASSGN)) {
+            addToSyntax("assignOp -> '='");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean indiceRep() {
         return false;
     }
 
