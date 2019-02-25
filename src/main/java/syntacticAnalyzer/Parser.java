@@ -159,6 +159,15 @@ public class Parser {
     }
 
     private boolean varDeclNotId() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.FLOAT, Token.TokenType.INTEGER), Collections.<Token.TokenType>emptyList(),false)) {
+            return false;
+        }
+
+        if(typeNotId() && match(Token.TokenType.ID) && varDeclNext()) {
+            addToSyntax("varDeclNotId -> typeNotId 'id' varDeclNext");
+            return true;
+        }
+
         return false;
     }
 
@@ -176,6 +185,53 @@ public class Parser {
     }
 
     private boolean idProdNext() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID, Token.TokenType.OSBRA, Token.TokenType.POIN, Token.TokenType.EQ, Token.TokenType.OPAR), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(match(Token.TokenType.OPAR) && aParams() && match(Token.TokenType.CPAR) && match(Token.TokenType.POIN) && idProd()) {
+            addToSyntax("idProdNext -> '(' aParams ')' '.' idProd ");
+            return  true;
+        } else if(varDeclId()) {
+            addToSyntax("idProdNext -> varDeclId");
+            return  true;
+        }
+        else if(oldVarEndNest()) {
+            addToSyntax("idProdNext -> oldVarEndNest");
+            return  true;
+        }
+        return false;
+    }
+
+    private boolean oldVarEndNest() {
+        return false;
+    }
+
+    private boolean varDeclId() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID),Collections.<Token.TokenType>emptyList(), false)) {
+            return false;
+        }
+
+        if(match(Token.TokenType.ID) && varDeclNext()) {
+            addToSyntax("varDeclId -> 'id' varDeclNext");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean varDeclNext() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.SEMI), Collections.<Token.TokenType>emptyList())) {
+            return  false;
+        }
+
+        if(arraySizeRep() && match(Token.TokenType.SEMI)) {
+            addToSyntax("varDeclNext -> arraySizeRep ';'");
+            return  true;
+        }
+        return false;
+    }
+
+    private boolean aParams() {
         return false;
     }
 
