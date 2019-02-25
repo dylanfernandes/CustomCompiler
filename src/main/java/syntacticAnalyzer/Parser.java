@@ -1,6 +1,7 @@
 package syntacticAnalyzer;
 
 import lexer.Token;
+import org.omg.CORBA.ARG_IN;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -300,10 +301,64 @@ public class Parser {
     }
 
     private boolean relExpr() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LESSEQ, Token.TokenType.LES, Token.TokenType.NEQ, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM))) {
+            return false;
+        }
+
+        if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM))){
+            addToSyntax("relExpr -> EPSILON");
+            return true;
+        } else if(relOp() && arithExpr() && relExpr()) {
+            addToSyntax("relExpr -> relOp arithExpr relExpr");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean relOp() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.NEQ, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.GRE, Token.TokenType.GREEQ, Token.TokenType.EQ), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(match(Token.TokenType.NEQ)) {
+            addToSyntax("relOp -> 'eq'");
+            return true;
+        } else if( match(Token.TokenType.NEQ)) {
+            addToSyntax("relOp -> 'neq'");
+            return true;
+        } else if(match(Token.TokenType.LES)) {
+            addToSyntax("relOp -> 'lt'");
+            return true;
+        } else if(match(Token.TokenType.GRE)) {
+            addToSyntax("relOp -> 'gt'");
+            return true;
+        } else if(match(Token.TokenType.LESSEQ)) {
+            addToSyntax("relOp -> 'leq'");
+            return true;
+        } else if(match(Token.TokenType.GREEQ)) {
+            addToSyntax("relOp -> 'geq'");
+            return true;
+        }
         return false;
     }
 
     private boolean arithExpr() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OPAR, Token.TokenType.FLO, Token.TokenType.INT, Token.TokenType.NOT, Token.TokenType.ID, Token.TokenType.ADD, Token.TokenType.SUB), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(term() && arithExprPrime()) {
+            addToSyntax("arithExpr -> term arithExprPrime");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean arithExprPrime() {
+        return false;
+    }
+
+    private boolean term() {
         return false;
     }
 
