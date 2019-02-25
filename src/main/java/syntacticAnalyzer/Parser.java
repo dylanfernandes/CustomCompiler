@@ -242,10 +242,6 @@ public class Parser {
         return false;
     }
 
-    private boolean expr() {
-        return false;
-    }
-
     private boolean assignOp() {
         if(!skipErrors(Arrays.asList(Token.TokenType.ASSGN), Collections.<Token.TokenType>emptyList())) {
             return false;
@@ -259,6 +255,55 @@ public class Parser {
     }
 
     private boolean indiceRep() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.POIN, Token.TokenType.ASSGN))) {
+            return false;
+        }
+
+        if(peekListMatch(Arrays.asList(Token.TokenType.POIN, Token.TokenType.ASSGN))) {
+            addToSyntax("indiceRep -> EPSILON");
+            return true;
+        }else if(indice() && indiceRep()) {
+            addToSyntax("indiceRep -> indice indiceRep");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean indice() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA), Collections.<Token.TokenType>emptyList())) {
+            return  false;
+        }
+
+        if(match(Token.TokenType.OSBRA) && arithExpr() && match(Token.TokenType.CSBRA)) {
+            addToSyntax("indice -> '[' arithExpr ']'");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean expr() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OPAR, Token.TokenType.FLO, Token.TokenType.INT, Token.TokenType.NOT, Token.TokenType.ID, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.EQ, Token.TokenType.GRE, Token.TokenType.GREEQ, Token.TokenType.LESSEQ, Token.TokenType.LES, Token.TokenType.NEQ, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM))) {
+            return false;
+        }
+
+        if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM))) {
+            addToSyntax("expr -> EPSILON");
+            return true;
+        } else if(arithExpr()) {
+            addToSyntax("expr -> arithExpr");
+            return true;
+        } else if(relExpr()) {
+            addToSyntax("expr -> relExpr");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean relExpr() {
+        return false;
+    }
+
+    private boolean arithExpr() {
         return false;
     }
 
