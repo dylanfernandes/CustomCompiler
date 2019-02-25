@@ -281,6 +281,29 @@ public class Parser {
     }
 
     private boolean fParamsTailRep() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.COMM, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.CPAR))) {
+            return  false;
+        }
+
+        if(peekMatch(Token.TokenType.CPAR)) {
+            addToSyntax("fParamsTailRep -> EPSILON");
+            return  true;
+        } else if(fParamsTail() && fParamsTailRep()) {
+            addToSyntax("fParamsTailRep -> fParamsTail fParamsTailRep");
+            return  true;
+        }
+        return false;
+    }
+
+    private boolean fParamsTail() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.COMM), Collections.<Token.TokenType>emptyList())) {
+            return  false;
+        }
+
+        if(match(Token.TokenType.COMM) && type() && match(Token.TokenType.ID) && arraySizeRep()) {
+            addToSyntax("fParamsTail -> ',' type 'id' arraySizeRep");
+            return true;
+        }
         return false;
     }
 
