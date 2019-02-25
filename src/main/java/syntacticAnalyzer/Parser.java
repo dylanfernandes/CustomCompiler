@@ -53,12 +53,13 @@ public class Parser {
         return  null;
     }
 
-    public boolean skipErrors(List<Token.TokenType> first, List<Token.TokenType> follow) {
+    public boolean skipErrors(List<Token.TokenType> first, List<Token.TokenType> follow, boolean write) {
         if(lookahead != null) {
             if (first.contains(lookahead.getType()) || (first.contains(Token.TokenType.EPSILON) && follow.contains(lookahead.getType()))) {
                 return true;
             } else {
-                addToSyntax("Syntax error at line: " + lookahead.getLineNumber());
+                if(write)
+                    addToSyntax("Syntax error at line: " + lookahead.getLineNumber());
                 //if in follow, current production not good, can get epsilon if in first in parse method
                 while (!first.contains(lookahead.getType()) && !follow.contains(lookahead.getType())) {
                     lookahead = nextToken();
@@ -74,6 +75,12 @@ public class Parser {
         }
         return false;
     }
+
+    //write error in syntax automatically
+    public boolean skipErrors(List<Token.TokenType> first, List<Token.TokenType> follow) {
+        return skipErrors(first, follow, true);
+    }
+
 
     public boolean match( Token.TokenType expectedTokenType) {
         if(lookahead != null && lookahead.getType() == expectedTokenType) {
@@ -156,6 +163,19 @@ public class Parser {
     }
 
     private boolean idProd() {
+        //error written by last prod
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID), Collections.<Token.TokenType>emptyList(), false)) {
+            return false;
+        }
+
+        if(match(Token.TokenType.ID) && idProdNext()) {
+            addToSyntax("idProd -> 'id' idProdNext");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean idProdNext() {
         return false;
     }
 
