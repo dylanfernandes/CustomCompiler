@@ -119,8 +119,50 @@ public class Parser {
 
 
     private boolean funcBody() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OBRA), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(match(Token.TokenType.OBRA) && varDeclStatFuncRep() && match(Token.TokenType.CBRA)) {
+            addToSyntax("funcBody -> '{' varDeclStatFuncRep '}'");
+            return true;
+        }
         return false;
     }
+
+    private boolean varDeclStatFuncRep() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.FOR, Token.TokenType.IF, Token.TokenType.READ, Token.TokenType.RETURN, Token.TokenType.WRITE, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.CBRA))) {
+            return false;
+        }
+
+        if(peekMatch(Token.TokenType.CBRA)) {
+            addToSyntax("varDeclStatFuncRep -> EPSILON");
+            return  true;
+        } else if(varDeclNotId() && varDeclStatFuncRep()) {
+            addToSyntax("varDeclStatFuncRep -> varDeclNotId varDeclStatFuncRep");
+            return true;
+        } else if(idProd() && varDeclStatFuncRep()) {
+            addToSyntax("varDeclStatFuncRep -> idProd varDeclStatFuncRep");
+            return true;
+        } else  if(statement() && varDeclStatFuncRep()) {
+            addToSyntax("statement -> idProd varDeclStatFuncRep");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean varDeclNotId() {
+        return false;
+    }
+
+    private boolean idProd() {
+        return false;
+    }
+
+    private boolean statement() {
+        return false;
+    }
+
 
     private boolean funcDefRep() {
         if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.ID, Token.TokenType.INTEGER, Token.TokenType.FLOAT), Arrays.asList(Token.TokenType.MAIN))){
