@@ -373,7 +373,49 @@ public class Parser {
     }
 
     private boolean factor() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.ID, Token.TokenType.NOT, Token.TokenType.INT, Token.TokenType.FLO, Token.TokenType.OPAR), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(match(Token.TokenType.INT)) {
+            addToSyntax("factor -> 'intNum'");
+            return true;
+        } else if(match(Token.TokenType.FLO)) {
+            addToSyntax("factor -> 'floatNum'");
+            return true;
+        } else if(match(Token.TokenType.OPAR) && arithExpr() && match(Token.TokenType.CPAR)) {
+            addToSyntax("'factor -> (' arithExpr ')'");
+            return true;
+        } else if(match(Token.TokenType.NOT) && factor()) {
+            addToSyntax("factor -> 'not' factor");
+            return true;
+        } else if(sign() && factor()) {
+            addToSyntax("factor -> sign factor");
+            return true;
+        } else  if(varOrFuncCall()) {
+            addToSyntax("factor -> varOrFuncCall");
+            return true;
+        }
         return false;
+    }
+
+    private boolean sign() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ADD, Token.TokenType.SUB), Collections.<Token.TokenType>emptyList(), false)) {
+            return false;
+        }
+
+        if(match(Token.TokenType.ADD)) {
+            addToSyntax("sign -> '+'");
+            return true;
+        } else if(match(Token.TokenType.SUB)) {
+            addToSyntax("sign -> '-'");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean varOrFuncCall() {
+        return  false;
     }
 
     private boolean varDeclId() {
