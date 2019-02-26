@@ -451,6 +451,39 @@ public class Parser {
     }
 
     private boolean varStart() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID), Collections.<Token.TokenType>emptyList() )) {
+            return false;
+        }
+
+        if(match(Token.TokenType.ID) && varNext()) {
+            addToSyntax("varStart -> 'id' varNext");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean varNext() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OPAR, Token.TokenType.POIN, Token.TokenType.OSBRA, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.ADD, Token.TokenType.ASSGN))) {
+            return false;
+        }
+
+        if(peekListMatch( Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.ADD, Token.TokenType.ASSGN))) {
+            addToSyntax("varNext -> EPSILON");
+            return true;
+        } else if(match(Token.TokenType.OPAR) && varAParams()) {
+            addToSyntax("varNext -> '(' varAParams");
+            return true;
+        } else if(match(Token.TokenType.POIN) && varStart()) {
+            addToSyntax("varNext -> '.' varStart");
+            return true;
+        } else if(varIndice()) {
+            addToSyntax("");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean varAParams() {
         return false;
     }
 
