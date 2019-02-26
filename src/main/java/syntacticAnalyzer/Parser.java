@@ -2,6 +2,7 @@ package syntacticAnalyzer;
 
 import lexer.Token;
 import org.omg.CORBA.ARG_IN;
+import sun.plugin2.gluegen.runtime.CPU;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -403,6 +404,44 @@ public class Parser {
     }
 
     private boolean aParams() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LESSEQ, Token.TokenType.LES, Token.TokenType.NEQ, Token.TokenType.EPSILON, Token.TokenType.OPAR, Token.TokenType.FLO, Token.TokenType.INT, Token.TokenType.NOT, Token.TokenType.ID, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.COMM), Arrays.asList(Token.TokenType.CPAR))) {
+            return false;
+        }
+
+        if(peekMatch(Token.TokenType.CPAR)) {
+            addToSyntax("aParams -> EPSILON");
+            return true;
+        } else if(expr() && aParamsTailRep()) {
+            addToSyntax("aParams -> expr aParamsTailRep");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean aParamsTailRep() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.COMM, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.CPAR))) {
+            return  false;
+        }
+
+        if(peekMatch(Token.TokenType.CPAR)) {
+            addToSyntax("aParamsTailRep -> EPSILON");
+            return true;
+        } else if(aParamsTail() && aParamsTailRep()) {
+            addToSyntax("aParamsTailRep -> aParamsTail aParamsTailRep");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean aParamsTail() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.COMM), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(match(Token.TokenType.COMM) && expr()) {
+            addToSyntax("aParamsTail -> ',' expr");
+            return true;
+        }
         return false;
     }
 
