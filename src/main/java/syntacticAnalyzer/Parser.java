@@ -1,10 +1,7 @@
 package syntacticAnalyzer;
 
 import lexer.Token;
-import org.omg.CORBA.ARG_IN;
-import sun.plugin2.gluegen.runtime.CPU;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
