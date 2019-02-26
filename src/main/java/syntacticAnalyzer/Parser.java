@@ -415,7 +415,19 @@ public class Parser {
     }
 
     private boolean varOrFuncCall() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID) ,Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(match(Token.TokenType.ID) && varOrFuncCallNext()) {
+            addToSyntax("varOrFuncCall -> 'id' varOrFuncCallNext");
+            return true;
+        }
         return  false;
+    }
+
+    private boolean varOrFuncCallNext() {
+        return false;
     }
 
     private boolean varDeclId() {
