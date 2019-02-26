@@ -566,6 +566,18 @@ public class Parser {
     }
 
     private boolean varFuncParams() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.OPAR, Token.TokenType.FLO, Token.TokenType.INT, Token.TokenType.NOT, Token.TokenType.ID, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.COMM, Token.TokenType.CPAR),Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(aParams() && match(Token.TokenType.CPAR) && varFuncParamsNext()) {
+            addToSyntax("varFuncParams ->  aParams ')' varFuncParamsNext");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean varFuncParamsNext() {
         return false;
     }
 
