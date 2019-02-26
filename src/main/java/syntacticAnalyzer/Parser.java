@@ -359,6 +359,22 @@ public class Parser {
     }
 
     private boolean term() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OPAR, Token.TokenType.FLO, Token.TokenType.INT, Token.TokenType.NOT, Token.TokenType.ID, Token.TokenType.ADD, Token.TokenType.SUB), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(factor() && termPrime()) {
+            addToSyntax("term -> factor termPrime");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean termPrime() {
+        return false;
+    }
+
+    private boolean factor() {
         return false;
     }
 
