@@ -32,17 +32,25 @@ public class validSyntaxTest {
         List<Token> tokens = lexerDriver.getTokensFromInput("main { };");
         parser .setTokenList(tokens);
 
-        System.out.println(parser.parse());
-        Mockito.verify(parser, times(1)).classDeclRep();
+        parser.parse();
         assertTrue(parser.isParseGood());
     }
 
     @Test
-    public void validVarDeclProgram() {
+    public void validVarDeclIdProgram() {
         List<Token> tokens = lexerDriver.getTokensFromInput("main { Blob id; };");
         parser .setTokenList(tokens);
 
-        System.out.println(parser.parse());
+        parser.parse();
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validVarDeclTypeProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { integer id; };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
         assertTrue(parser.isParseGood());
     }
 }
