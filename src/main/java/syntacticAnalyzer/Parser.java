@@ -693,7 +693,7 @@ public class Parser {
             return false;
         }
 
-        if(match(Token.TokenType.IF) && match(Token.TokenType.OPAR) && expr() && match(Token.TokenType.CPAR) && match(Token.TokenType.THEN) && statBlock() && match(Token.TokenType.ELSE) && statBlock()) {
+        if(match(Token.TokenType.IF) && match(Token.TokenType.OPAR) && expr() && match(Token.TokenType.CPAR) && match(Token.TokenType.THEN) && statBlock() && match(Token.TokenType.ELSE) && statBlock() && match(Token.TokenType.SEMI)) {
             addToSyntax("statement -> 'if' '(' expr ')' 'then' statBlock 'else' statBlock ';'");
             return true;
         } else if(match(Token.TokenType.FOR) && match(Token.TokenType.OPAR) && type() && match(Token.TokenType.ID) && assignOp() && expr() && relExpr() && match(Token.TokenType.SEMI) && assignStat() && match(Token.TokenType.CPAR) && statBlock() &&match (Token.TokenType.SEMI)) {
@@ -705,8 +705,8 @@ public class Parser {
         } else if(match(Token.TokenType.WRITE) && match(Token.TokenType.OPAR) && expr() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI)) {
             addToSyntax("'write' '(' expr ')' ';'");
             return  true;
-        } else if(match(Token.TokenType.READ) && match(Token.TokenType.OPAR) && expr() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI)) {
-            addToSyntax("'read' '(' expr ')' ';'");
+        } else if(match(Token.TokenType.RETURN) && match(Token.TokenType.OPAR) && expr() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI)) {
+            addToSyntax("'return' '(' expr ')' ';'");
             return true;
         }
         return false;
