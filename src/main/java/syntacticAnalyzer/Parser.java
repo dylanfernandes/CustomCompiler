@@ -353,6 +353,35 @@ public class Parser {
     }
 
     private boolean arithExprPrime() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GRE, Token.TokenType.GREEQ, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA))) {
+            return false;
+        }
+
+        if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GRE, Token.TokenType.GREEQ, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA))) {
+            addToSyntax("arithExprPrime -> EPSILON");
+            return true;
+        } else if(addOp() && term() && arithExprPrime()) {
+            addToSyntax("arithExprPrime -> addOp term arithExprPrime");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean addOp() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR) ,Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(match(Token.TokenType.ADD)) {
+            addToSyntax("addOp -> '+'");
+            return true;
+        } else  if(match(Token.TokenType.SUB)) {
+            addToSyntax("addOp -> '-'");
+            return true;
+        } else if(match(Token.TokenType.OR)) {
+            addToSyntax("addOp -> 'or");
+            return true;
+        }
         return false;
     }
 
@@ -578,6 +607,17 @@ public class Parser {
     }
 
     private boolean varFuncParamsNext() {
+        if(!skipErrors(Arrays.asList( Token.TokenType.POIN,  Token.TokenType.OSBRA, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LESSEQ, Token.TokenType.LES, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.AND))) {
+            return false;
+        }
+
+        if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LESSEQ, Token.TokenType.LES, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.AND))) {
+            addToSyntax("varFuncParamsNext -> EPSILON");
+            return true;
+        } else if(match(Token.TokenType.POIN) && varOrFuncCall()) {
+            addToSyntax("varFuncParamsNext -> '.' varOrFuncCall");
+            return true;
+        }
         return false;
     }
 
