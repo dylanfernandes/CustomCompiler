@@ -85,14 +85,6 @@ public class grammarTransitionTest {
         assertFalse(parser.isParseGood());
     }
 
-    @Test
-    public void validEmptyProgram() {
-        List<Token> tokens = lexerDriver.getTokensFromInput("main { };");
-        parser .setTokenList(tokens);
-        parser.parse();
-        Mockito.verify(parser, times(1)).classDeclRep();
-        assertTrue(parser.isParseGood());
-    }
 
 
 }

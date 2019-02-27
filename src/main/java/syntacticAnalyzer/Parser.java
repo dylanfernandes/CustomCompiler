@@ -57,19 +57,20 @@ public class Parser {
             if (first.contains(lookahead.getType()) || (first.contains(Token.TokenType.EPSILON) && follow.contains(lookahead.getType()))) {
                 return true;
             } else {
-                if(write)
+                if(write) {
                     addToSyntax("Syntax error at line: " + lookahead.getLineNumber());
-                //if in follow, current production not good, can get epsilon if in first in parse method
-                while (!first.contains(lookahead.getType()) && !follow.contains(lookahead.getType())) {
-                    lookahead = nextToken();
-                    if(lookahead == null)
-                        break;
-                    //production not properly completed
-                    if (first.contains(Token.TokenType.EPSILON) && follow.contains(lookahead.getType()))
-                        return false;
+                    //if in follow, current production not good, can get epsilon if in first in parse method
+                    while (!first.contains(lookahead.getType()) && !follow.contains(lookahead.getType())) {
+                        lookahead = nextToken();
+                        if (lookahead == null)
+                            break;
+                        //production not properly completed
+                        if (first.contains(Token.TokenType.EPSILON) && follow.contains(lookahead.getType()))
+                            return false;
+                    }
+                    if (lookahead != null)
+                        return true;
                 }
-                if(lookahead != null)
-                    return true;
             }
         }
         return false;
@@ -147,7 +148,7 @@ public class Parser {
         } else if(varDeclNotId() && varDeclStatFuncRep()) {
             addToSyntax("varDeclStatFuncRep -> varDeclNotId varDeclStatFuncRep");
             return true;
-        } else if(idProd() && varDeclStatFuncRep()) {
+        } else if(idProd(false) && varDeclStatFuncRep()) {
             addToSyntax("varDeclStatFuncRep -> idProd varDeclStatFuncRep");
             return true;
         } else  if(statement() && varDeclStatFuncRep()) {
@@ -170,9 +171,9 @@ public class Parser {
         return false;
     }
 
-    private boolean idProd() {
+    private boolean idProd(boolean write) {
         //error written by last prod
-        if(!skipErrors(Arrays.asList(Token.TokenType.ID), Collections.<Token.TokenType>emptyList(), false)) {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID), Collections.<Token.TokenType>emptyList(), write)) {
             return false;
         }
 
@@ -188,7 +189,7 @@ public class Parser {
             return false;
         }
 
-        if(match(Token.TokenType.OPAR) && aParams() && match(Token.TokenType.CPAR) && match(Token.TokenType.POIN) && idProd()) {
+        if(match(Token.TokenType.OPAR) && aParams() && match(Token.TokenType.CPAR) && match(Token.TokenType.POIN) && idProd(true)) {
             addToSyntax("idProdNext -> '(' aParams ')' '.' idProd ");
             return  true;
         } else if(varDeclId()) {
@@ -219,7 +220,7 @@ public class Parser {
             return false;
         }
 
-        if(match(Token.TokenType.POIN) && idProd()) {
+        if(match(Token.TokenType.POIN) && idProd(true)) {
             addToSyntax("oldVarEndNestNext -> '.' idProd");
             return true;
         } else if (assignStatEnd()) {
