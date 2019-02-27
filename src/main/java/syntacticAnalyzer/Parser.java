@@ -893,11 +893,11 @@ public class Parser {
             return false;
         }
 
-        if(match(Token.TokenType.OPAR) && fParams() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI) && funcDeclRep()) {
-            addToSyntax("varCheckNext -> '(' fParams ')' ';' funcDeclRep ");
-            return true;
-        } else if(arraySizeRep() && match(Token.TokenType.SEMI) && varOrFuncCheck()) {
+        if(arraySizeRep(false) && match(Token.TokenType.SEMI) && varOrFuncCheck()) {
             addToSyntax("varCheckNext -> arraySizeRep varOrFuncCheck  ';'");
+            return true;
+        }else if(match(Token.TokenType.OPAR) && fParams() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI) && funcDeclRep()) {
+            addToSyntax("varCheckNext -> '(' fParams ')' ';' funcDeclRep ");
             return true;
         }
 
@@ -977,7 +977,11 @@ public class Parser {
     }
 
     private boolean arraySizeRep() {
-        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM))) {
+        return arraySizeRep(true);
+    }
+
+    private boolean arraySizeRep(boolean write) {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM), write)) {
             return false;
         }
 

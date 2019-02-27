@@ -108,6 +108,21 @@ public class validSyntaxTest {
     }
 
     @Test
+    public void validClassVariableFunctionSeveral() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob { integer test; \n" +
+                "Blob blob; \n" +
+                "float fl; \n" +
+                "integer test();\n" +
+                "float test2(); \n" +
+                "Blobl test3(); }; \n" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
     public void validVarDeclIdProgram() {
         List<Token> tokens = lexerDriver.getTokensFromInput("main { Blob id; };");
         parser .setTokenList(tokens);
