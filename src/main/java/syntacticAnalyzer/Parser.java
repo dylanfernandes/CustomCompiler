@@ -763,14 +763,14 @@ public class Parser {
         if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.ID, Token.TokenType.INTEGER, Token.TokenType.FLOAT), Arrays.asList(Token.TokenType.MAIN))){
             return false;
         }
-        if(funcDef() && funcDefRep()) {
+        if(peekMatch(Token.TokenType.MAIN)) {
+            addToSyntax("funcDefRep -> EPSILON");
+            return true;
+        } else if(funcDef() && funcDefRep()) {
             addToSyntax("funcDefRep -> funcDef funcDefRep");
             return true;
         }
-        else if(peekMatch(Token.TokenType.MAIN)) {
-            addToSyntax("funcDefRep -> EPSILON");
-            return true;
-        }
+
         return false;
     }
 
@@ -819,12 +819,11 @@ public class Parser {
             return false;
         }
 
-        if(classDecl() && classDeclRep()) {
-            addToSyntax("classDeclRep -> classDecl classDeclRep");
-            return true;
-        }
-        else if(peekMatch(Token.TokenType.ID) || peekMatch(Token.TokenType.FLOAT) || peekMatch(Token.TokenType.INTEGER) || peekMatch(Token.TokenType.MAIN)){
+        if(peekMatch(Token.TokenType.ID) || peekMatch(Token.TokenType.FLOAT) || peekMatch(Token.TokenType.INTEGER) || peekMatch(Token.TokenType.MAIN)){
             addToSyntax("classDeclRep -> EPSILON");
+            return true;
+        }else if(classDecl() && classDeclRep()) {
+            addToSyntax("classDeclRep -> classDecl classDeclRep");
             return true;
         }
         return false;
