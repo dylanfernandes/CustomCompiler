@@ -881,7 +881,7 @@ public class Parser {
             addToSyntax("typeNotId -> 'integer'");
             return true;
         }
-        else if(match(Token.TokenType.FLO)) {
+        else if(match(Token.TokenType.FLOAT)) {
             addToSyntax("typeNotId -> 'float' ");
             return true;
         }
@@ -889,14 +889,14 @@ public class Parser {
     }
 
     public boolean varCheckNext() {
-        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.SEMI, Token.TokenType.OPAR), Collections.<Token.TokenType>emptyList())) {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.SEMI, Token.TokenType.OPAR), Collections.<Token.TokenType>emptyList())) {
             return false;
         }
 
         if(match(Token.TokenType.OPAR) && fParams() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI) && funcDeclRep()) {
             addToSyntax("varCheckNext -> '(' fParams ')' ';' funcDeclRep ");
             return true;
-        } else if(arraySizeRep() && varOrFuncCheck() && match(Token.TokenType.SEMI)) {
+        } else if(arraySizeRep() && match(Token.TokenType.SEMI) && varOrFuncCheck()) {
             addToSyntax("varCheckNext -> arraySizeRep varOrFuncCheck  ';'");
             return true;
         }

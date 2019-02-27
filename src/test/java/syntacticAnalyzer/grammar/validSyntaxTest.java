@@ -3,18 +3,15 @@ package syntacticAnalyzer.grammar;
 import lexer.LexerDriver;
 import lexer.Token;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.Spy;
+
 import org.mockito.junit.MockitoJUnitRunner;
 import syntacticAnalyzer.Parser;
 
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.class)
 public class validSyntaxTest {
@@ -43,7 +40,38 @@ public class validSyntaxTest {
                 "main { };");
         parser .setTokenList(tokens);
 
-        System.out.println(parser.parse());
+        parser.parse();
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validClassExt() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob : Foo {}; \n" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validClassExtSeveral() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Bar {}; \n" +
+                "class Blob : Foo, Bar {}; \n" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validClassExtMore() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob : Foo, Bar {}; \n" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
         assertTrue(parser.isParseGood());
     }
 
@@ -58,12 +86,24 @@ public class validSyntaxTest {
     }
 
     @Test
+    public void validClassVariableSeveral() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob { integer test; \n" +
+                "Blob blob; \n" +
+                "float fl;}; \n" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
     public void validClassFunction() {
         List<Token> tokens = lexerDriver.getTokensFromInput("class Blob { integer test();}; \n" +
                 "main { };");
         parser .setTokenList(tokens);
 
-        System.out.println(parser.parse());
+        parser.parse();
         assertTrue(parser.isParseGood());
     }
 
@@ -123,7 +163,7 @@ public class validSyntaxTest {
                 "};");
         parser .setTokenList(tokens);
 
-        System.out.println(parser.parse());
+        parser.parse();
         assertTrue(parser.isParseGood());
     }
 
@@ -134,7 +174,7 @@ public class validSyntaxTest {
                 "};");
         parser .setTokenList(tokens);
 
-        System.out.println(parser.parse());
+        parser.parse();
         assertTrue(parser.isParseGood());
     }
 }

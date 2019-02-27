@@ -9,7 +9,7 @@ funcDefRep -> EPSILON
 classDecl -> 'class' 'id' classExOpt '{' varOrFuncCheck '}' ';'
 
 varOrFuncCheck -> type 'id' varCheckNext | EPSILON
-varCheckNext -> arraySizeRep varOrFuncCheck  ';' | '(' fParams ')' ';' funcDeclRep 
+varCheckNext -> arraySizeRep ';' varOrFuncCheck | '(' fParams ')' ';' funcDeclRep 
 
 classExOpt ->  ':' 'id' classExMoreRep
 classExOpt -> EPSILON
