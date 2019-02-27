@@ -893,14 +893,14 @@ public class Parser {
             return false;
         }
 
-        if(arraySizeRep() && varOrFuncCheck() && match(Token.TokenType.SEMI)) {
+        if(match(Token.TokenType.OPAR) && fParams() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI) && funcDeclRep()) {
+            addToSyntax("varCheckNext -> '(' fParams ')' ';' funcDeclRep ");
+            return true;
+        } else if(arraySizeRep() && varOrFuncCheck() && match(Token.TokenType.SEMI)) {
             addToSyntax("varCheckNext -> arraySizeRep varOrFuncCheck  ';'");
             return true;
         }
-        else if(match(Token.TokenType.OPAR) && fParams() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI) && funcDeclRep()) {
-            addToSyntax("varCheckNext -> '(' fParams ')' ';' funcDeclRep ");
-            return true;
-        }
+
         return false;
     }
 
@@ -953,13 +953,14 @@ public class Parser {
             return false;
         }
 
-        if (funcDecl() && funcDeclRep()) {
-            addToSyntax("funcDeclRep -> funcDecl funcDeclRep");
-            return true;
-        } else if (peekMatch(Token.TokenType.CBRA) || peekMatch(Token.TokenType.SEMI)) {
+        if (peekMatch(Token.TokenType.CBRA) || peekMatch(Token.TokenType.SEMI)) {
             addToSyntax("funcDeclRep -> EPSILON");
             return true;
+        }else if (funcDecl() && funcDeclRep()) {
+            addToSyntax("funcDeclRep -> funcDecl funcDeclRep");
+            return true;
         }
+
         return false;
     }
 

@@ -38,6 +38,36 @@ public class validSyntaxTest {
     }
 
     @Test
+    public void validClass() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob {}; \n" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        System.out.println(parser.parse());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validClassVariable() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob { integer test;}; \n" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validClassFunction() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob { integer test();}; \n" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        System.out.println(parser.parse());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
     public void validVarDeclIdProgram() {
         List<Token> tokens = lexerDriver.getTokensFromInput("main { Blob id; };");
         parser .setTokenList(tokens);
@@ -45,6 +75,16 @@ public class validSyntaxTest {
         parser.parse();
         assertTrue(parser.isParseGood());
     }
+
+    @Test
+    public void validVarArray() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { Blob id[9]; };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertTrue(parser.isParseGood());
+    }
+
 
     @Test
     public void validVarDeclTypeProgram() {
