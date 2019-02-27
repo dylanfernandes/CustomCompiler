@@ -123,6 +123,42 @@ public class validSyntaxTest {
     }
 
     @Test
+    public void validFuncDefProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("Blob test(){}; main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validFuncDefParamProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("Blob test(integer test){}; main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validFuncDefParamSeveralProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("Blob test(integer test, float test2){}; main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validFuncDefSrProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("Blob Bar :: test(){}; main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
     public void validVarDeclIdProgram() {
         List<Token> tokens = lexerDriver.getTokensFromInput("main { Blob id; };");
         parser .setTokenList(tokens);

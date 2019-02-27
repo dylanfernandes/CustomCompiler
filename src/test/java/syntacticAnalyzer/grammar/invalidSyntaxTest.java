@@ -36,4 +36,13 @@ public class invalidSyntaxTest {
         parser.parse();
         assertFalse(parser.isParseGood());
     }
+
+    @Test
+    public void invalidVarArray() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { Blob id[id]; };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isParseGood());
+    }
 }
