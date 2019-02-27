@@ -87,11 +87,10 @@ public class validSyntaxTest {
         assertTrue(parser.isParseGood());
     }
 
-    @Ignore
     @Test
     public void validForProgram() {
         List<Token> tokens = lexerDriver.getTokensFromInput("main { \n" +
-                "for(id = id; id < id; id+1);\n" +
+                "for(id id = id; id < id; id = id);\n" +
                 "};");
         parser .setTokenList(tokens);
 
