@@ -17,8 +17,6 @@ classExOpt -> EPSILON
 classExMoreRep -> ',' 'id' classExMoreRep
 classExMoreRep -> EPSILON
 
-varDeclRep -> varDecl varDeclRep
-varDeclRep -> EPSILON
 
 funcDeclRep -> funcDecl funcDeclRep
 funcDeclRep -> EPSILON
@@ -51,7 +49,6 @@ varDeclId -> 'id' varDeclNext
 
 assignStatEnd -> assignOp expr ';'
 
-varDecl -> type 'id' varDeclNext 
 varDeclNotId -> typeNotId 'id' varDeclNext 
 varDeclNext -> arraySizeRep ';'
 
@@ -96,9 +93,6 @@ factor -> varOrFuncCall
  varOrFuncCallNext -> varIndice | '(' varFuncParams | '.' varStart | EPSILON
  varFuncParams ->  aParams ')' varFuncParamsNext
  varFuncParamsNext -> '.' varOrFuncCall | EPSILON
- varFuncIndice -> indice varIndiceNext
- varFuncIndiceNext -> varIndice | varIndiceNextNext
- varFuncIndiceNextNext -> '.' varStart | EPSILON
 
  varStart -> 'id' varNext
  varNext -> varIndice | '(' varAParams | '.' varStart | EPSILON
@@ -109,15 +103,11 @@ factor -> varOrFuncCall
  
  type -> typeNotId | 'id'
  typeNotId -> 'integer' | 'float' 
- 
- idnestRep -> idnest idnestRep
-idnestRep -> EPSILON
+
 
 indiceRep -> indice indiceRep
 indiceRep -> EPSILON
 
-idnest -> 'id' idnestTwo 
-idnestTwo -> indiceRep '.' | '(' aParams ')' '.' 
 
 indice -> '[' arithExpr ']'
 
