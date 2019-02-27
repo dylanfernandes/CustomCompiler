@@ -71,9 +71,10 @@ statementRep -> EPSILON
  
  statBlock -> '{' statementRep '}' | statement | EPSILON 
  
- expr -> arithExpr | relExpr 
+ expr -> arithExpr exprNext 
+ exprNext -> relOp arithExpr | EPSILON
 
-relExpr -> EPSILON | relOp arithExpr relExpr
+relExpr -> arithExpr relOp arithExpr
 arithExpr -> term arithExprPrime
 arithExprPrime -> EPSILON | addOp term arithExprPrime
 
