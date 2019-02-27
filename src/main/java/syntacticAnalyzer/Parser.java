@@ -1,7 +1,5 @@
 package syntacticAnalyzer;
 
-import com.sun.org.apache.regexp.internal.RE;
-import jdk.nashorn.internal.runtime.regexp.joni.constants.OPCode;
 import lexer.Token;
 
 import java.util.Arrays;
@@ -700,7 +698,7 @@ public class Parser {
         } else if(match(Token.TokenType.FOR) && match(Token.TokenType.OPAR) && type() && match(Token.TokenType.ID) && assignOp() && expr() && relExpr() && match(Token.TokenType.SEMI) && assignStat() && match(Token.TokenType.CPAR) && statBlock() &&match (Token.TokenType.SEMI)) {
             addToSyntax("statement -> 'for' '(' type 'id' assignOp expr ';' relExpr ';' assignStat ')' statBlock ';'");
             return true;
-        } else if(match(Token.TokenType.READ) && match(Token.TokenType.OPAR) && variable() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI)) {
+        } else if(match(Token.TokenType.READ) && match(Token.TokenType.OPAR) && varStart() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI)) {
             addToSyntax("statement -> 'read' '(' variable ')' ';'");
             return true;
         } else if(match(Token.TokenType.WRITE) && match(Token.TokenType.OPAR) && expr() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI)) {
@@ -713,15 +711,50 @@ public class Parser {
         return false;
     }
 
-    private boolean variable() {
-        return false;
-    }
 
     private boolean assignStat() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(varStart() && assignOp() && expr()) {
+            addToSyntax("assignStat -> varStart assignOp expr");
+            return true;
+        }
         return false;
     }
 
     private boolean statBlock() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OBRA, Token.TokenType.FOR, Token.TokenType.IF, Token.TokenType.READ, Token.TokenType.RETURN, Token.TokenType.WRITE, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.SEMI, Token.TokenType.ELSE))) {
+            return false;
+        }
+
+        if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.ELSE))) {
+            addToSyntax("statBlock -> EPSILON");
+            return true;
+        } else if (match(Token.TokenType.OBRA) && statementRep() && match(Token.TokenType.CBRA)) {
+            addToSyntax("statBlock -> '{' statementRep '}'");
+            return true;
+        } else if(statement()) {
+            addToSyntax("statBlock -> statement");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean statementRep() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.FOR, Token.TokenType.IF, Token.TokenType.READ, Token.TokenType.RETURN, Token.TokenType.WRITE, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.CBRA))) {
+            return false;
+        }
+
+        if(peekMatch(Token.TokenType.CBRA)) {
+            addToSyntax("statementRep -> EPSILON");
+            return true;
+        } else if(statement() && statementRep()) {
+            addToSyntax("statementRep -> statement statementRep");
+            return true;
+        }
+
         return false;
     }
 

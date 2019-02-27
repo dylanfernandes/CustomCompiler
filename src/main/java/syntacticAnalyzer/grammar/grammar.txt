@@ -61,7 +61,7 @@ arraySizeRep -> EPSILON
 
 statement -> 'if' '(' expr ')' 'then' statBlock 'else' statBlock ';'
  | 'for' '(' type 'id' assignOp expr ';' relExpr ';' assignStat ')' statBlock ';'
- | 'read' '(' variable ')' ';'
+ | 'read' '(' varStart')' ';'
  | 'write' '(' expr ')' ';'
  | 'return' '(' expr ')' ';' 
  
@@ -70,7 +70,7 @@ statementRep -> EPSILON
  
  arraySize -> '[' 'intNum' ']'
  
- assignStat -> variable assignOp expr
+ assignStat -> varStart assignOp expr
  
  statBlock -> '{' statementRep '}' | statement | EPSILON 
  
@@ -100,7 +100,6 @@ factor -> varOrFuncCall
  varFuncIndiceNext -> varIndice | varIndiceNextNext
  varFuncIndiceNextNext -> '.' varStart | EPSILON
 
- variable -> varStart
  varStart -> 'id' varNext
  varNext -> varIndice | '(' varAParams | '.' varStart | EPSILON
  varIndice -> indice varIndiceNext
