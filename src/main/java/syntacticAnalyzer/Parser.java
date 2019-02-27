@@ -1,5 +1,7 @@
 package syntacticAnalyzer;
 
+import com.sun.org.apache.regexp.internal.RE;
+import jdk.nashorn.internal.runtime.regexp.joni.constants.OPCode;
 import lexer.Token;
 
 import java.util.Arrays;
@@ -688,6 +690,38 @@ public class Parser {
     }
 
     private boolean statement() {
+        if(!skipErrors(Arrays.asList(Token.TokenType.WRITE, Token.TokenType.RETURN, Token.TokenType.READ, Token.TokenType.IF, Token.TokenType.FOR), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(match(Token.TokenType.IF) && match(Token.TokenType.OPAR) && expr() && match(Token.TokenType.CPAR) && match(Token.TokenType.THEN) && statBlock() && match(Token.TokenType.ELSE) && statBlock()) {
+            addToSyntax("statement -> 'if' '(' expr ')' 'then' statBlock 'else' statBlock ';'");
+            return true;
+        } else if(match(Token.TokenType.FOR) && match(Token.TokenType.OPAR) && type() && match(Token.TokenType.ID) && assignOp() && expr() && relExpr() && match(Token.TokenType.SEMI) && assignStat() && match(Token.TokenType.CPAR) && statBlock() &&match (Token.TokenType.SEMI)) {
+            addToSyntax("statement -> 'for' '(' type 'id' assignOp expr ';' relExpr ';' assignStat ')' statBlock ';'");
+            return true;
+        } else if(match(Token.TokenType.READ) && match(Token.TokenType.OPAR) && variable() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI)) {
+            addToSyntax("statement -> 'read' '(' variable ')' ';'");
+            return true;
+        } else if(match(Token.TokenType.WRITE) && match(Token.TokenType.OPAR) && expr() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI)) {
+            addToSyntax("'write' '(' expr ')' ';'");
+            return  true;
+        } else if(match(Token.TokenType.READ) && match(Token.TokenType.OPAR) && expr() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI)) {
+            addToSyntax("'read' '(' expr ')' ';'");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean variable() {
+        return false;
+    }
+
+    private boolean assignStat() {
+        return false;
+    }
+
+    private boolean statBlock() {
         return false;
     }
 
