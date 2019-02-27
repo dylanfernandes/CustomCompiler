@@ -45,4 +45,16 @@ public class invalidSyntaxTest {
         parser.parse();
         assertFalse(parser.isParseGood());
     }
+
+    @Test
+    public void invalidFuncDefSrProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("Blob Bar test(){}; main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        //error in syntax found
+        assertTrue(parser.isFoundError());
+        //compiler recovered from error
+        assertTrue(parser.isParseGood());
+    }
 }

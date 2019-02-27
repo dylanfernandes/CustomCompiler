@@ -12,12 +12,14 @@ public class Parser {
     private int position;
     private Token lookahead;
     private String syntax;
-    boolean parseGood;
+    private boolean parseGood;
+    private boolean foundError;
 
     public Parser() {
         position = 0;
         syntax = "";
         parseGood = false;
+        foundError = false;
     }
 
     public Parser(List<Token> tokens) {
@@ -36,6 +38,10 @@ public class Parser {
 
     public boolean isParseGood() {
         return parseGood;
+    }
+
+    public boolean isFoundError() {
+        return foundError;
     }
 
     private boolean hasNextToken() {
@@ -59,6 +65,7 @@ public class Parser {
             } else {
                 if(write) {
                     addToSyntax("Syntax error at line: " + lookahead.getLineNumber());
+                    foundError = true;
                     //if in follow, current production not good, can get epsilon if in first in parse method
                     while (!first.contains(lookahead.getType()) && !follow.contains(lookahead.getType())) {
                         lookahead = nextToken();

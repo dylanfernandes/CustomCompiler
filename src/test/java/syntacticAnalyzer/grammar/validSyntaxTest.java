@@ -150,6 +150,15 @@ public class validSyntaxTest {
     }
 
     @Test
+    public void validFuncDefVarDeclProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("Blob test(integer test){float test2 = test;}; main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
     public void validFuncDefSrProgram() {
         List<Token> tokens = lexerDriver.getTokensFromInput("Blob Bar :: test(){}; main { };");
         parser .setTokenList(tokens);
