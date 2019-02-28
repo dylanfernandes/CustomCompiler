@@ -4,8 +4,9 @@ Custom compiler written in Java
 
 ## Lexer
 - Code located in `src/main/java/lexer`
-- Test located in `src/test/java/lexer`
+- Tests located in `src/test/java/lexer`
 
 ## Syntactic Analyzer 
+- Grammar located in `src/main/java/syntacticAnalyzer/grammar/grammar.txt`
 - Code located in `src/main/java/syntacticAnalyzer`
-- Test located in `src/test/java/syntacticAnalyzer`
+- Tests located in `src/test/java/syntacticAnalyzer`
