@@ -276,7 +276,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
-        //assertFalse(parser.isFoundError());
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 }

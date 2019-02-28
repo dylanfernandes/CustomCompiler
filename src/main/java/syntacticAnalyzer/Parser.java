@@ -706,7 +706,7 @@ public class Parser {
         if(match(Token.TokenType.IF) && match(Token.TokenType.OPAR) && expr() && match(Token.TokenType.CPAR) && match(Token.TokenType.THEN) && statBlock() && match(Token.TokenType.ELSE) && statBlock() && match(Token.TokenType.SEMI)) {
             addToSyntax("statement -> 'if' '(' expr ')' 'then' statBlock 'else' statBlock ';'");
             return true;
-        } else if(match(Token.TokenType.FOR) && match(Token.TokenType.OPAR) && type() && match(Token.TokenType.ID) && assignOp() && expr() && relExpr() && match(Token.TokenType.SEMI) && assignStat() && match(Token.TokenType.CPAR) && statBlock() &&match (Token.TokenType.SEMI)) {
+        } else if(match(Token.TokenType.FOR) && match(Token.TokenType.OPAR) && type() && match(Token.TokenType.ID) && assignOp() && expr() && match(Token.TokenType.SEMI) && relExpr() && match(Token.TokenType.SEMI) && assignStat() && match(Token.TokenType.CPAR) && statBlock() && match(Token.TokenType.SEMI)) {
             addToSyntax("statement -> 'for' '(' type 'id' assignOp expr ';' relExpr ';' assignStat ')' statBlock ';'");
             return true;
         } else if(match(Token.TokenType.READ) && match(Token.TokenType.OPAR) && varStart() && match(Token.TokenType.CPAR) && match(Token.TokenType.SEMI)) {
