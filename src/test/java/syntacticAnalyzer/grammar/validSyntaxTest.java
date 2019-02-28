@@ -11,6 +11,7 @@ import syntacticAnalyzer.Parser;
 
 import java.util.List;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -31,6 +32,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -41,6 +43,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -51,6 +54,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -62,6 +66,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -72,6 +77,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -82,6 +88,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -94,6 +101,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -104,6 +112,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -119,6 +128,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -128,6 +138,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -137,6 +148,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -146,6 +158,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -155,6 +168,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        //assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -164,6 +178,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -173,6 +188,27 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validlIdNestProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { test.(test2) = test3; };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        //assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validlIdNestTailProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { test.(test2, test4) = test3; };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        //assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -182,6 +218,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -192,6 +229,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -201,6 +239,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -210,6 +249,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -224,6 +264,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
@@ -235,6 +276,7 @@ public class validSyntaxTest {
         parser .setTokenList(tokens);
 
         parser.parse();
+        //assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 }
