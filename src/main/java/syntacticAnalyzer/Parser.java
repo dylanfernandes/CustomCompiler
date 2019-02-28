@@ -30,6 +30,9 @@ public class Parser {
         }
     }
 
+    public String getSyntax() {
+        return syntax;
+    }
 
     public void setTokenList(List<Token> tokenList) {
         this.tokenList = tokenList;

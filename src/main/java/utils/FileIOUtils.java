@@ -21,12 +21,12 @@ public class FileIOUtils {
         return content;
     }
 
-    public static boolean writeOutput(String content, String output) {
+    public static boolean writeOutput(String content, String outputLocation) {
         Writer writer = null;
 
         try {
             writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(output), "utf-8"));
+                    new FileOutputStream(outputLocation), "utf-8"));
             writer.write(content);
         } catch (IOException ex) {
             // Report
