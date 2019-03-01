@@ -2,27 +2,27 @@ package syntacticAnalyzer.AST;
 
 import lexer.Token;
 
-public class ASTNode {
+abstract public class ASTNode {
     private ASTNode parent;
     private ASTNode rightSibling;
     private ASTNode firstSibling;
     private ASTNode firstChild;
-    private Token value;
 
-    public ASTNode(Token value, ASTNode parent, ASTNode rightSibling, ASTNode firstSibling, ASTNode firstChild) {
-        this.value = value;
+    abstract public String getValue();
+
+    public ASTNode( ASTNode parent, ASTNode rightSibling, ASTNode firstSibling, ASTNode firstChild) {
         this.parent = parent;
         this.rightSibling = rightSibling;
         this.firstSibling = firstSibling;
         this.firstChild = firstChild;
     }
 
-    public ASTNode(Token value) {
-        this.value = value;
+    public ASTNode() {
         this.parent = null;
         this.rightSibling = null;
         this.firstSibling = null;
     }
+
 
     public ASTNode getParent() {
         return parent;
@@ -48,13 +48,6 @@ public class ASTNode {
         this.firstSibling = firstSibling;
     }
 
-    public Token getValue() {
-        return value;
-    }
-
-    public void setValue(Token value) {
-        this.value = value;
-    }
 
     public ASTNode getFirstChild() {
         return firstChild;
