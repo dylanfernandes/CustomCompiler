@@ -12,9 +12,9 @@ public class ASTNodeTest {
         Token r1 = new Token(Token.TokenType.IF, "IF", 1);
         Token t1 = new Token(Token.TokenType.ID, "TEST", 1);
         Token t2 = new Token(Token.TokenType.INT, "123", 1);
-        ASTNode root = new TokenASTNode(r1);
-        ASTNode sibling1 = new TokenASTNode(t1);
-        ASTNode sibling2 = new TokenASTNode(t2);
+        ASTNode root = ASTNodeFactory.getASTNode(r1);
+        ASTNode sibling1 = ASTNodeFactory.getASTNode(t1);
+        ASTNode sibling2 = ASTNodeFactory.getASTNode(t2);
 
         sibling1.makeSiblings(sibling2);
         root.adoptChildren(sibling1);
@@ -33,8 +33,8 @@ public class ASTNodeTest {
     public void makeSiblings() {
         Token t1 = new Token(Token.TokenType.ID, "TEST", 1);
         Token t2 = new Token(Token.TokenType.INT, "123", 1);
-        ASTNode sibling1 = new TokenASTNode(t1);
-        ASTNode sibling2 = new TokenASTNode(t2);
+        ASTNode sibling1 = ASTNodeFactory.getASTNode(t1);
+        ASTNode sibling2 = ASTNodeFactory.getASTNode(t2);
 
         sibling1.makeSiblings(sibling2);
         assertEquals(null, sibling1.getFirstChild());
@@ -47,9 +47,9 @@ public class ASTNodeTest {
         Token r1 = new Token(Token.TokenType.IF, "IF", 1);
         Token t1 = new Token(Token.TokenType.ID, "TEST", 1);
         Token t2 = new Token(Token.TokenType.INT, "123", 1);
-        ASTNode root = new TokenASTNode(r1);
-        ASTNode sibling1 = new TokenASTNode(t1);
-        ASTNode sibling2 = new TokenASTNode(t2);
+        ASTNode root = ASTNodeFactory.getASTNode(r1);
+        ASTNode sibling1 = ASTNodeFactory.getASTNode(t1);
+        ASTNode sibling2 = ASTNodeFactory.getASTNode(t2);
 
         root.makeFamily(sibling1, sibling2);
 
