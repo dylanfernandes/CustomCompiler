@@ -1,6 +1,8 @@
 package syntacticAnalyzer;
 
 import lexer.Token;
+import syntacticAnalyzer.AST.ASTNode;
+import syntacticAnalyzer.AST.ASTNodeFactory;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,12 +16,14 @@ public class Parser {
     private String syntax;
     private boolean parseGood;
     private boolean foundError;
+    private ASTNode root;
 
     public Parser() {
         position = 0;
         syntax = "";
         parseGood = false;
         foundError = false;
+        root = null;
     }
 
     public Parser(List<Token> tokens) {
@@ -123,12 +127,18 @@ public class Parser {
 
 
     public boolean prog() {
+        root = ASTNodeFactory.getASTNode("prog");
+        ASTNode classDeclRep = ASTNodeFactory.getASTNode("classDeclRep");
+        ASTNode funcDefRep = ASTNodeFactory.getASTNode("funcDefRep");
+        ASTNode funcBody = ASTNodeFactory.getASTNode("funcBody");
+
         if(!skipErrors(Arrays.asList(Token.TokenType.INTEGER, Token.TokenType.FLOAT, Token.TokenType.CLASS, Token.TokenType.ID, Token.TokenType.MAIN), Collections.<Token.TokenType>emptyList())) {
             return false;
         }
 
-        if (classDeclRep() && funcDefRep() && match(Token.TokenType.MAIN) && funcBody() && match(Token.TokenType.SEMI)) {
+        if (classDeclRep(classDeclRep) && funcDefRep(funcDefRep) && match(Token.TokenType.MAIN) && funcBody(funcBody) && match(Token.TokenType.SEMI)) {
             addToSyntax("prog -> classDeclRep funcDefRep 'main' funcBody ';'");
+            root.makeFamily(classDeclRep, ASTNodeFactory.getASTNode("MAIN"),funcDefRep, funcBody, ASTNodeFactory.getASTNode("SEMI"));
             return true;
         }
         return false;
@@ -773,15 +783,20 @@ public class Parser {
     }
 
 
-    private boolean funcDefRep() {
+    private boolean funcDefRep(ASTNode funcDefRepNode) {
         if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.ID, Token.TokenType.INTEGER, Token.TokenType.FLOAT), Arrays.asList(Token.TokenType.MAIN))){
             return false;
         }
+        ASTNode funcDef = ASTNodeFactory.getASTNode("funcDef");
+        ASTNode funcDefRepNodePrime = ASTNodeFactory.getASTNode("funcDefRepNodePrime");
         if(peekMatch(Token.TokenType.MAIN)) {
             addToSyntax("funcDefRep -> EPSILON");
+            funcDefRepNode.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
-        } else if(funcDef() && funcDefRep()) {
+        } else if(funcDef(funcDef) && funcDefRep(funcDefRepNodePrime)) {
             addToSyntax("funcDefRep -> funcDef funcDefRep");
+            funcDef.makeSiblings(funcDefRepNode);
+            funcDefRepNode.adoptChildren(funcDef);
             return true;
         }
 
@@ -828,15 +843,16 @@ public class Parser {
     }
 
 
-    public boolean classDeclRep() {
+    public boolean classDeclRep(ASTNode classDeclRepNode) {
         if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.CLASS), Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.MAIN))) {
             return false;
         }
 
         if(peekMatch(Token.TokenType.ID) || peekMatch(Token.TokenType.FLOAT) || peekMatch(Token.TokenType.INTEGER) || peekMatch(Token.TokenType.MAIN)){
             addToSyntax("classDeclRep -> EPSILON");
+            classDeclRepNode.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
-        }else if(classDecl() && classDeclRep()) {
+        }else if(classDecl() && classDeclRep(classDeclRepNode)) {
             addToSyntax("classDeclRep -> classDecl classDeclRep");
             return true;
         }
