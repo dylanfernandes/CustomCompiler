@@ -62,4 +62,19 @@ public class ASTNodeTest {
         assertEquals(sibling1, sibling2.getFirstChild());
         assertEquals(sibling2, sibling1.getRightSibling());
     }
+
+    @Test
+    public void getTokenValue() {
+        Token t1 = new Token(Token.TokenType.IF, "test", 1);
+        ASTNode node = ASTNodeFactory.getASTNode(t1);
+        assertEquals("IF", node.getValue());
+    }
+
+    @Test
+    public void getTokenToken() {
+        Token t1 = new Token(Token.TokenType.IF, "test", 1);
+        ASTNode node = ASTNodeFactory.getASTNode(t1);
+        TokenASTNode tokenASTNode = (TokenASTNode) node;
+        assertEquals(t1, tokenASTNode.getToken());
+    }
 }
