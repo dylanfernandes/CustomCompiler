@@ -100,7 +100,8 @@ factor -> varOrFuncCall
  varIndice -> indice varIndiceNext
  varIndiceNext -> varIndice | varIndiceNextNext
  varIndiceNextNext -> '.' varStart | EPSILON
- varAParams ->  aParams ')' '.' varStart
+ varAParams ->  aParams ')' varAParamsNext
+ varAParamsNext -> '.' varStart | EPSILON
  
  type -> typeNotId | 'id'
  typeNotId -> 'integer' | 'float' 
@@ -119,7 +120,7 @@ fParams -> type 'id' arraySizeRep fParamsTailRep | EPSILON
 fParamsTailRep -> fParamsTail fParamsTailRep
 fParamsTailRep -> EPSILON
 
-aParams -> expr aParamsTailRep
+aParams -> expr aParamsTailRep | EPSILON
 
 aParamsTailRep -> aParamsTail aParamsTailRep
 aParamsTailRep -> EPSILON
