@@ -35,7 +35,7 @@ funcBody -> '{' varDeclStatFuncRep '}'
 
 varDeclStatFuncRep -> varDeclNotId varDeclStatFuncRep 
 | idProd varDeclStatFuncRep
-| statement varDeclStatFuncRep
+| statementNoId varDeclStatFuncRep
 
 varDeclStatFuncRep -> EPSILON
 
@@ -43,7 +43,7 @@ idProd -> 'id' idProdNext
 idProdNext -> varDeclId | oldVarEndNest | '(' aParams ')' '.' idProd 
 
 oldVarEndNest -> indiceRep oldVarEndNestNext 
-oldVarEndNestNext -> assignStatEnd | '.' idProd
+oldVarEndNestNext -> assignStatEnd | '.' idProd | ';'
 
 varDeclId -> 'id' varDeclNext
 
@@ -56,7 +56,9 @@ varDeclNext -> arraySizeRep ';'
 arraySizeRep -> arraySize arraySizeRep
 arraySizeRep -> EPSILON
 
-statement -> 'if' '(' expr ')' 'then' statBlock 'else' statBlock ';'
+statement -> statementNoId | statementId
+statementId -> assignStat ';'
+statementNoId -> 'if' '(' expr ')' 'then' statBlock 'else' statBlock ';'
  | 'for' '(' type 'id' assignOp expr ';' relExpr ';' assignStat ')' statBlock ';'
  | 'read' '(' varStart')' ';'
  | 'write' '(' expr ')' ';'
@@ -64,8 +66,6 @@ statement -> 'if' '(' expr ')' 'then' statBlock 'else' statBlock ';'
  
  statementRep -> statement statementRep
 statementRep -> EPSILON
- 
- arraySize -> '[' 'intNum' ']'
  
  assignStat -> varStart assignOp expr
  
