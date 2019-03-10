@@ -348,7 +348,7 @@ public class ParserAST {
 //            currentRoot.makeFamily(typeNode, ASTNodeFactory.getASTNode(id), ASTNodeFactory.getASTNode(opar), fParamsNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(semi));
 //            return true;
 //        }
-//        return false;
+        return false;
     }
 
 
