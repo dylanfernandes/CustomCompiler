@@ -154,6 +154,28 @@ public class ParserAST {
             return false;
     }
 
+    public boolean classDeclRep(ASTNode currentRoot) {
+        ASTNode classDeclNode = ASTNodeFactory.getASTNode("classDecl");
+        ASTNode classDeclRepNode = ASTNodeFactory.getASTNode("classDeclRep");
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.CLASS), Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.MAIN))) {
+            return false;
+        }
+
+        if(peekMatch(Token.TokenType.ID) || peekMatch(Token.TokenType.FLOAT) || peekMatch(Token.TokenType.INTEGER) || peekMatch(Token.TokenType.MAIN)){
+            currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
+            addToSyntax("classDeclRep -> EPSILON");
+            return true;
+        }else if(classDecl(classDeclNode) && classDeclRep(classDeclRepNode)) {
+            currentRoot.makeFamily(classDeclNode, classDeclRepNode);
+            addToSyntax("classDeclRep -> classDecl classDeclRep");
+            return true;
+        }
+        return false;
+    }
+
+
+
     public boolean classDecl(ASTNode classDeclNode) {
         Token classT = new Token();
         Token id = new Token();
@@ -176,25 +198,26 @@ public class ParserAST {
         return false;
     }
 
-    public boolean classDeclRep(ASTNode currentRoot) {
-        ASTNode classDeclNode = ASTNodeFactory.getASTNode("classDecl");
-        ASTNode classDeclRepNode = ASTNodeFactory.getASTNode("classDeclRep");
+    private boolean funcDefRep(ASTNode currentRoot) {
+        ASTNode funcDefNode = ASTNodeFactory.getASTNode("funcDef");
+        ASTNode funcDefRepNode = ASTNodeFactory.getASTNode("funcDefRep");
 
-        if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.CLASS), Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.MAIN))) {
+        if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.ID, Token.TokenType.INTEGER, Token.TokenType.FLOAT), Arrays.asList(Token.TokenType.MAIN))){
             return false;
         }
+//        if(peekMatch(Token.TokenType.MAIN)) {
+//            addToSyntax("funcDefRep -> EPSILON");
+//            currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
+//            return true;
+//        } else if(funcDef(funcDefNode) && funcDefRep(funcDefRepNode)) {
+//            addToSyntax("funcDefRep -> funcDef funcDefRep");
+//            currentRoot.makeFamily(funcDefNode, funcDefRepNode);
+//            return true;
+//        }
 
-        if(peekMatch(Token.TokenType.ID) || peekMatch(Token.TokenType.FLOAT) || peekMatch(Token.TokenType.INTEGER) || peekMatch(Token.TokenType.MAIN)){
-            currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
-            addToSyntax("classDeclRep -> EPSILON");
-            return true;
-        }else if(classDecl(classDeclNode) && classDeclRep(classDeclRepNode)) {
-            currentRoot.makeFamily(classDeclNode, classDeclRepNode);
-            addToSyntax("classDeclRep -> classDecl classDeclRep");
-            return true;
-        }
         return false;
     }
+
 
     private boolean funcBody(ASTNode currentRoot) {
         ASTNode varDeclStatFuncRepNode = ASTNodeFactory.getASTNode("varDeclStatFuncRep");
