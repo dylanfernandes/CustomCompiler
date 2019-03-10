@@ -309,6 +309,48 @@ public class ParserAST {
         return false;
     }
 
+    private boolean funcDeclRep(ASTNode currentRoot) {
+        ASTNode funcDeclNode = ASTNodeFactory.getASTNode("funcDecl");
+        ASTNode funcDeclRepNode = ASTNodeFactory.getASTNode("funcDeclRep");
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.CBRA))) {
+            return false;
+        }
+
+//        if (peekMatch(Token.TokenType.CBRA)) {
+//            addToSyntax("funcDeclRep -> EPSILON");
+//            currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
+//            return true;
+//        }else if (funcDecl(funcDeclNode) && funcDeclRep(funcDeclRepNode)) {
+//            addToSyntax("funcDeclRep -> funcDecl funcDeclRep");
+//            currentRoot.makeFamily(funcDeclNode, funcDeclRepNode);
+//            return true;
+//        }
+
+        return false;
+    }
+
+    private boolean funcDecl(ASTNode currentRoot) {
+        Token id = new Token();
+        Token opar = new Token();
+        Token cpar = new Token();
+        Token semi = new Token();
+
+        ASTNode typeNode = ASTNodeFactory.getASTNode("type");
+        ASTNode fParamsNode = ASTNodeFactory.getASTNode("fParams");
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.EPSILON), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(type(typeNode) && matchAndSave(Token.TokenType.ID, id) && matchAndSave(Token.TokenType.OPAR, opar) && fParams(fParamsNode) && matchAndSave(Token.TokenType.CPAR, cpar) && matchAndSave(Token.TokenType.SEMI, semi)) {
+//            addToSyntax("funcDecl -> type 'id' '(' fParams ')' ';' ");
+//            currentRoot.makeFamily(typeNode, ASTNodeFactory.getASTNode(id), ASTNodeFactory.getASTNode(opar), fParamsNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(semi));
+//            return true;
+//        }
+//        return false;
+    }
+
 
     private boolean funcBody(ASTNode currentRoot) {
         ASTNode varDeclStatFuncRepNode = ASTNodeFactory.getASTNode("varDeclStatFuncRep");
