@@ -153,4 +153,63 @@ public class ParserAST {
 //        }
             return false;
     }
+
+    public boolean classDecl(ASTNode classDeclNode) {
+        Token classT = new Token();
+        Token id = new Token();
+        Token oBra = new Token();
+        Token cBra = new Token();
+        Token semi = new Token();
+
+        ASTNode classExOptNode = ASTNodeFactory.getASTNode("classExOpt");
+        ASTNode varOrFuncCheckNode = ASTNodeFactory.getASTNode("varOrFuncCheck");
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.CLASS), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+//        if(matchAndSave(Token.TokenType.CLASS, classT) && matchAndSave(Token.TokenType.ID, id) && classExOpt(classExOptNode) && matchAndSave(Token.TokenType.OBRA, oBra) && varOrFuncCheck(varOrFuncCheckNode) && matchAndSave(Token.TokenType.CBRA, cBra) && matchAndSave(Token.TokenType.SEMI, semi)) {
+//
+//            addToSyntax("classDecl -> 'class' 'id' classExOpt '{' varOrFuncCheck '}' ';'");
+//            classDeclNode.makeFamily(ASTNodeFactory.getASTNode(classT), ASTNodeFactory.getASTNode(id), classExOptNode, ASTNodeFactory.getASTNode(oBra), varOrFuncCheckNode, ASTNodeFactory.getASTNode(cBra), ASTNodeFactory.getASTNode(semi));
+//            return true;
+//        }
+        return false;
+    }
+
+    public boolean classDeclRep(ASTNode currentRoot) {
+        ASTNode classDeclNode = ASTNodeFactory.getASTNode("classDecl");
+        ASTNode classDeclRepNode = ASTNodeFactory.getASTNode("classDeclRep");
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.CLASS), Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.MAIN))) {
+            return false;
+        }
+
+        if(peekMatch(Token.TokenType.ID) || peekMatch(Token.TokenType.FLOAT) || peekMatch(Token.TokenType.INTEGER) || peekMatch(Token.TokenType.MAIN)){
+            currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
+            addToSyntax("classDeclRep -> EPSILON");
+            return true;
+        }else if(classDecl(classDeclNode) && classDeclRep(classDeclRepNode)) {
+            currentRoot.makeFamily(classDeclNode, classDeclRepNode);
+            addToSyntax("classDeclRep -> classDecl classDeclRep");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean funcBody(ASTNode currentRoot) {
+        ASTNode varDeclStatFuncRepNode = ASTNodeFactory.getASTNode("varDeclStatFuncRep");
+        Token oBra = new Token();
+        Token cBra = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.OBRA), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(matchAndSave(Token.TokenType.OBRA, oBra) && varDeclStatFuncRep(varDeclStatFuncRepNode) && matchAndSave(Token.TokenType.CBRA,cBra)) {
+//            addToSyntax("funcBody -> '{' varDeclStatFuncRep '}'");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(oBra), varDeclStatFuncRepNode, ASTNodeFactory.getASTNode(cBra));
+//            return true;
+//        }
+        return false;
+    }
 }
