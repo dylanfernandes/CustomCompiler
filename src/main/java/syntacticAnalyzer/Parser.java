@@ -100,6 +100,15 @@ public class Parser {
         return  false;
     }
 
+    public boolean matchAndSave( Token.TokenType expectedTokenType, Token storageToken) {
+        if(lookahead != null && lookahead.getType() == expectedTokenType) {
+            storageToken.setToken(lookahead);
+            lookahead = nextToken();
+            return true;
+        }
+        return  false;
+    }
+
     public boolean peekListMatch(List<Token.TokenType> tokenTypes) {
         return lookahead != null && tokenTypes.contains(lookahead.getType());
     }

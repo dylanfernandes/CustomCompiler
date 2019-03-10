@@ -42,6 +42,21 @@ public class ParserTest {
     }
 
     @Test
+    public void matchAndSave() {
+        List<Token> tokens = new ArrayList<Token>();
+        Token aToken = new Token(Token.TokenType.ID, "test", 1);
+        Token storage = new Token();
+        tokens.add(aToken);
+        Parser parser = new Parser(tokens);
+        assertTrue(parser.matchAndSave(Token.TokenType.ID, storage));
+        //increases position
+        assertTrue(aToken.getType() == storage.getType());
+        assertTrue(aToken.getLexeme() == storage.getLexeme());
+        assertTrue(aToken.getLineNumber() == storage.getLineNumber());
+        assertFalse(parser.match(Token.TokenType.ID));
+    }
+
+    @Test
     public void peekMatch() {
         List<Token> tokens = new ArrayList<Token>();
         Token aToken = new Token(Token.TokenType.ID, "test", 1);
