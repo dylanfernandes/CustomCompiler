@@ -476,4 +476,152 @@ public class ParserAST {
 //        }
         return false;
     }
+
+    private boolean idProdNext(ASTNode currentRoot) {
+        ASTNode aParamsNode = ASTNodeFactory.getASTNode("aParams");
+        ASTNode idProdNode = ASTNodeFactory.getASTNode("idProd");
+        ASTNode varDeclIdNode = ASTNodeFactory.getASTNode("varDeclId");
+        ASTNode oldVarEndNestNode = ASTNodeFactory.getASTNode("oldVarEndNest");
+
+        Token opar = new Token();
+        Token cpar = new Token();
+        Token poin = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID, Token.TokenType.OSBRA, Token.TokenType.POIN, Token.TokenType.ASSGN, Token.TokenType.OPAR, Token.TokenType.SEMI), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(matchAndSave(Token.TokenType.OPAR, opar) && aParams(aParamsNode) && matchAndSave(Token.TokenType.CPAR, cpar) && matchAndSave(Token.TokenType.POIN, poin) && idProd(true, idProdNode)) {
+//            addToSyntax("idProdNext -> '(' aParams ')' '.' idProd ");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(opar), aParamsNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(poin), idProdNode);
+//            return  true;
+//        } else if(varDeclId(false, varDeclIdNode)) {
+//            addToSyntax("idProdNext -> varDeclId");
+//            currentRoot.makeFamily(varDeclIdNode);
+//            return  true;
+//        }
+//        else if(oldVarEndNest(oldVarEndNestNode)) {
+//            addToSyntax("idProdNext -> oldVarEndNest");
+//            currentRoot.makeFamily(oldVarEndNestNode);
+//            return  true;
+//        }
+
+        return false;
+    }
+
+    private boolean oldVarEndNest(ASTNode currentRoot) {
+        ASTNode indiceRepNode = ASTNodeFactory.getASTNode("indiceRep");
+        ASTNode oldVarEndNestNextNode = ASTNodeFactory.getASTNode("oldVarEndNestNext");
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.POIN, Token.TokenType.ASSGN, Token.TokenType.SEMI), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(indiceRep(indiceRepNode) && oldVarEndNestNext(oldVarEndNestNextNode)){
+//            addToSyntax("oldVarEndNest -> indiceRep oldVarEndNestNext");
+//            currentRoot.makeFamily(indiceRepNode, oldVarEndNestNextNode);
+//            return true;
+//        }
+        return false;
+    }
+
+    private boolean oldVarEndNestNext(ASTNode currentRoot) {
+        ASTNode idProdNode = ASTNodeFactory.getASTNode("idProd");
+        ASTNode assignStatEndNode = ASTNodeFactory.getASTNode("assignStatEnd");
+
+        Token poin = new Token();
+        Token semi = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.ASSGN, Token.TokenType.POIN), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(matchAndSave(Token.TokenType.SEMI, semi)) {
+//            addToSyntax("oldVarEndNestNext -> ';'");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(semi));
+//            return true;
+//        } else if(matchAndSave(Token.TokenType.POIN, poin) && idProd(true, idProdNode)) {
+//            addToSyntax("oldVarEndNestNext -> '.' idProd");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(poin), idProdNode);
+//            return true;
+//        } else if (assignStatEnd(assignStatEndNode)) {
+//            addToSyntax("oldVarEndNestNext -> assignStatEnd");
+//            return true;
+//        }
+
+        return false;
+    }
+
+    private boolean varDeclId(ASTNode currentRoot) {
+        ASTNode varDeclNextNode = ASTNodeFactory.getASTNode("varDeclNext");
+
+        Token id = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID),Collections.<Token.TokenType>emptyList(), false)) {
+            return false;
+        }
+
+//        if(matchAndSave(Token.TokenType.ID, id) && varDeclNext(varDeclNextNode)) {
+//            addToSyntax("varDeclId -> 'id' varDeclNext");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(id), varDeclNextNode);
+//            return true;
+//        }
+
+        return false;
+    }
+
+    private boolean assignStatEnd(ASTNode currentRoot) {
+        ASTNode assignOpNode = ASTNodeFactory.getASTNode("assignOp");
+        ASTNode exprNode = ASTNodeFactory.getASTNode("expr");
+
+        Token semi = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.ASSGN), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(assignOp(assignOpNode) && expr(exprNode) && matchAndSave(Token.TokenType.SEMI, semi)) {
+//            addToSyntax("assignStatEnd -> assignOp expr ';'");
+//            currentRoot.makeFamily(assignOpNode, exprNode, ASTNodeFactory.getASTNode(semi));
+//            return true;
+//        }
+
+        return false;
+    }
+
+    private boolean varDeclNotId(ASTNode currentRoot) {
+        ASTNode typeNotIdNode = ASTNodeFactory.getASTNode("typeNotId");
+        ASTNode varDeclNextNode = ASTNodeFactory.getASTNode("varDeclNext");
+
+        Token id = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.FLOAT, Token.TokenType.INTEGER), Collections.<Token.TokenType>emptyList(),false)) {
+            return false;
+        }
+
+//        if(typeNotId(typeNotIdNode) && matchAndSave(Token.TokenType.ID, id) && varDeclNext(varDeclNextNode)) {
+//            addToSyntax("varDeclNotId -> typeNotId 'id' varDeclNext");
+//            currentRoot.makeFamily(typeNotIdNode, ASTNodeFactory.getASTNode(id), varDeclNextNode);
+//            return true;
+//        }
+
+        return false;
+    }
+
+    private boolean varDeclNext(ASTNode currentRoot) {
+        ASTNode arraySizeRepNode = ASTNodeFactory.getASTNode("arraySizeRep");
+
+        Token semi = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.SEMI), Collections.<Token.TokenType>emptyList())) {
+            return  false;
+        }
+
+//        if(arraySizeRep(arraySizeRepNode) && matchAndSave(Token.TokenType.SEMI, semi)) {
+//            addToSyntax("varDeclNext -> arraySizeRep ';'");
+//            currentRoot.makeFamily(arraySizeRepNode, ASTNodeFactory.getASTNode(semi));
+//            return  true;
+//        }
+        return false;
+    }
 }
