@@ -730,7 +730,7 @@ public class ParserAST {
         return false;
     }
 
-    private Boolean ifRest(ASTNode currentRoot) {
+    private boolean ifRest(ASTNode currentRoot) {
         ASTNode ifStatBlockNode = ASTNodeFactory.getASTNode("statBlock");
         ASTNode elseStatBlockNode = ASTNodeFactory.getASTNode("statBlock");
         ASTNode exprNode = ASTNodeFactory.getASTNode("expr");
@@ -746,9 +746,36 @@ public class ParserAST {
             return false;
         }
 
-//        if(matchAndSave(Token.TokenType.OPAR, opar) && expr(exprNode) && matchAndSave(Token.TokenType.THEN, thenToken) && statBlock(ifStatBlockNode) && matchAndSave(Token.TokenType.ELSE, elseToken) && statBlock(elseStatBlockNode) && matchAndSave(Token.TokenType.SEMI, semi)){
+//        if(matchAndSave(Token.TokenType.OPAR, opar) && expr(exprNode) && matchAndSave(Token.TokenType.CPAR, cpar) &&matchAndSave(Token.TokenType.THEN, thenToken) && statBlock(ifStatBlockNode) && matchAndSave(Token.TokenType.ELSE, elseToken) && statBlock(elseStatBlockNode) && matchAndSave(Token.TokenType.SEMI, semi)){
 //            addToSyntax("ifRest -> '(' expr ')' 'then' statBlock 'else' statBlock ';'");
 //            currentRoot.makeFamily(ASTNodeFactory.getASTNode(opar), exprNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(thenToken), ifStatBlockNode, ASTNodeFactory.getASTNode(elseToken), elseStatBlockNode,ASTNodeFactory.getASTNode(semi));
+//            return true;
+//        }
+        return false;
+    }
+
+    private Boolean forRest(ASTNode currentRoot) {
+        ASTNode typeNode = ASTNodeFactory.getASTNode("type");
+        ASTNode assignOpNode = ASTNodeFactory.getASTNode("assignOp");
+        ASTNode exprNode = ASTNodeFactory.getASTNode("expr");
+        ASTNode relExprNode = ASTNodeFactory.getASTNode("relExpr");
+        ASTNode assignStatNode = ASTNodeFactory.getASTNode("assignStat");
+        ASTNode statBlockNode = ASTNodeFactory.getASTNode("statBlock");
+
+        Token opar = new Token();
+        Token cpar = new Token();
+        Token semiVar = new Token();
+        Token semiCond = new Token();
+        Token semiEnd = new Token();
+        Token id = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.OPAR), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(matchAndSave(Token.TokenType.OPAR, opar) && type(typeNode) && matchAndSave(Token.TokenType.ID, id) && assignOp(assignOpNode) && expr(exprNode) && matchAndSave(Token.TokenType.SEMI, semiVar) && relExpr(relExprNode) && matchAndSave(Token.TokenType.SEMI, semiCond) && assignStat(assignStatNode) && matchAndSave(Token.TokenType.OPAR, opar) && statBlock(statBlockNode) && matchAndSave(Token.TokenType.SEMI, semiEnd)){
+//            addToSyntax("forRest -> '(' type 'id' assignOp expr ';' relExpr ';' assignStat ')' statBlock ';'");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(opar), typeNode, ASTNodeFactory.getASTNode(id), assignOpNode, exprNode, ASTNodeFactory.getASTNode(semiVar), relExprNode, ASTNodeFactory.getASTNode(semiCond), assignStatNode, ASTNodeFactory.getASTNode(opar), statBlockNode,ASTNodeFactory.getASTNode(semiEnd));
 //            return true;
 //        }
         return false;
