@@ -29,6 +29,7 @@ public class Token {
     private String lexeme;
 
     public Token() {}
+
     public Token(TokenType tokenType, String lexeme, int lineNumber){
         this.type = tokenType;
         this.lexeme = lexeme;
