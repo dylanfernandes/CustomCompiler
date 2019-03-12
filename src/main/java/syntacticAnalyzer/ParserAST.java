@@ -692,7 +692,7 @@ public class ParserAST {
 
         ASTNode ifRestNode = ASTNodeFactory.getASTNode("ifRest");
         ASTNode forRestNode = ASTNodeFactory.getASTNode("forRest");
-        ASTNode varStartNode = ASTNodeFactory.getASTNode("expr");
+        ASTNode varStartNode = ASTNodeFactory.getASTNode("varStart");
         ASTNode exprNode = ASTNodeFactory.getASTNode("expr");
 
         Token opar = new Token();
@@ -725,6 +725,30 @@ public class ParserAST {
 //        } else if(matchAndSave(Token.TokenType.RETURN, reservedWord) && matchAndSave(Token.TokenType.OPAR, opar) && expr(exprNode) && matchAndSave(Token.TokenType.CPAR, cpar) && matchAndSave(Token.TokenType.SEMI, semi)) {
 //            addToSyntax("statementNoId -> 'return' '(' expr ')' ';'");
 //            currentRoot.makeFamily(ASTNodeFactory.getASTNode(reservedWord), ASTNodeFactory.getASTNode(opar),exprNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(semi));
+//            return true;
+//        }
+        return false;
+    }
+
+    private Boolean ifRest(ASTNode currentRoot) {
+        ASTNode ifStatBlockNode = ASTNodeFactory.getASTNode("statBlock");
+        ASTNode elseStatBlockNode = ASTNodeFactory.getASTNode("statBlock");
+        ASTNode exprNode = ASTNodeFactory.getASTNode("expr");
+
+        Token opar = new Token();
+        Token cpar = new Token();
+        Token semi = new Token();
+
+        Token thenToken = new Token();
+        Token elseToken = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.OPAR), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(matchAndSave(Token.TokenType.OPAR, opar) && expr(exprNode) && matchAndSave(Token.TokenType.THEN, thenToken) && statBlock(ifStatBlockNode) && matchAndSave(Token.TokenType.ELSE, elseToken) && statBlock(elseStatBlockNode) && matchAndSave(Token.TokenType.SEMI, semi)){
+//            addToSyntax("ifRest -> '(' expr ')' 'then' statBlock 'else' statBlock ';'");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(opar), exprNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(thenToken), ifStatBlockNode, ASTNodeFactory.getASTNode(elseToken), elseStatBlockNode,ASTNodeFactory.getASTNode(semi));
 //            return true;
 //        }
         return false;
