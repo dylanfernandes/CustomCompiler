@@ -624,4 +624,67 @@ public class ParserAST {
 //        }
         return false;
     }
+
+    private boolean arraySizeRep(ASTNode currentRoot) {
+        return arraySizeRep(true, currentRoot);
+    }
+
+    private boolean arraySizeRep(boolean write, ASTNode currentRoot) {
+        ASTNode arraySizeRepNode = ASTNodeFactory.getASTNode("arraySizeRep");
+        ASTNode arraySizeNode = ASTNodeFactory.getASTNode("arraySize");
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM), write)) {
+            return false;
+        }
+
+//        if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM))) {
+//            addToSyntax("arraySizeRep -> EPSILON");
+//            return true;
+//        } else  if (arraySize(arraySizeNode) && arraySizeRep(arraySizeRepNode)) {
+//            addToSyntax("arraySizeRep -> arraySize arraySizeRep");
+//            currentRoot.makeFamily(arraySizeNode, arraySizeRepNode);
+//            return true;
+//        }
+        return false;
+    }
+
+    private boolean statement(ASTNode currentRoot) {
+        ASTNode statementNoIdNode = ASTNodeFactory.getASTNode("statementNoId");
+        ASTNode statementIdNode = ASTNodeFactory.getASTNode("statementId");
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.WRITE, Token.TokenType.RETURN, Token.TokenType.READ, Token.TokenType.IF, Token.TokenType.FOR, Token.TokenType.ID), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(statementNoId(false, statementNoIdNode)) {
+//            addToSyntax("statement -> statementNoId");
+//            currentRoot.makeFamily(statementNoIdNode);
+//            return true;
+//
+//        } else if (statementId(statementIdNode)) {
+//            addToSyntax("statement -> statementIdNode");
+//            currentRoot.makeFamily(statementIdNode);
+//            return true;
+//        }
+
+        return false;
+    }
+
+    private boolean statementId(ASTNode currentRoot) {
+        ASTNode assignStatNode = ASTNodeFactory.getASTNode("assignStat");
+
+        Token semi = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(assignStat(assignStatNode) && matchAndSave(Token.TokenType.SEMI, semi)) {
+//            addToSyntax("statementId -> assignStat");
+//            currentRoot.makeFamily(assignStatNode, ASTNodeFactory.getASTNode(semi));
+//            return true;
+//        }
+
+        return false;
+    }
 }
