@@ -898,4 +898,80 @@ public class ParserAST {
 //        }
         return false;
     }
+
+    private boolean relExpr(ASTNode currentRoot) {
+        ASTNode relOpNode = ASTNodeFactory.getASTNode("relOp");
+        ASTNode arithExprStartNode = ASTNodeFactory.getASTNode("arithExpr");
+        ASTNode arithExprEndNode = ASTNodeFactory.getASTNode("arithExpr");
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.OPAR, Token.TokenType.FLO, Token.TokenType.INT, Token.TokenType.NOT, Token.TokenType.ID, Token.TokenType.ADD, Token.TokenType.SUB), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(arithExpr(arithExprStartNode) && relOp(relOpNode) && arithExpr(arithExprEndNode) ) {
+//            addToSyntax("relExpr -> arithExpr relOp arithExpr");
+//            currentRoot.makeFamily(arithExprStartNode, relOpNode, arithExprEndNode);
+//            return true;
+//        }
+
+        return false;
+    }
+
+    private boolean arithExpr(ASTNode currentRoot) {
+        ASTNode termNode = ASTNodeFactory.getASTNode("term");
+        ASTNode arithExprPrimeNode = ASTNodeFactory.getASTNode("arithExprPrime");
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.OPAR, Token.TokenType.FLO, Token.TokenType.INT, Token.TokenType.NOT, Token.TokenType.ID, Token.TokenType.ADD, Token.TokenType.SUB), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(term(termNode) && arithExprPrime(arithExprPrimeNode)) {
+//            addToSyntax("arithExpr -> term arithExprPrime");
+//            currentRoot.makeFamily(termNode, arithExprPrimeNode);
+//            return true;
+//        }
+
+        return false;
+    }
+
+    private boolean arithExprPrime(ASTNode currentRoot) {
+        ASTNode termNode = ASTNodeFactory.getASTNode("term");
+        ASTNode addOpNode = ASTNodeFactory.getASTNode("addOp");
+        ASTNode arithExprPrimeNode = ASTNodeFactory.getASTNode("arithExprPrime");
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GRE, Token.TokenType.GREEQ, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA))) {
+            return false;
+        }
+
+//        if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GRE, Token.TokenType.GREEQ, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA))) {
+//            addToSyntax("arithExprPrime -> EPSILON");
+//            currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
+//            return true;
+//        } else if(addOp(addOpNode) && term(termNode) && arithExprPrime(arithExprPrimeNode)) {
+//            addToSyntax("arithExprPrime -> addOp term arithExprPrime");
+//            currentRoot.makeFamily(addOpNode, termNode, arithExprPrimeNode);
+//            return true;
+//        }
+        return false;
+    }
+
+    private boolean sign(ASTNode currentRoot) {
+        Token op = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.ADD, Token.TokenType.SUB), Collections.<Token.TokenType>emptyList(), false)) {
+            return false;
+        }
+
+        if(matchAndSave(Token.TokenType.ADD, op)) {
+            addToSyntax("sign -> '+'");
+            currentRoot.makeFamily(ASTNodeFactory.getASTNode(op));
+            return true;
+        } else if(matchAndSave(Token.TokenType.SUB, op)) {
+            addToSyntax("sign -> '-'");
+            currentRoot.makeFamily(ASTNodeFactory.getASTNode(op));
+            return true;
+        }
+        return false;
+    }
+
 }
