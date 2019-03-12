@@ -687,4 +687,46 @@ public class ParserAST {
 
         return false;
     }
+
+    private boolean statementNoId(ASTNode currentRoot) {
+
+        ASTNode ifRestNode = ASTNodeFactory.getASTNode("ifRest");
+        ASTNode forRestNode = ASTNodeFactory.getASTNode("forRest");
+        ASTNode varStartNode = ASTNodeFactory.getASTNode("expr");
+        ASTNode exprNode = ASTNodeFactory.getASTNode("expr");
+
+        Token opar = new Token();
+        Token cpar = new Token();
+        Token semi = new Token();
+
+        Token reservedWord = new Token();
+
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.WRITE, Token.TokenType.RETURN, Token.TokenType.READ, Token.TokenType.IF, Token.TokenType.FOR), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(matchAndSave(Token.TokenType.IF, reservedWord) && ifRest(ifRestNode)) {
+//            addToSyntax("statementNoId -> 'if' ifRest");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(reservedWord), ifRestNode);
+//            return true;
+//        } else if(matchAndSave(Token.TokenType.FOR, reservedWord) && forRest(forRestNode)) {
+//            addToSyntax("statementNoId -> 'for' forRest");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(reservedWord), forRestNode);
+//            return true;
+//        } else if(matchAndSave(Token.TokenType.READ, reservedWord) && matchAndSave(Token.TokenType.OPAR, opar) && varStart(varStartNode) && matchAndSave(Token.TokenType.CPAR, cpar) && matchAndSave(Token.TokenType.SEMI, semi)) {
+//            addToSyntax("statementNoId -> 'read' '(' variable ')' ';'");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(reservedWord), ASTNodeFactory.getASTNode(opar),varStartNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(semi));
+//            return true;
+//        } else if(matchAndSave(Token.TokenType.WRITE, reservedWord) && matchAndSave(Token.TokenType.OPAR, opar) && expr(exprNode) && matchAndSave(Token.TokenType.CPAR, cpar) && matchAndSave(Token.TokenType.SEMI, semi)) {
+//            addToSyntax("statementNoId -> 'write' '(' expr ')' ';'");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(reservedWord), ASTNodeFactory.getASTNode(opar),exprNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(semi));
+//            return  true;
+//        } else if(matchAndSave(Token.TokenType.RETURN, reservedWord) && matchAndSave(Token.TokenType.OPAR, opar) && expr(exprNode) && matchAndSave(Token.TokenType.CPAR, cpar) && matchAndSave(Token.TokenType.SEMI, semi)) {
+//            addToSyntax("statementNoId -> 'return' '(' expr ')' ';'");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(reservedWord), ASTNodeFactory.getASTNode(opar),exprNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(semi));
+//            return true;
+//        }
+        return false;
+    }
 }
