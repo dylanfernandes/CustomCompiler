@@ -954,11 +954,13 @@ public class ParserAST {
 //        }
         return false;
     }
-
     private boolean sign(ASTNode currentRoot) {
+        return sign(true, currentRoot);
+    }
+    private boolean sign(boolean write, ASTNode currentRoot) {
         Token op = new Token();
 
-        if(!skipErrors(Arrays.asList(Token.TokenType.ADD, Token.TokenType.SUB), Collections.<Token.TokenType>emptyList(), false)) {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ADD, Token.TokenType.SUB), Collections.<Token.TokenType>emptyList(), write)) {
             return false;
         }
 
@@ -971,6 +973,134 @@ public class ParserAST {
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(op));
             return true;
         }
+        return false;
+    }
+
+    private boolean term(ASTNode currentRoot) {
+        ASTNode factorNode = ASTNodeFactory.getASTNode("factor");
+        ASTNode termPrimeNode = ASTNodeFactory.getASTNode("termPrime");
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.OPAR, Token.TokenType.FLO, Token.TokenType.INT, Token.TokenType.NOT, Token.TokenType.ID, Token.TokenType.ADD, Token.TokenType.SUB), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(factor(factorNode) && termPrime(termPrimeNode)) {
+//            addToSyntax("term -> factor termPrime");
+//            currentRoot.makeFamily(factorNode, termPrimeNode);
+//            return true;
+//        }
+        return false;
+    }
+
+    private boolean termPrime(ASTNode currentRoot) {
+        ASTNode multOpNode = ASTNodeFactory.getASTNode("multOp");
+        ASTNode factorNode = ASTNodeFactory.getASTNode("factor");
+        ASTNode termPrimeNode = ASTNodeFactory.getASTNode("termPrime");
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.AND, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GRE, Token.TokenType.GREEQ, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR))) {
+            return false;
+        }
+
+//        if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GRE, Token.TokenType.GREEQ, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR))) {
+//            addToSyntax("termPrime -> EPSILON");
+//            currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
+//            return true;
+//        } else if(multOp(multOpNode) && factor(factorNode) && termPrime(termPrimeNode)) {
+//            addToSyntax("termPrime -> multOp factor termPrime");
+//            currentRoot.makeFamily(multOpNode, factorNode, termPrimeNode);
+//            return true;
+//        }
+        return false;
+    }
+
+    private boolean factor(ASTNode currentRoot) {
+        ASTNode signNode = ASTNodeFactory.getASTNode("sign");
+        ASTNode factorNode = ASTNodeFactory.getASTNode("factor");
+        ASTNode arithExprNode = ASTNodeFactory.getASTNode("arithExpr");
+        ASTNode varOrFuncCallNode = ASTNodeFactory.getASTNode("varOrFuncCall");
+
+        Token start = new Token();
+        Token end = new Token();
+
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.ID, Token.TokenType.NOT, Token.TokenType.INT, Token.TokenType.FLO, Token.TokenType.OPAR), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(matchAndSave(Token.TokenType.INT, start)) {
+            addToSyntax("factor -> 'intNum'");
+            currentRoot.makeFamily(ASTNodeFactory.getASTNode(start));
+            return true;
+        } else if(matchAndSave(Token.TokenType.FLO, start)) {
+            addToSyntax("factor -> 'floatNum'");
+            currentRoot.makeFamily(ASTNodeFactory.getASTNode(start));
+            return true;
+        } else if(matchAndSave(Token.TokenType.OPAR, start) && arithExpr(arithExprNode) && matchAndSave(Token.TokenType.CPAR, end)) {
+            addToSyntax("'factor -> (' arithExpr ')'");
+            currentRoot.makeFamily(ASTNodeFactory.getASTNode(start), arithExprNode, ASTNodeFactory.getASTNode(end));
+            return true;
+        } else if(matchAndSave(Token.TokenType.NOT, start) && factor(factorNode)) {
+            addToSyntax("factor -> 'not' factor");
+            currentRoot.makeFamily(ASTNodeFactory.getASTNode(start), factorNode);
+            return true;
+        } else if(sign(false, signNode) && factor(factorNode)) {
+            addToSyntax("factor -> sign factor");
+            currentRoot.makeFamily(ASTNodeFactory.getASTNode(start), factorNode);
+            return true;
+        } else  if(varOrFuncCall(varOrFuncCallNode)) {
+            addToSyntax("factor -> varOrFuncCall");
+            currentRoot.makeFamily(varOrFuncCallNode);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean varOrFuncCall(ASTNode currentRoot) {
+        ASTNode varOrFuncCallNextNode = ASTNodeFactory.getASTNode("varOrFuncCallNext");
+
+        Token id = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.ID) ,Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(matchAndSave(Token.TokenType.ID, id) && varOrFuncCallNext(varOrFuncCallNextNode)) {
+//            addToSyntax("varOrFuncCall -> 'id' varOrFuncCallNext");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(id), varOrFuncCallNextNode);
+//            return true;
+//        }
+        return  false;
+    }
+
+    private boolean varOrFuncCallNext(ASTNode currentRoot) {
+        ASTNode varFuncParamsNode = ASTNodeFactory.getASTNode("varFuncParams");
+        ASTNode varStartNode = ASTNodeFactory.getASTNode("varStart");
+        ASTNode varIndiceNode = ASTNodeFactory.getASTNode("varIndice");
+
+        Token start = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.OPAR, Token.TokenType.POIN, Token.TokenType.OSBRA, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LESSEQ, Token.TokenType.LES, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.AND))) {
+            return false;
+        }
+
+//        if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LESSEQ, Token.TokenType.LES, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.AND))) {
+//            addToSyntax("varOrFuncCallNext -> EPSILON");
+//            currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
+//            return true;
+//        } else if(matchAndSave(Token.TokenType.OPAR, start) && varFuncParams(varFuncParamsNode)) {
+//            addToSyntax("varOrFuncCallNext -> '(' varFuncParams");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(start), varFuncParamsNode);
+//            return true;
+//        } else if(matchAndSave(Token.TokenType.POIN, start) && varStart(varStartNode)) {
+//            addToSyntax("varOrFuncCallNext -> '.' varStart");
+//            currentRoot.makeFamily(ASTNodeFactory.getASTNode(start), varStartNode);
+//            return true;
+//        } else if(varIndice(varIndiceNode)) {
+//            addToSyntax("varOrFuncCallNext -> varIndice");
+//            currentRoot.makeFamily(varIndiceNode);
+//            return true;
+//        }
+
         return false;
     }
 
