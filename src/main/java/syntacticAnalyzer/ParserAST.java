@@ -1207,4 +1207,127 @@ public class ParserAST {
         return false;
     }
 
+    private boolean varIndiceNext(ASTNode currentRoot) {
+        ASTNode varIndiceNode = ASTNodeFactory.getASTNode("varIndice");
+        ASTNode varIndiceNextNextNode = ASTNodeFactory.getASTNode("varIndiceNextNext");
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.POIN, Token.TokenType.EPSILON, Token.TokenType.OSBRA), Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.ADD, Token.TokenType.ASSGN))) {
+            return false;
+        }
+
+//        if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.ADD, Token.TokenType.ASSGN))) {
+//            addToSyntax(" varIndiceNext -> EPSILON");
+//            currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
+//            return true;
+//        } else if(varIndice(varIndiceNode)) {
+//            addToSyntax(" varIndiceNext -> varIndice");
+//            currentRoot.makeFamily(varIndiceNode);
+//            return true;
+//        } else if(varIndiceNextNext(varIndiceNextNextNode)) {
+//            addToSyntax("varIndiceNext -> varIndiceNextNext");
+//            currentRoot.makeFamily(varIndiceNextNextNode);
+//            return true;
+//        }
+        return false;
+    }
+
+    private boolean varIndiceNextNext(ASTNode currentRoot) {
+        ASTNode varStartNode = ASTNodeFactory.getASTNode("varStart");
+
+        Token poin = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.POIN, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.AND, Token.TokenType.ASSGN))) {
+            return false;
+        }
+
+        if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.AND, Token.TokenType.ASSGN))) {
+            addToSyntax(" varIndiceNextNext -> EPSILON");
+            currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
+            return true;
+        } else if(matchAndSave(Token.TokenType.POIN, poin) && varStart(varStartNode)) {
+            addToSyntax("varIndiceNextNext -> '.' varStart");
+            currentRoot.makeFamily(ASTNodeFactory.getASTNode(poin), varStartNode);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean varAParams(ASTNode currentRoot) {
+        ASTNode aParamsNode = ASTNodeFactory.getASTNode("aParams");
+        ASTNode varAParamsNextNode = ASTNodeFactory.getASTNode("varAParamsNext");
+
+        Token cpar = new Token();
+        if(!skipErrors(Arrays.asList(Token.TokenType.OPAR, Token.TokenType.CPAR, Token.TokenType.FLO, Token.TokenType.INT, Token.TokenType.NOT, Token.TokenType.ID, Token.TokenType.ADD, Token.TokenType.SUB), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+//        if(aParams(aParamsNode) && matchAndSave(Token.TokenType.CPAR, cpar)  && varAParamsNext(varAParamsNextNode)) {
+//            addToSyntax("varAParams ->  aParams ')'  varAParamsNext");
+//            currentRoot.makeFamily(aParamsNode, ASTNodeFactory.getASTNode(cpar), varAParamsNextNode);
+//            return true;
+//        }
+        return false;
+    }
+
+    private boolean varAParamsNext(ASTNode currentRoot) {
+        ASTNode varStartNode = ASTNodeFactory.getASTNode("varStart ");
+
+        Token poin = new Token();
+        if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.POIN), Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.AND, Token.TokenType.ASSGN))) {
+            return false;
+        }
+
+        if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.AND, Token.TokenType.ASSGN))) {
+            addToSyntax(" varAParamsNext -> EPSILON");
+            currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
+            return true;
+        } else if( matchAndSave(Token.TokenType.POIN, poin)  && varStart(varStartNode)) {
+            addToSyntax("varAParams ->  aParams ')'  varAParamsNext");
+            currentRoot.makeFamily(varStartNode, ASTNodeFactory.getASTNode(poin));
+            return true;
+        }
+
+        return false;
+    }
+    public boolean type(ASTNode currentRoot) {
+        ASTNode typeNotIdNode = ASTNodeFactory.getASTNode("typeNotId");
+
+        Token id = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.ID), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+
+        if(matchAndSave(Token.TokenType.ID, id)) {
+            addToSyntax("type -> 'id'");
+            currentRoot.makeFamily(ASTNodeFactory.getASTNode(id));
+            return true;
+        } else if(typeNotId(typeNotIdNode)) {
+            addToSyntax("type -> typeNotId");
+            currentRoot.makeFamily(typeNotIdNode);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean typeNotId(ASTNode currentRoot) {
+        Token type = new Token();
+
+        if(!skipErrors(Arrays.asList(Token.TokenType.FLOAT, Token.TokenType.INTEGER), Collections.<Token.TokenType>emptyList())) {
+            return false;
+        }
+        if(matchAndSave(Token.TokenType.INTEGER, type)) {
+            addToSyntax("typeNotId -> 'integer'");
+            currentRoot.makeFamily(ASTNodeFactory.getASTNode(type));
+            return true;
+        }
+        else if(matchAndSave(Token.TokenType.FLOAT, type)) {
+            addToSyntax("typeNotId -> 'float' ");
+            currentRoot.makeFamily(ASTNodeFactory.getASTNode(type));
+            return true;
+        }
+        return false;
+    }
+
+
 }
