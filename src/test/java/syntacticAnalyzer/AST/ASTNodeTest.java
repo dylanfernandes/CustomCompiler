@@ -47,6 +47,7 @@ public class ASTNodeTest {
         Token r1 = new Token(Token.TokenType.IF, "IF", 1);
         Token t1 = new Token(Token.TokenType.ID, "TEST", 1);
         Token t2 = new Token(Token.TokenType.INT, "123", 1);
+
         ASTNode root = ASTNodeFactory.getASTNode(r1);
         ASTNode sibling1 = ASTNodeFactory.getASTNode(t1);
         ASTNode sibling2 = ASTNodeFactory.getASTNode(t2);

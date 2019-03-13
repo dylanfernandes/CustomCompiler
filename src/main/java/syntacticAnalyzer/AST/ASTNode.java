@@ -84,11 +84,10 @@ abstract public class ASTNode {
                 this.firstChild = child;
             }
             child.setParent(this);
-            if(lastChild == null) {
-                lastChild = child;
-            } else {
+            if(lastChild != null) {
                 lastChild.makeSiblings(child);
             }
+            lastChild = child;
         }
     }
 }
