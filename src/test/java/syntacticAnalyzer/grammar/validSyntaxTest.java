@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 
 import org.mockito.junit.MockitoJUnitRunner;
 import syntacticAnalyzer.Parser;
+import syntacticAnalyzer.ParserAST;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(MockitoJUnitRunner.class)
 public class validSyntaxTest {
 
-    Parser parser = new Parser();
+    ParserAST parser = new ParserAST();
 
     LexerDriver lexerDriver;
 
