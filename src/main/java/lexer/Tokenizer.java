@@ -114,6 +114,7 @@ public class Tokenizer {
         currentLexeme += "." + firstDigit;
         if (firstDigit == '0') {
             if (current == null || (!LexerMatcher.isNumeric(current) && current != 'e')) {
+                backup();
                 return createToken(Token.TokenType.FLO);
             }
         }

@@ -344,7 +344,7 @@ public class validSyntaxTest {
 
         parser.parse();
 
-        //assertFalse(parser.isFoundError());
-        //assertTrue(parser.isParseGood());
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
     }
 }

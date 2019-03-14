@@ -45,6 +45,20 @@ public class FLOTokenTest {
     }
 
     @Test
+    public void FLOATTest_Num_Dot_Zero_CharAfter(){
+        Tokenizer tokenizer = new Tokenizer("2.0)");
+        Token token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.FLO, token.getType());
+        assertEquals("2.0", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+
+        token = tokenizer.nextToken();
+        assertEquals(Token.TokenType.CPAR, token.getType());
+        assertEquals(")", token.getLexeme());
+        assertEquals(0, token.getLineNumber());
+    }
+
+    @Test
     public void FLOATTest_ValidFraction(){
         Tokenizer tokenizer = new Tokenizer("2.0e-25");
         Token token = tokenizer.nextToken();
