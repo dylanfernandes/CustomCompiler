@@ -25,7 +25,7 @@ public class ASTNodeTest {
         assertEquals(sibling1, root.getFirstChild());
 
         assertEquals(null, sibling1.getFirstChild());
-        assertEquals(sibling1, sibling2.getFirstChild());
+        assertEquals(sibling1, sibling2.getFirstSibling());
         assertEquals(sibling2, sibling1.getRightSibling());
     }
 
@@ -37,8 +37,8 @@ public class ASTNodeTest {
         ASTNode sibling2 = ASTNodeFactory.getASTNode(t2);
 
         sibling1.makeSiblings(sibling2);
-        assertEquals(null, sibling1.getFirstChild());
-        assertEquals(sibling1, sibling2.getFirstChild());
+        assertEquals(null, sibling1.getFirstSibling());
+        assertEquals(sibling1, sibling2.getFirstSibling());
         assertEquals(sibling2, sibling1.getRightSibling());
     }
 
@@ -60,7 +60,7 @@ public class ASTNodeTest {
         assertEquals(sibling1, root.getFirstChild());
 
         assertEquals(null, sibling1.getFirstChild());
-        assertEquals(sibling1, sibling2.getFirstChild());
+        assertEquals(sibling1, sibling2.getFirstSibling());
         assertEquals(sibling2, sibling1.getRightSibling());
     }
 

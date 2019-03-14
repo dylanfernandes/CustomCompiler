@@ -69,10 +69,10 @@ abstract public class ASTNode {
     }
 
     public void makeSiblings(ASTNode sibling) {
-        if(firstChild == null) {
-            sibling.firstChild = this;
+        if(firstSibling == null) {
+            sibling.firstSibling = this;
         } else {
-            sibling.firstChild = this.firstChild;
+            sibling.firstSibling = this.firstSibling;
         }
         this.rightSibling = sibling;
     }
@@ -89,6 +89,24 @@ abstract public class ASTNode {
             }
             lastChild = child;
         }
+    }
+
+    public String print() {
+        String printedTree = "";
+        if(this.getClass() == StringASTNode.class && this.getValue() != "EPSILON") {
+            printedTree = printedTree + this.getValue() + "->";
+        } else {
+            printedTree = printedTree + this.getValue();
+        }
+        if(this.rightSibling != null) {
+            printedTree = printedTree + this.rightSibling.print();
+        } else {
+            printedTree = printedTree + "\n";
+        }
+        if(this.firstChild != null){
+            printedTree = printedTree + this.firstChild.print();
+        }
+        return printedTree;
     }
 }
 
