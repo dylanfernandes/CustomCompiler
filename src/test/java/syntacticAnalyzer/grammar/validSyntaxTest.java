@@ -261,10 +261,30 @@ public class validSyntaxTest {
     }
 
     @Test
+    public void validIfStatement() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main{if(array[idx] > maxValue) then { maxValue = array[idx];} else{};  };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
     public void validForProgram() {
         List<Token> tokens = lexerDriver.getTokensFromInput("main { \n" +
                 "for(id id = id; id < id; id = id);\n" +
                 "};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validForStatement() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main{for( integer idx = 99; idx > 0; idx = idx - 1 ){ if(array[idx] > maxValue) then { maxValue = array[idx];} else{}; };};");
         parser .setTokenList(tokens);
 
         parser.parse();
@@ -347,4 +367,16 @@ public class validSyntaxTest {
         assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
+
+    @Test
+    public void validArrayAssign() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main {arrayUtility[utility.var1[1][2][3][4][5][6][idx+maxValue]][1][1][1].var2 = 2.5; };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
 }
