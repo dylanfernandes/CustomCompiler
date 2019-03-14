@@ -13,9 +13,9 @@ public class ParserDriver {
 
 
     public void start(List<Token> tokens) {
-        Parser parser = new Parser(tokens);
+        ParserAST parser = new ParserAST(tokens);
         parser.parse();
-        FileIOUtils.writeOutput(parser.getSyntax(), outputLocation);
+        FileIOUtils.writeOutput(parser.printAST(), outputLocation);
     }
 
 }

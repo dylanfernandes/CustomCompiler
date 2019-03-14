@@ -21,6 +21,6 @@ public class TokenASTNode extends  ASTNode{
     }
 
     public String getValue() {
-        return value.getType().toString();
+        return value.getLexeme();
     }
 }

@@ -93,19 +93,23 @@ abstract public class ASTNode {
 
     public String print() {
         String printedTree = "";
-        if(this.getClass() == StringASTNode.class && this.getValue() != "EPSILON") {
-            printedTree = printedTree + this.getValue() + "->";
-        } else {
-            printedTree = printedTree + this.getValue();
+        ASTNode temp;
+        if(this.firstChild != null){
+            printedTree += this.getValue();
+            temp = firstChild;
+            printedTree += " -> ";
+            do {
+                printedTree += temp.getValue() + " ";
+                temp = temp.getRightSibling();
+            }
+            while (temp != null);
+            printedTree += "\n";
+            printedTree += this.firstChild.print();
         }
         if(this.rightSibling != null) {
-            printedTree = printedTree + this.rightSibling.print();
-        } else {
-            printedTree = printedTree + "\n";
+            printedTree += this.rightSibling.print();
         }
-        if(this.firstChild != null){
-            printedTree = printedTree + this.firstChild.print();
-        }
+
         return printedTree;
     }
 }

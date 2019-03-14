@@ -38,6 +38,12 @@ public class ParserAST {
         return syntax;
     }
 
+    public String printAST() {
+        if(root != null)
+            return root.print();
+        return "";
+    }
+
     public void setTokenList(List<Token> tokenList) {
         this.tokenList = tokenList;
         lookahead = tokenList.get(0);
@@ -148,7 +154,7 @@ public class ParserAST {
 
         if (classDeclRep(classDeclRepNode) && funcDefRep(funcDefRepNode) && matchAndSave(Token.TokenType.MAIN, main) && funcBody(funcBodyNode) && matchAndSave(Token.TokenType.SEMI, semi)) {
             addToSyntax("prog -> classDeclRep funcDefRep 'main' funcBody ';'");
-            root.makeFamily(classDeclRepNode, ASTNodeFactory.getASTNode(main),funcDefRepNode, funcBodyNode, ASTNodeFactory.getASTNode(semi));
+            root.makeFamily(classDeclRepNode, funcDefRepNode, ASTNodeFactory.getASTNode(main), funcBodyNode, ASTNodeFactory.getASTNode(semi));
             return true;
         }
             return false;
