@@ -533,7 +533,7 @@ public class ParserAST {
         Token poin = new Token();
         Token semi = new Token();
 
-        if(!skipErrors(Arrays.asList(Token.TokenType.ASSGN, Token.TokenType.POIN), Collections.<Token.TokenType>emptyList())) {
+        if(!skipErrors(Arrays.asList(Token.TokenType.ASSGN, Token.TokenType.POIN, Token.TokenType.SEMI), Collections.<Token.TokenType>emptyList())) {
             return false;
         }
 
@@ -1344,11 +1344,11 @@ public class ParserAST {
         ASTNode indiceNode = ASTNodeFactory.getASTNode("indice");
         ASTNode indiceRepNode = ASTNodeFactory.getASTNode("indiceRep");
 
-        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.POIN, Token.TokenType.ASSGN))) {
+        if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.POIN, Token.TokenType.ASSGN, Token.TokenType.SEMI))) {
             return false;
         }
 
-        if(peekListMatch(Arrays.asList(Token.TokenType.POIN, Token.TokenType.ASSGN))) {
+        if(peekListMatch(Arrays.asList(Token.TokenType.POIN, Token.TokenType.ASSGN, Token.TokenType.SEMI))) {
             addToSyntax("indiceRep -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;

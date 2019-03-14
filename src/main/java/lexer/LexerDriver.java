@@ -49,7 +49,7 @@ public class LexerDriver {
         Token token;
         while (!tokenizer.isEndOfInput()) {
             token = tokenizer.nextToken();
-            if(token.getType() != Token.TokenType.NEWLINE) {
+            if(token != null && token.getType() != Token.TokenType.NEWLINE) {
                 tokens.add(token);
             }
         }

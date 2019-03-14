@@ -280,4 +280,47 @@ public class validSyntaxTest {
         assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
+
+    @Test
+    public void validInherit() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Utility : InheritedUtility {}; main{};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validLargeArray() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main{integer var1[4][5][7][8][9][1][0]; };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validArrayParam() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class test {integer findMax(integer array[100]);  };\n" +
+                "main{}; \n ");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validVarIndice() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main{id[id];};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
 }
