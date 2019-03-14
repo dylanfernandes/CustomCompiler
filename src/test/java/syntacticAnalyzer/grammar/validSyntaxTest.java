@@ -195,23 +195,14 @@ public class validSyntaxTest {
 
     @Test
     public void validlIdNestProgram() {
-        List<Token> tokens = lexerDriver.getTokensFromInput("main { test.(test2) = test3; };");
+        List<Token> tokens = lexerDriver.getTokensFromInput("main {id = id.id(id); };");
         parser .setTokenList(tokens);
 
         parser.parse();
-        //assertFalse(parser.isFoundError());
+        assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
 
-    @Test
-    public void validlIdNestTailProgram() {
-        List<Token> tokens = lexerDriver.getTokensFromInput("main { test.(test2, test4) = test3; };");
-        parser .setTokenList(tokens);
-
-        parser.parse();
-        //assertFalse(parser.isFoundError());
-        assertTrue(parser.isParseGood());
-    }
 
     @Test
     public void validVarArray() {
@@ -322,5 +313,38 @@ public class validSyntaxTest {
 
         assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validAssignArray() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main{id[id] = id;};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validArith() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main{value = 100 * (2 + 3.0 / 7.0006); };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validArithCond() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main{value = 1.05 + ((2.04 * 2.47) - 3.0) + 7.0006 > 1 && ! - 1; };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+
+        //assertFalse(parser.isFoundError());
+        //assertTrue(parser.isParseGood());
     }
 }
