@@ -66,9 +66,9 @@ public class ASTNodeTest {
 
     @Test
     public void getTokenValue() {
-        Token t1 = new Token(Token.TokenType.IF, "test", 1);
+        Token t1 = new Token(Token.TokenType.IF, "if", 1);
         ASTNode node = ASTNodeFactory.getASTNode(t1);
-        assertEquals("IF", node.getValue());
+        assertEquals("if", node.getValue());
     }
 
     @Test
