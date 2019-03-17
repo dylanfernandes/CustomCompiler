@@ -8,6 +8,11 @@ public class ProgASTNode extends ASTNode {
     private String value;
     private SymbolTable globalTable;
 
+
+    public  ProgASTNode(String value) {
+        this.value = value;
+    }
+
     public String getValue() {
         return null;
     }

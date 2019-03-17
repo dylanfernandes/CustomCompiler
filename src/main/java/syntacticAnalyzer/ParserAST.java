@@ -3,6 +3,7 @@ package syntacticAnalyzer;
 import lexer.Token;
 import syntacticAnalyzer.AST.ASTNode;
 import syntacticAnalyzer.AST.ASTNodeFactory;
+import syntacticAnalyzer.AST.semanticNodes.ProgASTNode;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +17,7 @@ public class ParserAST {
     private String syntax;
     private boolean parseGood;
     private boolean foundError;
-    private ASTNode root;
+    private ProgASTNode root;
 
     public ParserAST() {
         position = 0;
@@ -38,7 +39,7 @@ public class ParserAST {
         return syntax;
     }
 
-    public ASTNode getAST() {
+    public ProgASTNode getAST() {
         return root;
     }
 
@@ -145,7 +146,7 @@ public class ParserAST {
      *******************************************************************/
 
     public boolean prog() {
-        root = ASTNodeFactory.getASTNode("prog");
+        root = new ProgASTNode("prog");
         ASTNode classDeclRepNode = ASTNodeFactory.getASTNode("classDeclRep");
         ASTNode funcDefRepNode = ASTNodeFactory.getASTNode("funcDefRep");
         ASTNode funcBodyNode = ASTNodeFactory.getASTNode("funcBody");

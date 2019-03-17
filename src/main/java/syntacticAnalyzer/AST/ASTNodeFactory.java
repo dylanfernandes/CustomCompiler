@@ -1,6 +1,7 @@
 package syntacticAnalyzer.AST;
 
 import lexer.Token;
+import syntacticAnalyzer.AST.semanticNodes.ProgASTNode;
 
 public class ASTNodeFactory {
 

@@ -9,6 +9,6 @@ public class SemanticDriver {
     public void start(ProgASTNode progASTNode) {
         SemanticPhases semanticPhases = new SemanticPhases();
         semanticPhases.creation(progASTNode);
-        FileIOUtils.writeOutput(progASTNode.print(), outputLocation);
+        FileIOUtils.writeOutput(progASTNode.getGlobalTable().print(), outputLocation);
     }
 }
