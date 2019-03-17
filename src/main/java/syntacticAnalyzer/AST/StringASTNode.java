@@ -1,22 +1,19 @@
 package syntacticAnalyzer.AST;
 
 import lexer.Token;
+import semanticAnalyzer.visitor.Visitor;
 
-public class StringASTNode extends ASTNode{
-
-    private String value;
+public class StringASTNode extends BasicASTNode{
 
     public StringASTNode(String value, ASTNode parent, ASTNode rightSibling, ASTNode firstSibling, ASTNode firstChild) {
-        super(parent, rightSibling, firstSibling, firstChild);
-        this.value = value;
+        super(value, parent, rightSibling, firstSibling, firstChild);
     }
 
     public StringASTNode(String value) {
-        super();
-        this.value = value;
+        super(value);
     }
 
-    public String getValue() {
-        return value;
+    public void accept(Visitor visitor) {
+        visitor.visit( this);
     }
 }

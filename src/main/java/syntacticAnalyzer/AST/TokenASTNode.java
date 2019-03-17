@@ -1,6 +1,7 @@
 package syntacticAnalyzer.AST;
 
 import lexer.Token;
+import semanticAnalyzer.visitor.Visitor;
 
 public class TokenASTNode extends  ASTNode{
 
@@ -22,5 +23,9 @@ public class TokenASTNode extends  ASTNode{
 
     public String getValue() {
         return value.getLexeme();
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit( this);
     }
 }

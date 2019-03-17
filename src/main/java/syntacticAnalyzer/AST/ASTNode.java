@@ -1,6 +1,7 @@
 package syntacticAnalyzer.AST;
 
 import lexer.Token;
+import semanticAnalyzer.visitor.Visitor;
 
 abstract public class ASTNode {
     private ASTNode parent;
@@ -9,6 +10,8 @@ abstract public class ASTNode {
     private ASTNode firstChild;
 
     abstract public String getValue();
+    abstract public void accept(Visitor visitor);
+
 
     public ASTNode( ASTNode parent, ASTNode rightSibling, ASTNode firstSibling, ASTNode firstChild) {
         this.parent = parent;
@@ -22,7 +25,6 @@ abstract public class ASTNode {
         this.rightSibling = null;
         this.firstSibling = null;
     }
-
 
     public ASTNode getParent() {
         return parent;
