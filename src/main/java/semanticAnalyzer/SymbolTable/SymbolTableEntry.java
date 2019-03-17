@@ -1,4 +1,4 @@
-package semanticAnalyzer;
+package semanticAnalyzer.SymbolTable;
 
 public class SymbolTableEntry {
     String name;
@@ -43,5 +43,11 @@ public class SymbolTableEntry {
 
     public void setLink(SymbolTableEntry link) {
         this.link = link;
+    }
+
+    public String print(){
+        String entry = "";
+        entry += getName() + "\t" + getEntryKind().toString() + "\t" + getEntryType().print() + "\t" + link.getName();
+        return entry;
     }
 }

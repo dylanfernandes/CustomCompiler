@@ -1,4 +1,4 @@
-package semanticAnalyzer;
+package semanticAnalyzer.SymbolTable;
 
 public enum EntryKind {
     FUNCTION,

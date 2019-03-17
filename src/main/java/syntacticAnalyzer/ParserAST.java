@@ -38,6 +38,10 @@ public class ParserAST {
         return syntax;
     }
 
+    public ASTNode getAST() {
+        return root;
+    }
+
     public String printAST() {
         if(root != null)
             return root.print();

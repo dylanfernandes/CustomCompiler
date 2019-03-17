@@ -1,10 +1,1 @@
-main {
-    if(id) then
-    {
-        return(id);
-    }
-    else
-    {
-        return(id);
-    };
-};
+main { integer test; };

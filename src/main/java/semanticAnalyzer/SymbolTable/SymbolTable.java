@@ -1,7 +1,6 @@
-package semanticAnalyzer;
+package semanticAnalyzer.SymbolTable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class SymbolTable {
@@ -47,6 +46,16 @@ public class SymbolTable {
             return symbolTableEntries.remove(index);
         }
         return null;
+    }
+
+    public String print() {
+        String table = "";
+        table += "Symbol Table: " + this.name + "\n";
+        table += "name\t type\t kind\t link \n";
+        for (int i = 0;i < symbolTableEntries.size(); i++) {
+            table += symbolTableEntries.get(i).print();
+        }
+        return table;
     }
 
 

@@ -1,12 +1,12 @@
 package syntacticAnalyzer.AST.semanticNodes;
 
-import semanticAnalyzer.SymbolTable;
+import semanticAnalyzer.SymbolTable.SymbolTable;
 import semanticAnalyzer.visitor.Visitor;
 import syntacticAnalyzer.AST.ASTNode;
 
 public class ProgASTNode extends ASTNode {
     private String value;
-    private SymbolTable symbolTable;
+    private SymbolTable globalTable;
 
     public String getValue() {
         return null;
@@ -16,11 +16,12 @@ public class ProgASTNode extends ASTNode {
         visitor.visit(this);
     }
 
-    public SymbolTable getSymbolTable() {
-        return symbolTable;
+    public SymbolTable getGlobalTable() {
+        return globalTable;
     }
 
-    public void setSymbolTable(SymbolTable symbolTable) {
-        this.symbolTable = symbolTable;
+    public void setGlobalTable(SymbolTable symbolTable) {
+        this.globalTable = symbolTable;
     }
+
 }

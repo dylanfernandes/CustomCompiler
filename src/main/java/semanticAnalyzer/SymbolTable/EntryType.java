@@ -1,4 +1,4 @@
-package semanticAnalyzer;
+package semanticAnalyzer.SymbolTable;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,5 +31,24 @@ public class EntryType {
 
     public void setParameterTypes(List<String> parameterTypes) {
         this.parameterTypes = parameterTypes;
+    }
+
+    public String print() {
+        String type = "";
+        type += getElementType();
+        if(parameterTypes.size() > 0) {
+            type += ": " + printParameters();
+        }
+        return type;
+    }
+    private String printParameters() {
+        String parameter = "";
+        for(int i = 0; i <parameterTypes.size();i++) {
+            parameter += parameterTypes.get(i);
+            if (parameterTypes.size() > 1 &&  i  < parameterTypes.size() - 1) {
+                parameter += ",";
+            }
+        }
+        return parameter;
     }
 }
