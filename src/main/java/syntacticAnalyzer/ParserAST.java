@@ -4,6 +4,7 @@ import lexer.Token;
 import syntacticAnalyzer.AST.ASTNode;
 import syntacticAnalyzer.AST.ASTNodeFactory;
 import syntacticAnalyzer.AST.semanticNodes.ClassDeclASTNode;
+import syntacticAnalyzer.AST.semanticNodes.FuncDefASTNode;
 import syntacticAnalyzer.AST.semanticNodes.ProgASTNode;
 
 import java.util.Arrays;
@@ -211,7 +212,7 @@ public class ParserAST {
     }
 
     private boolean funcDefRep(ASTNode currentRoot) {
-        ASTNode funcDefNode = ASTNodeFactory.getASTNode("funcDef");
+        FuncDefASTNode funcDefNode = new FuncDefASTNode("funcDef");
         ASTNode funcDefRepNode = ASTNodeFactory.getASTNode("funcDefRep");
 
         if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.ID, Token.TokenType.INTEGER, Token.TokenType.FLOAT), Arrays.asList(Token.TokenType.MAIN))){
