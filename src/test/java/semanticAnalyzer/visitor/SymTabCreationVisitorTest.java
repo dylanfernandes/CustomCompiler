@@ -76,6 +76,38 @@ public class SymTabCreationVisitorTest {
     }
 
     @Test
+    public void classSeveralVar() {
+        SymbolTable bar;
+        SymbolTableEntry class1;
+
+        List<Token> tokens = lexerDriver.getTokensFromInput("class bar{integer id; foo bar;};main {  };");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        symbolTable = semanticPhases.getSymbolTable();
+        assertEquals(0, symbolTable.find("bar"));
+        class1 = symbolTable.search("bar");
+
+        assertEquals(EntryKind.CLASS, class1.getEntryKind());
+        assertEquals("bar", class1.getName());
+
+        bar = class1.getLink();
+        assertEquals(0, bar.find("id"));
+        class1 = bar.search("id");
+
+        assertEquals("id", class1.getName());
+        assertEquals(EntryKind.VARIABLE, class1.getEntryKind());
+        assertEquals("integer", class1.getEntryType().getElementType().getType());
+
+        assertEquals(1, bar.find("bar"));
+        class1 = bar.search("bar");
+
+        assertEquals("bar", class1.getName());
+        assertEquals(EntryKind.VARIABLE, class1.getEntryKind());
+        assertEquals("foo", class1.getEntryType().getElementType().getType());
+    }
+
+    @Test
     public void classVarArray() {
         SymbolTable bar;
         SymbolTableEntry class1;
