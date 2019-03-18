@@ -1,20 +1,33 @@
 package semanticAnalyzer.SymbolTable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class VariableType {
     private String type;
-    private List<Integer> arraySizes;
+    private List<String> arraySizes;
 
     public VariableType(String type) {
         this.type = type;
-        this.arraySizes = Collections.emptyList();
+        this.arraySizes = new ArrayList<String>();
     }
 
-    public VariableType(String type, List<Integer> arraySizes) {
+    public VariableType(String type, List<String> arraySizes) {
         this.type = type;
         this.arraySizes = arraySizes;
+    }
+
+    public void addArrayDimension(String size) {
+        arraySizes.add(size);
+    }
+
+    public int getNumDimensions(){
+        return arraySizes.size();
+    }
+
+    public String getSingleDimension(int dimension) {
+        return arraySizes.get(dimension);
     }
 
     public boolean isArray() {

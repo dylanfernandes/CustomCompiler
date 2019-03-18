@@ -178,6 +178,37 @@ public class SymTabCreationVisitorTest {
     }
 
     @Test
+    public void functionDefHeaderParameterArray() {
+        SymbolTableEntry func;
+        SymbolTable funcTable;
+        SymbolTableEntry param;
+
+        List<Token> tokens = lexerDriver.getTokensFromInput("integer foo(bar varName[1]){};  main {};");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        symbolTable = semanticPhases.getSymbolTable();
+        assertEquals(0, symbolTable.find("foo"));
+        func = symbolTable.search("foo");
+
+        assertEquals(EntryKind.FUNCTION, func.getEntryKind());
+        assertEquals("foo", func.getName());
+        assertEquals("integer", func.getEntryType().getElementType().getType());
+        assertEquals("foo", func.getLink().getName());
+
+        funcTable = func.getLink();
+        assertEquals(0, funcTable.find("varName"));
+        param = funcTable.search("varName");
+
+        assertEquals(EntryKind.PARAMETER, param.getEntryKind());
+        assertEquals("varName", param.getName());
+        assertEquals("bar", param.getEntryType().getElementType().getType());
+        assertTrue(param.getEntryType().getElementType().isArray());
+        assertEquals(1, param.getEntryType().getElementType().getNumDimensions());
+        assertEquals("1", param.getEntryType().getElementType().getSingleDimension(0));
+    }
+
+    @Test
     public void functionDefHeaderSeveral() {
         SymbolTableEntry func;
         SymbolTableEntry func2;

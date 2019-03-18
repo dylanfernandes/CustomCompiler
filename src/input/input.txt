@@ -1,1 +1,1 @@
-integer foo(bar varName){};  main {};
+integer foo(bar varName[1]){};  main {};

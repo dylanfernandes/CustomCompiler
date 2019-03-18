@@ -1,9 +1,6 @@
 package semanticAnalyzer.visitor;
 
-import semanticAnalyzer.SymbolTable.EntryKind;
-import semanticAnalyzer.SymbolTable.EntryType;
-import semanticAnalyzer.SymbolTable.SymbolTable;
-import semanticAnalyzer.SymbolTable.SymbolTableEntry;
+import semanticAnalyzer.SymbolTable.*;
 import syntacticAnalyzer.AST.ASTNode;
 import syntacticAnalyzer.AST.StringASTNode;
 import syntacticAnalyzer.AST.TokenASTNode;
@@ -139,9 +136,11 @@ public class SymTabCreationVisitor implements Visitor {
         String paramName;
         String paramTypeStr;
         EntryType paramType;
+        VariableType param;
 
         ASTNode type = astNode.getFirstChild();
         ASTNode id = type.getRightSibling();
+        ASTNode array = id.getRightSibling();
 
         while(type.getFirstChild() != null) {
             type = type.getFirstChild();
@@ -149,8 +148,18 @@ public class SymTabCreationVisitor implements Visitor {
 
         paramName = id.getValue();
         paramTypeStr = type.getValue();
-        paramType = new EntryType(paramTypeStr);
 
+        if(!array.getFirstChild().equals("EPSILON")) {
+            param = new VariableType(paramTypeStr);
+            while(!array.getFirstChild().getValue().equals("EPSILON")) {
+                array = array.getFirstChild();
+                param.addArrayDimension(array.getFirstChild().getRightSibling().getValue());
+                array = array.getRightSibling();
+            }
+            paramType = new EntryType(param);
+        } else {
+            paramType = new EntryType(paramTypeStr);
+        }
         symbolTableEntry = new SymbolTableEntry(paramName, EntryKind.PARAMETER, paramType, null);
         astNode.addEntry(symbolTableEntry);
     }
