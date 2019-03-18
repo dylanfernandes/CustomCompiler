@@ -125,8 +125,10 @@ public class SymTabCreationVisitor implements Visitor {
         funcTable = new SymbolTable(funcName);
 
         //add function paramters to function table
-        fParams.accept(this);
-        funcTable.addEntries(fParams.getEntries());
+        if(!fParams.getFirstChild().getValue().equals("EPSILON")) {
+            fParams.accept(this);
+            funcTable.addEntries(fParams.getEntries());
+        }
 
         symbolTableEntry = new SymbolTableEntry(funcName, EntryKind.FUNCTION, funcTypes, funcTable);
         astNode.setEntry(symbolTableEntry);
