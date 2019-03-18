@@ -89,4 +89,30 @@ public class SymTabCreationVisitorTest {
         assertEquals("integer", func.getEntryType().getElementType());
     }
 
+    @Test
+    public void functionDefHeaderSeveral() {
+        SymbolTableEntry func;
+        SymbolTableEntry func2;
+
+        List<Token> tokens = lexerDriver.getTokensFromInput("integer test(){}; Foo blob(){}; main { };");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        symbolTable = semanticPhases.getSymbolTable();
+
+        assertEquals(0, symbolTable.find("test"));
+        func = symbolTable.search("test");
+
+        assertEquals(EntryKind.FUNCTION, func.getEntryKind());
+        assertEquals("test", func.getName());
+        assertEquals("integer", func.getEntryType().getElementType());
+
+        assertEquals(1, symbolTable.find("blob"));
+        func2 = symbolTable.search("blob");
+
+        assertEquals(EntryKind.FUNCTION, func2.getEntryKind());
+        assertEquals("blob", func2.getName());
+        assertEquals("Foo", func2.getEntryType().getElementType());
+    }
+
 }
