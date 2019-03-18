@@ -1,1 +1,1 @@
-class bar{integer id;};main {  };
+class bar{integer id[7];};main {  };
