@@ -1,1 +1,1 @@
-class bar{integer id; foo bar;};main {  };
+class bar{integer id; foo classFunc(integer bar);};main {  };

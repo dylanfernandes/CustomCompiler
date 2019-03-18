@@ -196,11 +196,13 @@ public class SymTabCreationVisitor implements Visitor {
     }
 
     public void visit(VarOrFuncCheckASTNode astNode) {
+        SymbolTable funcTable;
         SymbolTableEntry symbolTableEntry;
         String elementName;
         String elementTypeStr;
         EntryType elementType;
         VariableType element;
+        FParamsASTNode fParamsASTNode;
 
         ASTNode type;
         ASTNode id;
@@ -227,7 +229,19 @@ public class SymTabCreationVisitor implements Visitor {
                 symbolTableEntry = new SymbolTableEntry(id.getValue(), EntryKind.VARIABLE, elementType, null);
                 astNode.addEntry(symbolTableEntry);
             }
+            else if(varCheckNext.getFirstChild().getValue().equals("(")) {
+                //Element is a function declaration
+                head = varCheckNext.getFirstChild();
+                fParamsASTNode = (FParamsASTNode) head.getRightSibling();
+                fParamsASTNode.accept(this);
+                funcTable = new SymbolTable(id.getValue());
+                funcTable.addEntries(fParamsASTNode.getEntries());
+                elementType = new EntryType(elementTypeStr);
+                symbolTableEntry = new SymbolTableEntry(id.getValue(), EntryKind.FUNCTION, elementType, funcTable);
+                astNode.addEntry(symbolTableEntry);
+            }
         }
+
     }
 
 
