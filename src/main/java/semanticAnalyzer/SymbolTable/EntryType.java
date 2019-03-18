@@ -4,24 +4,31 @@ import java.util.Collections;
 import java.util.List;
 
 public class EntryType {
-    String elementType;
+    VariableType elementType;
     List<VariableType> parameterTypes;
 
-    public EntryType(String elementType, List<VariableType> parameterTypes) {
+    public EntryType(VariableType elementType, List<VariableType> parameterTypes) {
         this.elementType = elementType;
         this.parameterTypes = parameterTypes;
     }
 
-    public EntryType(String elementType) {
+    public EntryType(VariableType elementType) {
         this.elementType = elementType;
         this.parameterTypes = Collections.emptyList();
     }
 
-    public String getElementType() {
+    public EntryType(String elementType) {
+        this.elementType = new VariableType(elementType);
+        this.parameterTypes = Collections.emptyList();
+    }
+
+
+
+    public VariableType getElementType() {
         return elementType;
     }
 
-    public void setElementType(String returnValue) {
+    public void setElementType(VariableType returnValue) {
         this.elementType = returnValue;
     }
 
@@ -35,7 +42,7 @@ public class EntryType {
 
     public String print() {
         String type = "";
-        type += getElementType();
+        type += getElementType().print();
         if(parameterTypes.size() > 0) {
             type += ": " + printParameters();
         }
@@ -44,7 +51,7 @@ public class EntryType {
     private String printParameters() {
         String parameter = "";
         for(int i = 0; i <parameterTypes.size();i++) {
-            parameter += parameterTypes.get(i);
+            parameter += parameterTypes.get(i).print();
             if (parameterTypes.size() > 1 &&  i  < parameterTypes.size() - 1) {
                 parameter += ",";
             }

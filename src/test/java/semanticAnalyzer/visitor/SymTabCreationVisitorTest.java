@@ -146,7 +146,7 @@ public class SymTabCreationVisitorTest {
 
         assertEquals(EntryKind.FUNCTION, func.getEntryKind());
         assertEquals("test", func.getName());
-        assertEquals("integer", func.getEntryType().getElementType());
+        assertEquals("integer", func.getEntryType().getElementType().getType());
     }
 
     @Test
@@ -165,14 +165,14 @@ public class SymTabCreationVisitorTest {
 
         assertEquals(EntryKind.FUNCTION, func.getEntryKind());
         assertEquals("test", func.getName());
-        assertEquals("integer", func.getEntryType().getElementType());
+        assertEquals("integer", func.getEntryType().getElementType().getType());
 
         assertEquals(1, symbolTable.find("blob"));
         func2 = symbolTable.search("blob");
 
         assertEquals(EntryKind.FUNCTION, func2.getEntryKind());
         assertEquals("blob", func2.getName());
-        assertEquals("Foo", func2.getEntryType().getElementType());
+        assertEquals("Foo", func2.getEntryType().getElementType().getType());
     }
 
 }
