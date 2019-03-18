@@ -25,7 +25,7 @@ public class SymbolTable {
         SymbolTableEntry temp;
         for (int i  = 0; i < symbolTableEntries.size(); i++){
             temp = symbolTableEntries.get(i);
-            if(temp.getName() == name) {
+            if(temp.getName().equals(name)) {
                 return i;
             }
         }
@@ -34,7 +34,7 @@ public class SymbolTable {
 
     public SymbolTableEntry search(String name) {
         int index = find(name);
-        if(index > 0 && index < symbolTableEntries.size()) {
+        if(index > -1 && index < symbolTableEntries.size()) {
             return symbolTableEntries.get(index);
         }
         return null;

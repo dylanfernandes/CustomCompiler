@@ -18,13 +18,14 @@ import static org.junit.Assert.assertTrue;
 @RunWith(MockitoJUnitRunner.class)
 public class validSyntaxTest {
 
-    ParserAST parser = new ParserAST();
+    ParserAST parser;
 
     LexerDriver lexerDriver;
 
     @Before
     public void setup() {
         lexerDriver = new LexerDriver();
+        parser = new ParserAST();
     }
 
     @Test
