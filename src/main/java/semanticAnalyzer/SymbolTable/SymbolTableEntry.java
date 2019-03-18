@@ -56,6 +56,7 @@ public class SymbolTableEntry {
             entry += "\t" + link.getName();
         else
             entry +=  "\t null";
+        entry += "\n";
         return entry;
     }
 }

@@ -22,4 +22,7 @@ public class ParserDriver {
     public ASTNode getAST() {
         return parser.getAST();
     }
+    public boolean isParseGood() {
+        return parser.isParseGood();
+    }
 }

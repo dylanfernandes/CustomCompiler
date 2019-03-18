@@ -14,6 +14,8 @@ public class Main {
 
         lex.start();
         parserDriver.start(lex.getTokens());
-        semanticDriver.start((ProgASTNode) parserDriver.getAST());
+
+        if(parserDriver.isParseGood())
+            semanticDriver.start((ProgASTNode) parserDriver.getAST());
     }
 }
