@@ -3,10 +3,7 @@ package syntacticAnalyzer;
 import lexer.Token;
 import syntacticAnalyzer.AST.ASTNode;
 import syntacticAnalyzer.AST.ASTNodeFactory;
-import syntacticAnalyzer.AST.semanticNodes.ClassDeclASTNode;
-import syntacticAnalyzer.AST.semanticNodes.FParamsASTNode;
-import syntacticAnalyzer.AST.semanticNodes.FuncDefASTNode;
-import syntacticAnalyzer.AST.semanticNodes.ProgASTNode;
+import syntacticAnalyzer.AST.semanticNodes.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -198,7 +195,7 @@ public class ParserAST {
         Token semi = new Token();
 
         ASTNode classExOptNode = ASTNodeFactory.getASTNode("classExOpt");
-        ASTNode varOrFuncCheckNode = ASTNodeFactory.getASTNode("varOrFuncCheck");
+        VarOrFuncCheckASTNode varOrFuncCheckNode = new VarOrFuncCheckASTNode("varOrFuncCheck");
 
         if(!skipErrors(Arrays.asList(Token.TokenType.CLASS), Collections.<Token.TokenType>emptyList())) {
             return false;
@@ -258,7 +255,7 @@ public class ParserAST {
         Token semi = new Token();
 
         ASTNode arraySizeRepNode = ASTNodeFactory.getASTNode("arraySizeRep");
-        ASTNode varOrFuncCheckNode = ASTNodeFactory.getASTNode("varOrFuncCheck");
+        VarOrFuncCheckASTNode varOrFuncCheckNode = new VarOrFuncCheckASTNode("varOrFuncCheck");
 
         FParamsASTNode fParamsNode = new FParamsASTNode("fParams");
         ASTNode funcDeclRepNode = ASTNodeFactory.getASTNode("funcDeclRep");

@@ -4,10 +4,7 @@ import semanticAnalyzer.SymbolTable.*;
 import syntacticAnalyzer.AST.ASTNode;
 import syntacticAnalyzer.AST.StringASTNode;
 import syntacticAnalyzer.AST.TokenASTNode;
-import syntacticAnalyzer.AST.semanticNodes.ClassDeclASTNode;
-import syntacticAnalyzer.AST.semanticNodes.FParamsASTNode;
-import syntacticAnalyzer.AST.semanticNodes.FuncDefASTNode;
-import syntacticAnalyzer.AST.semanticNodes.ProgASTNode;
+import syntacticAnalyzer.AST.semanticNodes.*;
 
 public class SymTabCreationVisitor implements Visitor {
     public void visit(StringASTNode astNode) {
@@ -57,6 +54,7 @@ public class SymTabCreationVisitor implements Visitor {
         SymbolTableEntry symbolTableEntry;
         SymbolTableEntry inheritance;
         ASTNode child = astNode.getFirstChild();
+        VarOrFuncCheckASTNode varOrFuncCheck;
         String value = "";
         String inheritName;
 
@@ -65,7 +63,7 @@ public class SymTabCreationVisitor implements Visitor {
             child = child.getRightSibling();
             value = child.getValue();
         }
-
+        varOrFuncCheck = (VarOrFuncCheckASTNode) child.getRightSibling().getRightSibling().getRightSibling();
         classTable = new SymbolTable(value);
 
         //get inheritance of class
@@ -84,8 +82,11 @@ public class SymTabCreationVisitor implements Visitor {
                 }
             }
         }
-        symbolTableEntry = new SymbolTableEntry(value, EntryKind.CLASS, null, classTable);
         //TODO class body
+        varOrFuncCheck.accept(this);
+        classTable.addEntries(varOrFuncCheck.getEntries());
+
+        symbolTableEntry = new SymbolTableEntry(value, EntryKind.CLASS, null, classTable);
         astNode.setEntry(symbolTableEntry);
     }
 
@@ -182,6 +183,44 @@ public class SymTabCreationVisitor implements Visitor {
             }
             symbolTableEntry = new SymbolTableEntry(paramName, EntryKind.PARAMETER, paramType, null);
             astNode.addEntry(symbolTableEntry);
+        }
+    }
+
+    public void visit(VarOrFuncCheckASTNode astNode) {
+        SymbolTableEntry symbolTableEntry;
+        String elementName;
+        String elementTypeStr;
+        EntryType elementType;
+        VariableType element;
+
+        ASTNode type;
+        ASTNode id;
+        ASTNode array;
+        ASTNode head;
+        ASTNode varCheckNext;
+
+        head = astNode;
+
+        while(head.getValue().equals("varOrFuncCheck") && !head.getFirstChild().getValue().equals("EPSILON")) {
+            type = head.getFirstChild();
+            id = type.getRightSibling();
+            varCheckNext = id.getRightSibling();
+            while (type.getFirstChild() != null) {
+                type = type.getFirstChild();
+            }
+            //element is variable
+            if (varCheckNext.getFirstChild().getValue().equals("arraySizeRep")) {
+                array = varCheckNext.getFirstChild();
+                head = varCheckNext.getFirstChild().getRightSibling().getRightSibling();
+
+                if (!array.getFirstChild().getValue().equals("EPSILON")) {
+                    elementType = new EntryType(type.getValue());
+                } else {
+                    elementType = new EntryType(type.getValue());
+                }
+                symbolTableEntry = new SymbolTableEntry(id.getValue(), EntryKind.VARIABLE, elementType, null);
+                astNode.addEntry(symbolTableEntry);
+            }
         }
     }
 

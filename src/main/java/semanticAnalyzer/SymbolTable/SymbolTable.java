@@ -63,7 +63,7 @@ public class SymbolTable {
         List<Integer> links = new ArrayList<Integer>();
         String table = "";
         table += "Symbol Table: " + this.name + "\n";
-        table += "name\t type\t kind\t link \n";
+        table += "name\t kind\t type\t link \n";
 
         for (int i = 0;i < symbolTableEntries.size(); i++) {
             current = symbolTableEntries.get(i);

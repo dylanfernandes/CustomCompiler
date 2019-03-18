@@ -2,10 +2,7 @@ package semanticAnalyzer.visitor;
 
 import syntacticAnalyzer.AST.StringASTNode;
 import syntacticAnalyzer.AST.TokenASTNode;
-import syntacticAnalyzer.AST.semanticNodes.ClassDeclASTNode;
-import syntacticAnalyzer.AST.semanticNodes.FParamsASTNode;
-import syntacticAnalyzer.AST.semanticNodes.FuncDefASTNode;
-import syntacticAnalyzer.AST.semanticNodes.ProgASTNode;
+import syntacticAnalyzer.AST.semanticNodes.*;
 
 public interface Visitor {
     public void  visit(StringASTNode astNode);
@@ -14,4 +11,5 @@ public interface Visitor {
     public void  visit(ClassDeclASTNode astNode);
     public void  visit(FuncDefASTNode astNode);
     public void  visit(FParamsASTNode astNode);
+    public void  visit(VarOrFuncCheckASTNode astNode);
 }

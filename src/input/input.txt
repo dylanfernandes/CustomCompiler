@@ -1,1 +1,1 @@
-integer foo(bar varName, blob var2[5]){};  main {};
+class bar{integer id;};main {  };

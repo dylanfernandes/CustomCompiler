@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import semanticAnalyzer.SemanticPhases;
 import semanticAnalyzer.SymbolTable.EntryKind;
+import semanticAnalyzer.SymbolTable.EntryType;
 import semanticAnalyzer.SymbolTable.SymbolTable;
 import semanticAnalyzer.SymbolTable.SymbolTableEntry;
 import syntacticAnalyzer.AST.semanticNodes.ProgASTNode;
@@ -47,6 +48,31 @@ public class SymTabCreationVisitorTest {
 
         assertEquals(EntryKind.CLASS, class1.getEntryKind());
         assertEquals("test", class1.getName());
+    }
+
+    @Test
+    public void classVar() {
+        SymbolTable bar;
+        SymbolTableEntry class1;
+
+        List<Token> tokens = lexerDriver.getTokensFromInput("class bar{integer id;};main {  };");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        symbolTable = semanticPhases.getSymbolTable();
+        assertEquals(0, symbolTable.find("bar"));
+        class1 = symbolTable.search("bar");
+
+        assertEquals(EntryKind.CLASS, class1.getEntryKind());
+        assertEquals("bar", class1.getName());
+
+        bar = class1.getLink();
+        assertEquals(0, bar.find("id"));
+        class1 = bar.search("id");
+
+        assertEquals("id", class1.getName());
+        assertEquals(EntryKind.VARIABLE, class1.getEntryKind());
+        assertEquals("integer", class1.getEntryType().getElementType().getType());
     }
 
     @Test
