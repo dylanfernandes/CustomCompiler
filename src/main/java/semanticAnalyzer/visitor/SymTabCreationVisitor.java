@@ -79,14 +79,17 @@ public class SymTabCreationVisitor implements Visitor {
                 inheritName = child.getValue();
                 inheritance = new SymbolTableEntry(inheritName,EntryKind.INHERIT,null, null);
                 classTable.addEntry(inheritance);
-            }
-            //get several inheritance
-            child = child.getRightSibling();
-            while (child.getFirstChild().getValue().equals(",")) {
+
+                //get several inheritance
                 child = child.getRightSibling();
-                inheritName = child.getValue();
-                inheritance = new SymbolTableEntry(inheritName,EntryKind.INHERIT,null, null);
-                classTable.addEntry(inheritance);
+                while (child.getFirstChild().getValue().equals(",")) {
+                    child = child.getFirstChild();
+                    child = child.getRightSibling();
+                    inheritName = child.getValue();
+                    inheritance = new SymbolTableEntry(inheritName,EntryKind.INHERIT,null, null);
+                    classTable.addEntry(inheritance);
+                    child = child.getRightSibling();
+                }
             }
         }
         symbolTableEntry = new SymbolTableEntry(value, EntryKind.CLASS, null, classTable);

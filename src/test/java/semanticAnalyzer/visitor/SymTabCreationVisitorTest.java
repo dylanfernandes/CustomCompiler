@@ -77,6 +77,39 @@ public class SymTabCreationVisitorTest {
     }
 
     @Test
+    public void classHeaderInheritSeveral() {
+        SymbolTableEntry class1;
+        SymbolTableEntry classInherit;
+        SymbolTable classTable;
+
+        List<Token> tokens = lexerDriver.getTokensFromInput("class test:blob, foo{}; main { };");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        symbolTable = semanticPhases.getSymbolTable();
+        assertEquals(0, symbolTable.find("test"));
+        class1 = symbolTable.search("test");
+
+        assertEquals(EntryKind.CLASS, class1.getEntryKind());
+        assertEquals("test", class1.getName());
+        assertEquals("test", class1.getLink().getName());
+
+        classTable = class1.getLink();
+
+        assertEquals(0, classTable.find("blob"));
+        classInherit = classTable.search("blob");
+
+        assertEquals(EntryKind.INHERIT, classInherit.getEntryKind());
+        assertEquals("blob", classInherit.getName());
+
+        assertEquals(1, classTable.find("foo"));
+        classInherit = classTable.search("foo");
+
+        assertEquals(EntryKind.INHERIT, classInherit.getEntryKind());
+        assertEquals("foo", classInherit.getName());
+    }
+
+    @Test
     public void classHeaderSeveral() {
         SymbolTableEntry class1;
         SymbolTableEntry class2;
