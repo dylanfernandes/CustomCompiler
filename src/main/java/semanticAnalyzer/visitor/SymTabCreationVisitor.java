@@ -74,19 +74,13 @@ public class SymTabCreationVisitor implements Visitor {
         if(child.getRightSibling().getValue().equals("classExOpt")) {
             child = child.getRightSibling();
             if(child.getFirstChild().getValue().equals(":")) {
-                child = child.getFirstChild();
-                child = child.getRightSibling();
-                inheritName = child.getValue();
-                inheritance = new SymbolTableEntry(inheritName,EntryKind.INHERIT,null, null);
+                inheritance = getInheritanceEntry(child);
                 classTable.addEntry(inheritance);
 
                 //get several inheritance
                 child = child.getRightSibling();
                 while (child.getFirstChild().getValue().equals(",")) {
-                    child = child.getFirstChild();
-                    child = child.getRightSibling();
-                    inheritName = child.getValue();
-                    inheritance = new SymbolTableEntry(inheritName,EntryKind.INHERIT,null, null);
+                    inheritance = getInheritanceEntry(child);
                     classTable.addEntry(inheritance);
                     child = child.getRightSibling();
                 }
@@ -95,6 +89,19 @@ public class SymTabCreationVisitor implements Visitor {
         symbolTableEntry = new SymbolTableEntry(value, EntryKind.CLASS, null, classTable);
         //TODO class body
         astNode.setEntry(symbolTableEntry);
+    }
+
+    private SymbolTableEntry getInheritanceEntry(ASTNode child){
+        String inheritName;
+        //For movement around tree
+        ASTNode temp;
+        temp = child.getFirstChild();
+        temp = temp.getRightSibling();
+        //set instance to new location
+        child.set(temp);
+        inheritName = temp.getValue();
+        return new SymbolTableEntry(inheritName,EntryKind.INHERIT,null, null);
+
     }
 
     public void visit(FuncDefASTNode astNode) {

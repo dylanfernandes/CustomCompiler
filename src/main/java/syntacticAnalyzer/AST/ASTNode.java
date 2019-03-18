@@ -26,6 +26,13 @@ abstract public class ASTNode {
         this.firstSibling = null;
     }
 
+    public void set(ASTNode node) {
+        this.parent = node.getParent();
+        this.rightSibling = node.getRightSibling();
+        this.firstSibling = node.getFirstSibling();
+        this.firstChild = node.getFirstChild();
+    }
+
     public ASTNode getParent() {
         return parent;
     }
