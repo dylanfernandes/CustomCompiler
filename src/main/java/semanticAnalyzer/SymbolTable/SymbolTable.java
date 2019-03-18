@@ -49,11 +49,24 @@ public class SymbolTable {
     }
 
     public String print() {
+        SymbolTableEntry current;
+        List<Integer> links = new ArrayList<Integer>();
         String table = "";
         table += "Symbol Table: " + this.name + "\n";
         table += "name\t type\t kind\t link \n";
+
         for (int i = 0;i < symbolTableEntries.size(); i++) {
-            table += symbolTableEntries.get(i).print();
+            current = symbolTableEntries.get(i);
+            table += current.print();
+            if(current.hasLink()) {
+                links.add(i);
+            }
+        }
+
+        //print linked tables
+        for (int j = 0; j < links.size(); j++) {
+            table += "\n";
+            table += symbolTableEntries.get(links.get(j)).print();
         }
         return table;
     }
