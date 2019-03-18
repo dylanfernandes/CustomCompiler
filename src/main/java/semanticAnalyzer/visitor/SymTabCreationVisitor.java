@@ -55,13 +55,41 @@ public class SymTabCreationVisitor implements Visitor {
 
 
     public void visit(ClassDeclASTNode astNode) {
+        SymbolTable classTable;
         SymbolTableEntry symbolTableEntry;
+        SymbolTableEntry inheritance;
         ASTNode child = astNode.getFirstChild();
         String value = "";
+        String inheritName;
+
+
         if(child.getValue().equals("class")) {
-            value = child.getRightSibling().getValue();
+            child = child.getRightSibling();
+            value = child.getValue();
         }
-        symbolTableEntry = new SymbolTableEntry(value, EntryKind.CLASS, null, null);
+
+        classTable = new SymbolTable(value);
+
+        //get inheritance of class
+        if(child.getRightSibling().getValue().equals("classExOpt")) {
+            child = child.getRightSibling();
+            if(child.getFirstChild().getValue().equals(":")) {
+                child = child.getFirstChild();
+                child = child.getRightSibling();
+                inheritName = child.getValue();
+                inheritance = new SymbolTableEntry(inheritName,EntryKind.INHERIT,null, null);
+                classTable.addEntry(inheritance);
+            }
+            //get several inheritance
+            child = child.getRightSibling();
+            while (child.getFirstChild().getValue().equals(",")) {
+                child = child.getRightSibling();
+                inheritName = child.getValue();
+                inheritance = new SymbolTableEntry(inheritName,EntryKind.INHERIT,null, null);
+                classTable.addEntry(inheritance);
+            }
+        }
+        symbolTableEntry = new SymbolTableEntry(value, EntryKind.CLASS, null, classTable);
         //TODO class body
         astNode.setEntry(symbolTableEntry);
     }

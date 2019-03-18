@@ -17,6 +17,10 @@ public class SymbolTable {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void addEntry(SymbolTableEntry newEntry) {
         symbolTableEntries.add(newEntry);
     }
@@ -66,7 +70,7 @@ public class SymbolTable {
         //print linked tables
         for (int j = 0; j < links.size(); j++) {
             table += "\n";
-            table += symbolTableEntries.get(links.get(j)).print();
+            table += symbolTableEntries.get(links.get(j)).getLink().print();
         }
         return table;
     }

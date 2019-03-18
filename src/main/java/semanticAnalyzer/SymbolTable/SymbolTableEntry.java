@@ -4,10 +4,10 @@ public class SymbolTableEntry {
     String name;
     EntryKind entryKind;
     EntryType entryType;
-    SymbolTableEntry link;
+    SymbolTable link;
     boolean hasLink;
 
-    public SymbolTableEntry(String name, EntryKind entryKind, EntryType entryType, SymbolTableEntry link) {
+    public SymbolTableEntry(String name, EntryKind entryKind, EntryType entryType, SymbolTable link) {
         this.name = name;
         this.entryKind = entryKind;
         this.entryType = entryType;
@@ -39,11 +39,11 @@ public class SymbolTableEntry {
         this.entryType = entryType;
     }
 
-    public SymbolTableEntry getLink() {
+    public SymbolTable getLink() {
         return link;
     }
 
-    public void setLink(SymbolTableEntry link) {
+    public void setLink(SymbolTable link) {
         hasLink();
         this.link = link;
     }
