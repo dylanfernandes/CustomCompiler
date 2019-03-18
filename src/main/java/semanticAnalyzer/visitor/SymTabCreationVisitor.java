@@ -138,30 +138,51 @@ public class SymTabCreationVisitor implements Visitor {
         EntryType paramType;
         VariableType param;
 
-        ASTNode type = astNode.getFirstChild();
-        ASTNode id = type.getRightSibling();
-        ASTNode array = id.getRightSibling();
+        ASTNode type;
+        ASTNode id;
+        ASTNode array;
+        ASTNode head;
 
-        while(type.getFirstChild() != null) {
-            type = type.getFirstChild();
-        }
+        head = astNode;
 
-        paramName = id.getValue();
-        paramTypeStr = type.getValue();
+        while(!head.getFirstChild().getValue().equals("EPSILON")) {
 
-        if(!array.getFirstChild().equals("EPSILON")) {
-            param = new VariableType(paramTypeStr);
-            while(!array.getFirstChild().getValue().equals("EPSILON")) {
-                array = array.getFirstChild();
-                param.addArrayDimension(array.getFirstChild().getRightSibling().getValue());
-                array = array.getRightSibling();
+            if(head.getValue().equals("fParams")) {
+                type = head.getFirstChild();
+                id = type.getRightSibling();
+                array = id.getRightSibling();
+                head = array.getRightSibling();
             }
-            paramType = new EntryType(param);
-        } else {
-            paramType = new EntryType(paramTypeStr);
+            else {
+                type = head.getFirstChild().getFirstChild().getRightSibling();
+                id = type.getRightSibling();
+                array = id.getRightSibling();
+                head = head.getFirstChild().getRightSibling();
+            }
+
+
+
+            while (type.getFirstChild() != null) {
+                type = type.getFirstChild();
+            }
+
+            paramName = id.getValue();
+            paramTypeStr = type.getValue();
+
+            if (!array.getFirstChild().getValue().equals("EPSILON")) {
+                param = new VariableType(paramTypeStr);
+                while (!array.getFirstChild().getValue().equals("EPSILON")) {
+                    array = array.getFirstChild();
+                    param.addArrayDimension(array.getFirstChild().getRightSibling().getValue());
+                    array = array.getRightSibling();
+                }
+                paramType = new EntryType(param);
+            } else {
+                paramType = new EntryType(paramTypeStr);
+            }
+            symbolTableEntry = new SymbolTableEntry(paramName, EntryKind.PARAMETER, paramType, null);
+            astNode.addEntry(symbolTableEntry);
         }
-        symbolTableEntry = new SymbolTableEntry(paramName, EntryKind.PARAMETER, paramType, null);
-        astNode.addEntry(symbolTableEntry);
     }
 
 
