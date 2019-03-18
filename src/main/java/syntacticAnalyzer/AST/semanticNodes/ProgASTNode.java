@@ -3,18 +3,17 @@ package syntacticAnalyzer.AST.semanticNodes;
 import semanticAnalyzer.SymbolTable.SymbolTable;
 import semanticAnalyzer.visitor.Visitor;
 import syntacticAnalyzer.AST.ASTNode;
+import syntacticAnalyzer.AST.BasicASTNode;
 
-public class ProgASTNode extends ASTNode {
-    private String value;
+public class ProgASTNode extends BasicASTNode {
     private SymbolTable globalTable;
 
-
-    public  ProgASTNode(String value) {
-        this.value = value;
+    public ProgASTNode(String value, ASTNode parent, ASTNode rightSibling, ASTNode firstSibling, ASTNode firstChild) {
+        super(value, parent, rightSibling, firstSibling, firstChild);
     }
 
-    public String getValue() {
-        return null;
+    public ProgASTNode(String value) {
+        super(value);
     }
 
     public void accept(Visitor visitor) {

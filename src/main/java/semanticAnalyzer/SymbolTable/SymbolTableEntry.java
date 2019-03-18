@@ -47,7 +47,15 @@ public class SymbolTableEntry {
 
     public String print(){
         String entry = "";
-        entry += getName() + "\t" + getEntryKind().toString() + "\t" + getEntryType().print() + "\t" + link.getName();
+        entry += getName() + "\t" + getEntryKind().toString();
+        if(entryType != null)
+            entry +=  "\t" + getEntryType().print();
+        else
+            entry +=  "\t null";
+        if (link != null)
+            entry += "\t" + link.getName();
+        else
+            entry +=  "\t null";
         return entry;
     }
 }

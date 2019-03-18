@@ -3,6 +3,7 @@ package syntacticAnalyzer;
 import lexer.Token;
 import syntacticAnalyzer.AST.ASTNode;
 import syntacticAnalyzer.AST.ASTNodeFactory;
+import syntacticAnalyzer.AST.semanticNodes.ClassDeclASTNode;
 import syntacticAnalyzer.AST.semanticNodes.ProgASTNode;
 
 import java.util.Arrays;
@@ -166,7 +167,7 @@ public class ParserAST {
     }
 
     public boolean classDeclRep(ASTNode currentRoot) {
-        ASTNode classDeclNode = ASTNodeFactory.getASTNode("classDecl");
+        ClassDeclASTNode classDeclNode = new ClassDeclASTNode("classDecl");
         ASTNode classDeclRepNode = ASTNodeFactory.getASTNode("classDeclRep");
 
         if(!skipErrors(Arrays.asList(Token.TokenType.EPSILON, Token.TokenType.CLASS), Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.MAIN))) {
