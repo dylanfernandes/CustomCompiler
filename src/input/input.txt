@@ -1,1 +1,1 @@
-class test:blob, foo{};  main {};
+integer foo(bar varName){};  main {};

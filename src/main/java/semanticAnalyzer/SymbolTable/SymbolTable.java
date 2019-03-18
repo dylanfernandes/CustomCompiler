@@ -25,6 +25,12 @@ public class SymbolTable {
         symbolTableEntries.add(newEntry);
     }
 
+    public void addEntries(List<SymbolTableEntry> entries){
+        for (int i = 0; i < entries.size(); i++) {
+            addEntry(entries.get(i));
+        }
+    }
+
     public int find(String name){
         SymbolTableEntry temp;
         for (int i  = 0; i < symbolTableEntries.size(); i++){

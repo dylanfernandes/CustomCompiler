@@ -4,6 +4,7 @@ import lexer.Token;
 import syntacticAnalyzer.AST.ASTNode;
 import syntacticAnalyzer.AST.ASTNodeFactory;
 import syntacticAnalyzer.AST.semanticNodes.ClassDeclASTNode;
+import syntacticAnalyzer.AST.semanticNodes.FParamsASTNode;
 import syntacticAnalyzer.AST.semanticNodes.FuncDefASTNode;
 import syntacticAnalyzer.AST.semanticNodes.ProgASTNode;
 
@@ -259,7 +260,7 @@ public class ParserAST {
         ASTNode arraySizeRepNode = ASTNodeFactory.getASTNode("arraySizeRep");
         ASTNode varOrFuncCheckNode = ASTNodeFactory.getASTNode("varOrFuncCheck");
 
-        ASTNode fParamsNode = ASTNodeFactory.getASTNode("fParams");
+        FParamsASTNode fParamsNode = new FParamsASTNode("fParams");
         ASTNode funcDeclRepNode = ASTNodeFactory.getASTNode("funcDeclRep");
 
         if(!skipErrors(Arrays.asList(Token.TokenType.OSBRA, Token.TokenType.SEMI, Token.TokenType.OPAR), Collections.<Token.TokenType>emptyList())) {
@@ -350,7 +351,7 @@ public class ParserAST {
         Token semi = new Token();
 
         ASTNode typeNode = ASTNodeFactory.getASTNode("type");
-        ASTNode fParamsNode = ASTNodeFactory.getASTNode("fParams");
+        FParamsASTNode fParamsNode = new FParamsASTNode("fParams");
 
         if(!skipErrors(Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.EPSILON), Collections.<Token.TokenType>emptyList())) {
             return false;
@@ -401,7 +402,7 @@ public class ParserAST {
     }
 
     private boolean funcHeadChoice(ASTNode currentRoot) {
-        ASTNode fParamsNode = ASTNodeFactory.getASTNode("fParams");
+        FParamsASTNode fParamsNode = new FParamsASTNode("fParams");
 
         Token dcolo = new Token();
         Token id = new Token();

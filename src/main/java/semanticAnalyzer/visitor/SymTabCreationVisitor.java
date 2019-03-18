@@ -8,6 +8,7 @@ import syntacticAnalyzer.AST.ASTNode;
 import syntacticAnalyzer.AST.StringASTNode;
 import syntacticAnalyzer.AST.TokenASTNode;
 import syntacticAnalyzer.AST.semanticNodes.ClassDeclASTNode;
+import syntacticAnalyzer.AST.semanticNodes.FParamsASTNode;
 import syntacticAnalyzer.AST.semanticNodes.FuncDefASTNode;
 import syntacticAnalyzer.AST.semanticNodes.ProgASTNode;
 
@@ -105,18 +106,51 @@ public class SymTabCreationVisitor implements Visitor {
     }
 
     public void visit(FuncDefASTNode astNode) {
+        SymbolTable funcTable;
         SymbolTableEntry symbolTableEntry;
         EntryType funcTypes;
+        String funcName;
 
         ASTNode head = astNode.getFirstChild();
         ASTNode type = head.getFirstChild();
         ASTNode id = type.getRightSibling();
+        FParamsASTNode fParams = (FParamsASTNode) id.getRightSibling().getFirstChild().getRightSibling();
+
         while(type.getFirstChild() != null) {
             type = type.getFirstChild();
         }
         funcTypes = new EntryType(type.getValue());
-        symbolTableEntry = new SymbolTableEntry(id.getValue(), EntryKind.FUNCTION, funcTypes, null);
+        funcName = id.getValue();
+
+        funcTable = new SymbolTable(funcName);
+
+        //add function paramters to function table
+        fParams.accept(this);
+        funcTable.addEntries(fParams.getEntries());
+
+        symbolTableEntry = new SymbolTableEntry(funcName, EntryKind.FUNCTION, funcTypes, funcTable);
         astNode.setEntry(symbolTableEntry);
+    }
+
+    public void visit(FParamsASTNode astNode) {
+        SymbolTableEntry symbolTableEntry;
+        String paramName;
+        String paramTypeStr;
+        EntryType paramType;
+
+        ASTNode type = astNode.getFirstChild();
+        ASTNode id = type.getRightSibling();
+
+        while(type.getFirstChild() != null) {
+            type = type.getFirstChild();
+        }
+
+        paramName = id.getValue();
+        paramTypeStr = type.getValue();
+        paramType = new EntryType(paramTypeStr);
+
+        symbolTableEntry = new SymbolTableEntry(paramName, EntryKind.PARAMETER, paramType, null);
+        astNode.addEntry(symbolTableEntry);
     }
 
 
