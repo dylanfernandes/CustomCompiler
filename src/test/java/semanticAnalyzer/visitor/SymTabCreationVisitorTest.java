@@ -121,6 +121,43 @@ public class SymTabCreationVisitorTest {
     }
 
     @Test
+    public void classFuncSeveral() {
+        SymbolTable bar;
+        SymbolTable classFunc;
+        SymbolTableEntry class1;
+        SymbolTableEntry func;
+
+        List<Token> tokens = lexerDriver.getTokensFromInput("class bar{foo classFunc();integer classFunc2();};main {  };");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        symbolTable = semanticPhases.getSymbolTable();
+        assertEquals(0, symbolTable.find("bar"));
+        class1 = symbolTable.search("bar");
+
+        assertEquals(EntryKind.CLASS, class1.getEntryKind());
+        assertEquals("bar", class1.getName());
+
+        bar = class1.getLink();
+
+        assertEquals(0, bar.find("classFunc"));
+        func = bar.search("classFunc");
+
+        assertEquals(EntryKind.FUNCTION, func.getEntryKind());
+        assertEquals("classFunc", func.getName());
+        assertEquals("foo", func.getEntryType().getElementType().getType());
+        assertEquals("classFunc", func.getLink().getName());
+
+        assertEquals(1, bar.find("classFunc2"));
+        func = bar.search("classFunc2");
+
+        assertEquals(EntryKind.FUNCTION, func.getEntryKind());
+        assertEquals("classFunc2", func.getName());
+        assertEquals("integer", func.getEntryType().getElementType().getType());
+        assertEquals("classFunc2", func.getLink().getName());
+    }
+
+    @Test
     public void classSeveralVar() {
         SymbolTable bar;
         SymbolTableEntry class1;

@@ -239,6 +239,24 @@ public class SymTabCreationVisitor implements Visitor {
                 elementType = new EntryType(elementTypeStr);
                 symbolTableEntry = new SymbolTableEntry(id.getValue(), EntryKind.FUNCTION, elementType, funcTable);
                 astNode.addEntry(symbolTableEntry);
+                //point to function delaration repitition
+                head = varCheckNext.getFirstChild().getRightSibling().getRightSibling().getRightSibling().getRightSibling();
+            }
+        }
+
+        if(head != null && head.getValue().equals("funcDeclRep")) {
+            while(head.getValue().equals("funcDeclRep") && !head.getFirstChild().getValue().equals("EPSILON")) {
+                type = head.getFirstChild().getFirstChild();
+                elementTypeStr = getType(type);
+                id = type.getRightSibling();
+                fParamsASTNode = (FParamsASTNode) id.getRightSibling().getRightSibling();
+                fParamsASTNode.accept(this);
+                funcTable = new SymbolTable(id.getValue());
+                funcTable.addEntries(fParamsASTNode.getEntries());
+                elementType = new EntryType(elementTypeStr);
+                symbolTableEntry = new SymbolTableEntry(id.getValue(), EntryKind.FUNCTION, elementType, funcTable);
+                astNode.addEntry(symbolTableEntry);
+                head = head.getFirstChild().getRightSibling();
             }
         }
 
