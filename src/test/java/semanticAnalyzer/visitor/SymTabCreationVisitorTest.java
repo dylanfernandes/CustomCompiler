@@ -557,28 +557,35 @@ public class SymTabCreationVisitorTest {
         assertEquals(EntryKind.VARIABLE, main.getEntryKind());
         assertEquals("integer", main.getEntryType().getElementType().getType());
     }
-//    @Test
-//    public void mainVar() {
-//        SymbolTable bar;
-//        SymbolTableEntry main;
-//
-//        List<Token> tokens = lexerDriver.getTokensFromInput("main {  integer blob; };");
-//        parserDriver.start(tokens);
-//
-//        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
-//        symbolTable = semanticPhases.getSymbolTable();
-//        assertEquals(0, symbolTable.find("main"));
-//        main = symbolTable.search("main");
-//
-//        assertEquals(EntryKind.FUNCTION, main.getEntryKind());
-//        assertEquals("main", main.getName());
-//
-//        bar = main.getLink();
-//        assertEquals(0, bar.find("blob"));
-//        main = bar.search("blob");
-//
-//        assertEquals("blob", main.getName());
-//        assertEquals(EntryKind.VARIABLE, main.getEntryKind());
-//        assertEquals("integer", main.getEntryType().getElementType().getType());
-//    }
+    @Test
+    public void mainSeveralVar() {
+        SymbolTable bar;
+        SymbolTableEntry main;
+
+        List<Token> tokens = lexerDriver.getTokensFromInput("main {  integer blob; float bar;};");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        symbolTable = semanticPhases.getSymbolTable();
+        assertEquals(0, symbolTable.find("main"));
+        main = symbolTable.search("main");
+
+        assertEquals(EntryKind.FUNCTION, main.getEntryKind());
+        assertEquals("main", main.getName());
+
+        bar = main.getLink();
+        assertEquals(0, bar.find("blob"));
+        main = bar.search("blob");
+
+        assertEquals("blob", main.getName());
+        assertEquals(EntryKind.VARIABLE, main.getEntryKind());
+        assertEquals("integer", main.getEntryType().getElementType().getType());
+
+        assertEquals(1, bar.find("bar"));
+        main = bar.search("bar");
+
+        assertEquals("bar", main.getName());
+        assertEquals(EntryKind.VARIABLE, main.getEntryKind());
+        assertEquals("float", main.getEntryType().getElementType().getType());
+    }
 }

@@ -288,7 +288,7 @@ public class SymTabCreationVisitor implements Visitor {
                 symbolTableEntry = new SymbolTableEntry(id, EntryKind.VARIABLE, varEntry,null);
                 astNode.addEntry(symbolTableEntry);
             }
-            head = head.getRightSibling();
+            head = head.getFirstChild().getRightSibling();
         }
 
     }
