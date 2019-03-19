@@ -1,1 +1,1 @@
-main {  integer blob; float bar;};
+integer foo(){integer id;};main {  };

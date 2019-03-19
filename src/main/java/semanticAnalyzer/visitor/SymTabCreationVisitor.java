@@ -117,6 +117,7 @@ public class SymTabCreationVisitor implements Visitor {
         String typeStr;
 
         ASTNode head = astNode.getFirstChild();
+        VarDeclStatFuncRepASTNode varDeclStatFuncRepASTNode = (VarDeclStatFuncRepASTNode) head.getRightSibling().getFirstChild().getRightSibling();
         ASTNode type = head.getFirstChild();
         ASTNode id = type.getRightSibling();
         ASTNode headerChoice = id.getRightSibling();
@@ -147,8 +148,12 @@ public class SymTabCreationVisitor implements Visitor {
             funcTable.addEntries(fParams.getEntries());
         }
 
+        varDeclStatFuncRepASTNode.accept(this);
+        funcTable.addEntries(varDeclStatFuncRepASTNode.getEntries());
+
         symbolTableEntry = new SymbolTableEntry(funcName, EntryKind.FUNCTION, funcTypes, funcTable);
         astNode.setEntry(symbolTableEntry);
+
     }
 
     public void visit(FParamsASTNode astNode) {

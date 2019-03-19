@@ -534,6 +534,31 @@ public class SymTabCreationVisitorTest {
     }
 
     @Test
+    public void funcBodyVar() {
+        SymbolTable bar;
+        SymbolTableEntry foo;
+
+        List<Token> tokens = lexerDriver.getTokensFromInput("integer foo(){integer id;};main {  };");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        symbolTable = semanticPhases.getSymbolTable();
+        assertEquals(0, symbolTable.find("foo"));
+        foo = symbolTable.search("foo");
+
+        assertEquals(EntryKind.FUNCTION, foo.getEntryKind());
+        assertEquals("foo", foo.getName());
+
+        bar = foo.getLink();
+        assertEquals(0, bar.find("id"));
+        foo = bar.search("id");
+
+        assertEquals("id", foo.getName());
+        assertEquals(EntryKind.VARIABLE, foo.getEntryKind());
+        assertEquals("integer", foo.getEntryType().getElementType().getType());
+    }
+
+    @Test
     public void mainVar() {
         SymbolTable bar;
         SymbolTableEntry main;
@@ -557,6 +582,7 @@ public class SymTabCreationVisitorTest {
         assertEquals(EntryKind.VARIABLE, main.getEntryKind());
         assertEquals("integer", main.getEntryType().getElementType().getType());
     }
+
     @Test
     public void mainSeveralVar() {
         SymbolTable bar;
