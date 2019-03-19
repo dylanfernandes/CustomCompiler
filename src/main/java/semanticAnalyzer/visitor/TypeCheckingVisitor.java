@@ -1,10 +1,14 @@
 package semanticAnalyzer.visitor;
 
+import syntacticAnalyzer.AST.ASTNode;
 import syntacticAnalyzer.AST.StringASTNode;
 import syntacticAnalyzer.AST.TokenASTNode;
 import syntacticAnalyzer.AST.semanticNodes.*;
 
-public class TypeCheckingVisitor implements Visitor {
+public class TypeCheckingVisitor extends Visitor {
+    private boolean hasError;
+    private String errorOutput;
+
     public void visit(StringASTNode astNode) {
 
     }
@@ -14,6 +18,12 @@ public class TypeCheckingVisitor implements Visitor {
     }
 
     public void visit(ProgASTNode astNode) {
+        ASTNode classDeclRep = astNode.getFirstChild();
+        ASTNode funcDefRep = classDeclRep.getRightSibling();
+        VarDeclStatFuncRepASTNode varDeclStatFuncRep = (VarDeclStatFuncRepASTNode) funcDefRep.getRightSibling().getRightSibling().getFirstChild().getRightSibling();
+
+        ClassDeclASTNode classNode;
+        FuncDefASTNode functionNode;
 
     }
 

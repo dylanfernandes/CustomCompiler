@@ -6,7 +6,7 @@ import syntacticAnalyzer.AST.StringASTNode;
 import syntacticAnalyzer.AST.TokenASTNode;
 import syntacticAnalyzer.AST.semanticNodes.*;
 
-public class SymTabCreationVisitor implements Visitor {
+public class SymTabCreationVisitor extends Visitor {
     public void visit(StringASTNode astNode) {
 
     }
@@ -95,18 +95,6 @@ public class SymTabCreationVisitor implements Visitor {
         astNode.setEntry(symbolTableEntry);
     }
 
-    private SymbolTableEntry getInheritanceEntry(ASTNode child){
-        String inheritName;
-        //For movement around tree
-        ASTNode temp;
-        temp = child.getFirstChild();
-        temp = temp.getRightSibling();
-        //set instance to new location
-        child.set(temp);
-        inheritName = temp.getValue();
-        return new SymbolTableEntry(inheritName,EntryKind.INHERIT,null, null);
-
-    }
 
     public void visit(FuncDefASTNode astNode) {
         SymbolTable funcTable;
@@ -196,29 +184,6 @@ public class SymTabCreationVisitor implements Visitor {
         }
     }
 
-    private String getType(ASTNode typeRoot){
-        while (typeRoot.getFirstChild() != null) {
-            typeRoot = typeRoot.getFirstChild();
-        }
-        return typeRoot.getValue();
-    }
-
-    private EntryType getArray(ASTNode array, String type) {
-        EntryType entryType;
-        VariableType variableType;
-        if (!array.getFirstChild().getValue().equals("EPSILON")) {
-            variableType = new VariableType(type);
-            while (!array.getFirstChild().getValue().equals("EPSILON")) {
-                array = array.getFirstChild();
-                variableType.addArrayDimension(array.getFirstChild().getRightSibling().getValue());
-                array = array.getRightSibling();
-            }
-            entryType = new EntryType(variableType);
-        } else {
-            entryType = new EntryType(type);
-        }
-        return entryType;
-    }
 
     public void visit(VarOrFuncCheckASTNode astNode) {
         SymbolTableEntry symbolTableEntry;
@@ -298,16 +263,6 @@ public class SymTabCreationVisitor implements Visitor {
 
     }
 
-    private SymbolTableEntry getParamFuncTable(FParamsASTNode fParamsASTNode, String idVal, String elementTypeStr){
-        SymbolTable funcTable;
-        EntryType elementType;
-
-        fParamsASTNode.accept(this);
-        funcTable = new SymbolTable(idVal);
-        funcTable.addEntries(fParamsASTNode.getEntries());
-        elementType = new EntryType(elementTypeStr);
-        return new SymbolTableEntry(idVal, EntryKind.FUNCTION, elementType, funcTable);
-    }
 
 
 }
