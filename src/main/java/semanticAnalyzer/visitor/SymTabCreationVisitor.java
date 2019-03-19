@@ -196,12 +196,9 @@ public class SymTabCreationVisitor implements Visitor {
     }
 
     public void visit(VarOrFuncCheckASTNode astNode) {
-        SymbolTable funcTable;
         SymbolTableEntry symbolTableEntry;
-        String elementName;
         String elementTypeStr;
         EntryType elementType;
-        VariableType element;
         FParamsASTNode fParamsASTNode;
 
         ASTNode type;
@@ -233,12 +230,7 @@ public class SymTabCreationVisitor implements Visitor {
                 //Element is a function declaration
                 head = varCheckNext.getFirstChild();
                 fParamsASTNode = (FParamsASTNode) head.getRightSibling();
-                fParamsASTNode.accept(this);
-                funcTable = new SymbolTable(id.getValue());
-                funcTable.addEntries(fParamsASTNode.getEntries());
-                elementType = new EntryType(elementTypeStr);
-                symbolTableEntry = new SymbolTableEntry(id.getValue(), EntryKind.FUNCTION, elementType, funcTable);
-                astNode.addEntry(symbolTableEntry);
+                astNode.addEntry(getParamFuncTable(fParamsASTNode, id.getValue(), elementTypeStr));
                 //point to function delaration repitition
                 head = varCheckNext.getFirstChild().getRightSibling().getRightSibling().getRightSibling().getRightSibling();
             }
@@ -250,16 +242,22 @@ public class SymTabCreationVisitor implements Visitor {
                 elementTypeStr = getType(type);
                 id = type.getRightSibling();
                 fParamsASTNode = (FParamsASTNode) id.getRightSibling().getRightSibling();
-                fParamsASTNode.accept(this);
-                funcTable = new SymbolTable(id.getValue());
-                funcTable.addEntries(fParamsASTNode.getEntries());
-                elementType = new EntryType(elementTypeStr);
-                symbolTableEntry = new SymbolTableEntry(id.getValue(), EntryKind.FUNCTION, elementType, funcTable);
-                astNode.addEntry(symbolTableEntry);
+                astNode.addEntry(getParamFuncTable(fParamsASTNode, id.getValue(),elementTypeStr));
                 head = head.getFirstChild().getRightSibling();
             }
         }
 
+    }
+
+    private SymbolTableEntry getParamFuncTable(FParamsASTNode fParamsASTNode, String idVal, String elementTypeStr){
+        SymbolTable funcTable;
+        EntryType elementType;
+
+        fParamsASTNode.accept(this);
+        funcTable = new SymbolTable(idVal);
+        funcTable.addEntries(fParamsASTNode.getEntries());
+        elementType = new EntryType(elementTypeStr);
+        return new SymbolTableEntry(idVal, EntryKind.FUNCTION, elementType, funcTable);
     }
 
 
