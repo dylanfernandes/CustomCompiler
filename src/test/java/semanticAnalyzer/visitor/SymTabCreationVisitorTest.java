@@ -318,6 +318,32 @@ public class SymTabCreationVisitorTest {
     }
 
     @Test
+    public void classFunctionDefHeader() {
+        SymbolTable funcTable;
+        SymbolTableEntry func;
+
+        List<Token> tokens = lexerDriver.getTokensFromInput("integer foo::blob(){};main {  };");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        symbolTable = semanticPhases.getSymbolTable();
+        assertEquals(0, symbolTable.find("blob"));
+        func = symbolTable.search("blob");
+
+        assertEquals(EntryKind.FUNCTION, func.getEntryKind());
+        assertEquals("blob", func.getName());
+        assertEquals("integer", func.getEntryType().getElementType().getType());
+        assertEquals("blob", func.getLink().getName());
+        funcTable = func.getLink();
+
+        assertEquals(0, funcTable.find("foo"));
+        func = funcTable.search("foo");
+        assertEquals(EntryKind.INHERIT, func.getEntryKind());
+        assertEquals("foo", func.getName());
+
+    }
+
+    @Test
     public void functionDefHeaderParameter() {
         SymbolTableEntry func;
         SymbolTable funcTable;

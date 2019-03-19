@@ -106,6 +106,7 @@ public class SymTabCreationVisitor implements Visitor {
     public void visit(FuncDefASTNode astNode) {
         SymbolTable funcTable;
         SymbolTableEntry symbolTableEntry;
+        SymbolTableEntry classDef;
         EntryType funcTypes;
         String funcName;
         String typeStr;
@@ -113,13 +114,27 @@ public class SymTabCreationVisitor implements Visitor {
         ASTNode head = astNode.getFirstChild();
         ASTNode type = head.getFirstChild();
         ASTNode id = type.getRightSibling();
-        FParamsASTNode fParams = (FParamsASTNode) id.getRightSibling().getFirstChild().getRightSibling();
+        ASTNode headerChoice = id.getRightSibling();
+        FParamsASTNode fParams;
 
         typeStr = getType(type);
         funcTypes = new EntryType(typeStr);
-        funcName = id.getValue();
+        //free function definition
+        if(headerChoice.getFirstChild().getValue().equals("(")) {
+            fParams = (FParamsASTNode) id.getRightSibling().getFirstChild().getRightSibling();
+            funcName = id.getValue();
+            funcTable = new SymbolTable(funcName);
+        } else {
+            //class function definition
+            //id was id of class
+            classDef = new SymbolTableEntry(id.getValue(), EntryKind.INHERIT, null, null);
+            id = headerChoice.getFirstChild().getRightSibling();
+            funcName = id.getValue();
+            fParams = (FParamsASTNode) id.getRightSibling().getRightSibling();
+            funcTable = new SymbolTable(funcName);
+            funcTable.addEntry(classDef);
+        }
 
-        funcTable = new SymbolTable(funcName);
 
         //add function paramters to function table
         if(!fParams.getFirstChild().getValue().equals("EPSILON")) {

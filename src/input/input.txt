@@ -1,1 +1,1 @@
-class bar{foo classFunc();integer classFunc2();};main {  };
+integer foo::blob(){};main {  };
