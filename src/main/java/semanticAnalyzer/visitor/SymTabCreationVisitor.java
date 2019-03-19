@@ -18,6 +18,7 @@ public class SymTabCreationVisitor extends Visitor {
     public void visit(ProgASTNode astNode) {
         SymbolTable globalTable = new SymbolTable("global");
         SymbolTable mainTable = new SymbolTable("main");
+
         ASTNode classDeclRep = astNode.getFirstChild();
         ASTNode funcDefRep = classDeclRep.getRightSibling();
         VarDeclStatFuncRepASTNode varDeclStatFuncRep = (VarDeclStatFuncRepASTNode) funcDefRep.getRightSibling().getRightSibling().getFirstChild().getRightSibling();
@@ -58,11 +59,12 @@ public class SymTabCreationVisitor extends Visitor {
         SymbolTable classTable;
         SymbolTableEntry symbolTableEntry;
         SymbolTableEntry inheritance;
+
         ASTNode child = astNode.getFirstChild();
+        ASTNode temp = new StringASTNode("");
+
         VarOrFuncCheckASTNode varOrFuncCheck;
         String value = "";
-        String inheritName;
-
 
         if(child.getValue().equals("class")) {
             child = child.getRightSibling();
@@ -75,19 +77,23 @@ public class SymTabCreationVisitor extends Visitor {
         if(child.getRightSibling().getValue().equals("classExOpt")) {
             child = child.getRightSibling();
             if(child.getFirstChild().getValue().equals(":")) {
-                inheritance = getInheritanceEntry(child);
+                inheritance = getInheritanceEntry(child, temp);
+                //set child to end location
+                child = temp;
                 classTable.addEntry(inheritance);
 
                 //get several inheritance
                 child = child.getRightSibling();
                 while (child.getFirstChild().getValue().equals(",")) {
-                    inheritance = getInheritanceEntry(child);
+                    inheritance = getInheritanceEntry(child, temp);
+                    //set child to end location
+                    child = temp;
                     classTable.addEntry(inheritance);
                     child = child.getRightSibling();
                 }
             }
         }
-        //TODO class body
+
         varOrFuncCheck.accept(this);
         classTable.addEntries(varOrFuncCheck.getEntries());
 

@@ -31,6 +31,19 @@ public class SymbolTable {
         }
     }
 
+
+    public int find(String name, EntryKind entryKind){
+        SymbolTableEntry temp;
+        for (int i  = 0; i < symbolTableEntries.size(); i++){
+            temp = symbolTableEntries.get(i);
+            if(temp.getName().equals(name) && temp.getEntryKind().equals(entryKind)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
     public int find(String name){
         SymbolTableEntry temp;
         for (int i  = 0; i < symbolTableEntries.size(); i++){
@@ -44,6 +57,14 @@ public class SymbolTable {
 
     public SymbolTableEntry search(String name) {
         int index = find(name);
+        if(index > -1 && index < symbolTableEntries.size()) {
+            return symbolTableEntries.get(index);
+        }
+        return null;
+    }
+
+    public SymbolTableEntry search(String name, EntryKind entryKind) {
+        int index = find(name, entryKind);
         if(index > -1 && index < symbolTableEntries.size()) {
             return symbolTableEntries.get(index);
         }

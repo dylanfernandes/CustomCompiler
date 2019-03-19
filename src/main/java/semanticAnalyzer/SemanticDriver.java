@@ -8,7 +8,7 @@ public class SemanticDriver {
 
     public void start(ProgASTNode progASTNode) {
         SemanticPhases semanticPhases = new SemanticPhases();
-        semanticPhases.StartPhases(progASTNode);
+        semanticPhases.startPhases(progASTNode);
         FileIOUtils.writeOutput(progASTNode.getGlobalTable().print(), outputLocation);
     }
 }
