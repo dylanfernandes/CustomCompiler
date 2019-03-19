@@ -12,4 +12,5 @@ public interface Visitor {
     public void  visit(FuncDefASTNode astNode);
     public void  visit(FParamsASTNode astNode);
     public void  visit(VarOrFuncCheckASTNode astNode);
+    public void  visit(VarDeclStatFuncRepASTNode astNode);
 }

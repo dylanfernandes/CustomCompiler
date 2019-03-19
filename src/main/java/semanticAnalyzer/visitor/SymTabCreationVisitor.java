@@ -17,13 +17,15 @@ public class SymTabCreationVisitor implements Visitor {
 
     public void visit(ProgASTNode astNode) {
         SymbolTable globalTable = new SymbolTable("global");
+        SymbolTable mainTable = new SymbolTable("main");
         ASTNode classDeclRep = astNode.getFirstChild();
         ASTNode funcDefRep = classDeclRep.getRightSibling();
+        VarDeclStatFuncRepASTNode varDeclStatFuncRep = (VarDeclStatFuncRepASTNode) funcDefRep.getRightSibling().getRightSibling().getFirstChild().getRightSibling();
 
         ClassDeclASTNode classNode;
         FuncDefASTNode functionNode;
 
-        while(classDeclRep.getValue() == "classDeclRep" ) {
+        while(classDeclRep.getValue().equals("classDeclRep") ) {
             classDeclRep = classDeclRep.getFirstChild();
             if(classDeclRep.getClass() == ClassDeclASTNode.class) {
                 classNode = (ClassDeclASTNode) classDeclRep;
@@ -33,8 +35,7 @@ public class SymTabCreationVisitor implements Visitor {
             }
         }
 
-        //TODO Function
-        while(funcDefRep.getValue() == "funcDefRep" ) {
+        while(funcDefRep.getValue().equals("funcDefRep") ) {
             funcDefRep = funcDefRep.getFirstChild();
             if(funcDefRep.getClass() == FuncDefASTNode.class) {
                 functionNode = (FuncDefASTNode) funcDefRep;
@@ -43,7 +44,11 @@ public class SymTabCreationVisitor implements Visitor {
                 funcDefRep = functionNode.getRightSibling();
             }
         }
-        //TODO Main
+
+        varDeclStatFuncRep.accept(this);
+        mainTable.addEntries(varDeclStatFuncRep.getEntries());
+
+        globalTable.addEntry(new SymbolTableEntry("main", EntryKind.FUNCTION, null, mainTable));
         astNode.setGlobalTable(globalTable);
 
     }
@@ -260,6 +265,30 @@ public class SymTabCreationVisitor implements Visitor {
                 astNode.addEntry(getParamFuncTable(fParamsASTNode, id.getValue(),elementTypeStr));
                 head = head.getFirstChild().getRightSibling();
             }
+        }
+
+    }
+
+    public void visit(VarDeclStatFuncRepASTNode astNode) {
+        ASTNode head = astNode;
+        SymbolTableEntry symbolTableEntry;
+        ASTNode var;
+        ASTNode array;
+        String type = "";
+        String id = "";
+        EntryType varEntry;
+
+        while(head != null && head.getValue().equals("varDeclStatFuncRep")) {
+            if(head.getFirstChild().getValue().equals("varDeclNotId")) {
+                var = head.getFirstChild().getFirstChild();
+                type = var.getFirstChild().getValue();
+                id = var.getRightSibling().getValue();
+                array = var.getRightSibling().getRightSibling().getFirstChild();
+                varEntry = getArray(array, type);
+                symbolTableEntry = new SymbolTableEntry(id, EntryKind.VARIABLE, varEntry,null);
+                astNode.addEntry(symbolTableEntry);
+            }
+            head = head.getRightSibling();
         }
 
     }

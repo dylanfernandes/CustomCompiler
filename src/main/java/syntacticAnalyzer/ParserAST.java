@@ -364,7 +364,7 @@ public class ParserAST {
 
 
     private boolean funcBody(ASTNode currentRoot) {
-        ASTNode varDeclStatFuncRepNode = ASTNodeFactory.getASTNode("varDeclStatFuncRep");
+        VarDeclStatFuncRepASTNode varDeclStatFuncRepNode = new VarDeclStatFuncRepASTNode("varDeclStatFuncRep");
         Token oBra = new Token();
         Token cBra = new Token();
 
@@ -443,7 +443,7 @@ public class ParserAST {
 
     private boolean varDeclStatFuncRep(ASTNode currentRoot) {
         ASTNode varDeclNotIdNode = ASTNodeFactory.getASTNode("varDeclNotId");
-        ASTNode varDeclStatFuncRepNode = ASTNodeFactory.getASTNode("varDeclStatFuncRep");
+        VarDeclStatFuncRepASTNode varDeclStatFuncRepNode = new VarDeclStatFuncRepASTNode("varDeclStatFuncRep");
 
         ASTNode idProdNode = ASTNodeFactory.getASTNode("idProd");
         ASTNode statementNoIdNode = ASTNodeFactory.getASTNode("statement");
