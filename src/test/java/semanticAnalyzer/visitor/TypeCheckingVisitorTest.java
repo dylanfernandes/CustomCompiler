@@ -32,7 +32,37 @@ public class TypeCheckingVisitorTest {
     }
 
     @Test
-    public void classHeaderInherit() {
+    public void classHeaderInheritDefinedBefore() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class blob{}; class test:blob{}; main { };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void classHeaderInheritDefinedAfter() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class test:blob{}; class blob{}; main { };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void classHeaderInheritSeveralNotDefined() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class test:blob, bar{}; class blob{}; main { };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void classHeaderInheritNotDefined() {
         List<Token> tokens = lexerDriver.getTokensFromInput("class test:blob{}; main { };");
         parserDriver.start(tokens);
 
