@@ -1,6 +1,7 @@
 package semanticAnalyzer.visitor;
 
 import semanticAnalyzer.SymbolTable.EntryKind;
+import semanticAnalyzer.SymbolTable.EntryType;
 import semanticAnalyzer.SymbolTable.SymbolTable;
 import semanticAnalyzer.SymbolTable.SymbolTableEntry;
 import syntacticAnalyzer.AST.ASTNode;
@@ -80,14 +81,14 @@ public class TypeCheckingVisitor extends Visitor {
         if(child.getRightSibling().getValue().equals("classExOpt")) {
             child = child.getRightSibling();
             if(child.getFirstChild().getValue().equals(":")) {
-                verifyInheritance(getInheritanceEntry(child, temp));
+                verifyClass(getInheritanceEntry(child, temp).getName());
                 child = temp;
 
 
                 //verify several inheritance
                 child = child.getRightSibling();
                 while (child.getFirstChild().getValue().equals(",")) {
-                    verifyInheritance(getInheritanceEntry(child, temp));
+                    verifyClass(getInheritanceEntry(child, temp).getName());
                     child = temp;
                     child = child.getRightSibling();
                 }
@@ -97,10 +98,10 @@ public class TypeCheckingVisitor extends Visitor {
         varOrFuncCheck.accept(this);
     }
 
-    private void verifyInheritance(SymbolTableEntry inheritance){
-        if (globalSymbolTable.find(inheritance.getName(), EntryKind.CLASS) == -1){
+    private void verifyClass(String classCheck){
+        if (globalSymbolTable.find(classCheck, EntryKind.CLASS) == -1){
             hasError = true;
-            errorOutput += "Class "+ inheritance.getName() + "is not defined \n";
+            errorOutput += "Class "+ classCheck + "is not defined \n";
         }
 
     }
@@ -114,6 +115,57 @@ public class TypeCheckingVisitor extends Visitor {
     }
 
     public void visit(VarOrFuncCheckASTNode astNode) {
+        String elementTypeStr;
+        EntryType elementType;
+        FParamsASTNode fParamsASTNode;
+
+        ASTNode type;
+        ASTNode id;
+        ASTNode array;
+        ASTNode head;
+        ASTNode varCheckNext;
+
+        head = astNode;
+
+        while(head.getValue().equals("varOrFuncCheck") && !head.getFirstChild().getValue().equals("EPSILON")) {
+            type = head.getFirstChild();
+            id = type.getRightSibling();
+            varCheckNext = id.getRightSibling();
+
+            elementTypeStr = getType(type);
+
+            if (!(elementTypeStr.equals("integer") || elementTypeStr.equals("float"))) {
+                verifyClass(elementTypeStr);
+            }
+
+            //element is variable
+            if (varCheckNext.getFirstChild().getValue().equals("arraySizeRep")) {
+                array = varCheckNext.getFirstChild();
+                head = varCheckNext.getFirstChild().getRightSibling().getRightSibling();
+
+                elementType = getArray(array, elementTypeStr);
+
+            }
+            else if(varCheckNext.getFirstChild().getValue().equals("(")) {
+                //Element is a function declaration
+                head = varCheckNext.getFirstChild();
+                fParamsASTNode = (FParamsASTNode) head.getRightSibling();
+
+                //point to function delaration repitition
+                head = varCheckNext.getFirstChild().getRightSibling().getRightSibling().getRightSibling().getRightSibling();
+            }
+        }
+
+        if(head != null && head.getValue().equals("funcDeclRep")) {
+            while(head.getValue().equals("funcDeclRep") && !head.getFirstChild().getValue().equals("EPSILON")) {
+                type = head.getFirstChild().getFirstChild();
+                elementTypeStr = getType(type);
+                id = type.getRightSibling();
+                fParamsASTNode = (FParamsASTNode) id.getRightSibling().getRightSibling();
+
+                head = head.getFirstChild().getRightSibling();
+            }
+        }
 
     }
 

@@ -70,4 +70,24 @@ public class TypeCheckingVisitorTest {
         assertTrue(semanticPhases.hasError());
 
     }
+
+    @Test
+    public void classVarNotDefined() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class test{Blob var;}; main { };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void classVarDefined() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob{}; class test{Blob var;}; main { };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
 }
