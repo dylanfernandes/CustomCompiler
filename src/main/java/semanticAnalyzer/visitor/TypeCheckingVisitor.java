@@ -1,9 +1,6 @@
 package semanticAnalyzer.visitor;
 
-import semanticAnalyzer.SymbolTable.EntryKind;
-import semanticAnalyzer.SymbolTable.EntryType;
-import semanticAnalyzer.SymbolTable.SymbolTable;
-import semanticAnalyzer.SymbolTable.SymbolTableEntry;
+import semanticAnalyzer.SymbolTable.*;
 import syntacticAnalyzer.AST.ASTNode;
 import syntacticAnalyzer.AST.StringASTNode;
 import syntacticAnalyzer.AST.TokenASTNode;
@@ -110,6 +107,11 @@ public class TypeCheckingVisitor extends Visitor {
 
     private int verifyClass(String classCheck){
         int status = globalSymbolTable.find(classCheck, EntryKind.CLASS);
+
+        if (classCheck.equals("integer") || classCheck.equals("float")) {
+            //base types
+            return -2;
+        }
         if (status == -1){
             hasError = true;
             errorOutput += "Class "+ classCheck + "is not defined \n";
@@ -121,6 +123,8 @@ public class TypeCheckingVisitor extends Visitor {
         SymbolTable classTable;
         SymbolTable funcTable;
         int status = -1;
+
+
         if (verifyClass(classCheck) != -1){
             classTable = globalSymbolTable.search(classCheck, EntryKind.CLASS).getLink();
             status = classTable.find(functioName, EntryKind.FUNCTION);
@@ -144,6 +148,27 @@ public class TypeCheckingVisitor extends Visitor {
     }
 
     public void visit(FParamsASTNode astNode) {
+        String paramTypeStr;
+
+        ASTNode type;
+        ASTNode head;
+
+        head = astNode;
+
+        while(!head.getFirstChild().getValue().equals("EPSILON")) {
+
+            if(head.getValue().equals("fParams")) {
+                type = head.getFirstChild();
+                head = type.getRightSibling().getRightSibling().getRightSibling();
+            }
+            else {
+                type = head.getFirstChild().getFirstChild().getRightSibling();
+                head = head.getFirstChild().getRightSibling();
+            }
+
+            paramTypeStr = getType(type);
+            verifyClass(paramTypeStr);
+        }
 
     }
 
@@ -181,6 +206,7 @@ public class TypeCheckingVisitor extends Visitor {
                 //Element is a function declaration
                 head = varCheckNext.getFirstChild();
                 fParamsASTNode = (FParamsASTNode) head.getRightSibling();
+                fParamsASTNode.accept(this);
                 //point to function delaration repitition
                 head = varCheckNext.getFirstChild().getRightSibling().getRightSibling().getRightSibling().getRightSibling();
             }
@@ -190,8 +216,12 @@ public class TypeCheckingVisitor extends Visitor {
             while(head.getValue().equals("funcDeclRep") && !head.getFirstChild().getValue().equals("EPSILON")) {
                 type = head.getFirstChild().getFirstChild();
                 elementTypeStr = getType(type);
+                if (!(elementTypeStr.equals("integer") || elementTypeStr.equals("float"))) {
+                    verifyClass(elementTypeStr);
+                }
                 id = type.getRightSibling();
                 fParamsASTNode = (FParamsASTNode) id.getRightSibling().getRightSibling();
+                fParamsASTNode.accept(this);
                 head = head.getFirstChild().getRightSibling();
             }
         }
