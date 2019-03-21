@@ -9,6 +9,8 @@ import syntacticAnalyzer.AST.StringASTNode;
 import syntacticAnalyzer.AST.TokenASTNode;
 import syntacticAnalyzer.AST.semanticNodes.*;
 
+import java.util.List;
+
 public class TypeCheckingVisitor extends Visitor {
     private boolean hasError;
     private String errorOutput;
@@ -67,6 +69,7 @@ public class TypeCheckingVisitor extends Visitor {
     }
 
     public void visit(ClassDeclASTNode astNode) {
+        List<SymbolTableEntry> symbolTableEntries;
         ASTNode child = astNode.getFirstChild();
         ASTNode temp = new StringASTNode("");
         VarOrFuncCheckASTNode varOrFuncCheck;
@@ -96,14 +99,44 @@ public class TypeCheckingVisitor extends Visitor {
         }
 
         varOrFuncCheck.accept(this);
+        symbolTableEntries = varOrFuncCheck.getEntries();
+        //check if declared functions are defined
+        for(int i = 0; i < symbolTableEntries.size(); i++) {
+            if(symbolTableEntries.get(i).getEntryKind() == EntryKind.FUNCTION) {
+                verifyClassFunction(astNode.getEntry().getName(), symbolTableEntries.get(i).getName());
+            }
+        }
     }
 
-    private void verifyClass(String classCheck){
-        if (globalSymbolTable.find(classCheck, EntryKind.CLASS) == -1){
+    private int verifyClass(String classCheck){
+        int status = globalSymbolTable.find(classCheck, EntryKind.CLASS);
+        if (status == -1){
             hasError = true;
             errorOutput += "Class "+ classCheck + "is not defined \n";
         }
+        return status;
+    }
 
+    private int verifyClassFunction(String classCheck, String functioName){
+        SymbolTable classTable;
+        SymbolTable funcTable;
+        int status = -1;
+        if (verifyClass(classCheck) != -1){
+            classTable = globalSymbolTable.search(classCheck, EntryKind.CLASS).getLink();
+            status = classTable.find(functioName, EntryKind.FUNCTION);
+            if(status == -1) {
+                hasError = true;
+                errorOutput += "Class function "+ functioName + "is not declared \n";
+            } else {
+                funcTable = classTable.search(functioName, EntryKind.FUNCTION).getLink();
+                status = funcTable.find(classCheck, EntryKind.INHERIT);
+                if(status == -1){
+                    hasError = true;
+                    errorOutput += "Class function "+ functioName + "is not defined \n";
+                }
+            }
+        }
+        return status;
     }
 
     public void visit(FuncDefASTNode astNode) {
@@ -143,14 +176,11 @@ public class TypeCheckingVisitor extends Visitor {
                 array = varCheckNext.getFirstChild();
                 head = varCheckNext.getFirstChild().getRightSibling().getRightSibling();
 
-                elementType = getArray(array, elementTypeStr);
-
             }
             else if(varCheckNext.getFirstChild().getValue().equals("(")) {
                 //Element is a function declaration
                 head = varCheckNext.getFirstChild();
                 fParamsASTNode = (FParamsASTNode) head.getRightSibling();
-
                 //point to function delaration repitition
                 head = varCheckNext.getFirstChild().getRightSibling().getRightSibling().getRightSibling().getRightSibling();
             }
@@ -162,7 +192,6 @@ public class TypeCheckingVisitor extends Visitor {
                 elementTypeStr = getType(type);
                 id = type.getRightSibling();
                 fParamsASTNode = (FParamsASTNode) id.getRightSibling().getRightSibling();
-
                 head = head.getFirstChild().getRightSibling();
             }
         }

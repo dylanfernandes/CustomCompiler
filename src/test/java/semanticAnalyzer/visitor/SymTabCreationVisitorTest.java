@@ -319,16 +319,20 @@ public class SymTabCreationVisitorTest {
 
     @Test
     public void classFunctionDefHeader() {
+        SymbolTable classTable;
         SymbolTable funcTable;
         SymbolTableEntry func;
 
-        List<Token> tokens = lexerDriver.getTokensFromInput("integer foo::blob(){};main {  };");
+        List<Token> tokens = lexerDriver.getTokensFromInput("class foo{ integer blob();}; integer foo::blob(){};main {  };");
         parserDriver.start(tokens);
 
         semanticPhases.creation((ProgASTNode) parserDriver.getAST());
         symbolTable = semanticPhases.getSymbolTable();
-        assertEquals(0, symbolTable.find("blob"));
-        func = symbolTable.search("blob");
+        assertEquals(0, symbolTable.find("foo"));
+        classTable = symbolTable.search("foo").getLink();
+
+        assertEquals(0, classTable.find("blob"));
+        func = classTable.search("blob");
 
         assertEquals(EntryKind.FUNCTION, func.getEntryKind());
         assertEquals("blob", func.getName());

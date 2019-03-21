@@ -7,6 +7,27 @@ import syntacticAnalyzer.AST.TokenASTNode;
 import syntacticAnalyzer.AST.semanticNodes.*;
 
 public class SymTabCreationVisitor extends Visitor {
+
+    private boolean hasError;
+    private String errorOutput;
+    private SymbolTable visitorGlobalSymbol;
+
+    public SymTabCreationVisitor() {
+        hasError = false;
+        errorOutput = "";
+    }
+
+    public String print() {
+        if (!hasError && visitorGlobalSymbol != null){
+            return visitorGlobalSymbol.print();
+        }
+        return errorOutput;
+    }
+
+    public boolean hasError() {
+        return hasError;
+    }
+
     public void visit(StringASTNode astNode) {
 
     }
@@ -18,6 +39,14 @@ public class SymTabCreationVisitor extends Visitor {
     public void visit(ProgASTNode astNode) {
         SymbolTable globalTable = new SymbolTable("global");
         SymbolTable mainTable = new SymbolTable("main");
+
+        SymbolTable classTable;
+        SymbolTable funcTable;
+
+        String className;
+        String functionName;
+
+        int tableRow;
 
         ASTNode classDeclRep = astNode.getFirstChild();
         ASTNode funcDefRep = classDeclRep.getRightSibling();
@@ -41,16 +70,51 @@ public class SymTabCreationVisitor extends Visitor {
             if(funcDefRep.getClass() == FuncDefASTNode.class) {
                 functionNode = (FuncDefASTNode) funcDefRep;
                 functionNode.accept(this);
-                globalTable.addEntry(functionNode.getEntry());
+                if(functionNode.getEntry().hasLink() && functionNode.getEntry().getLink().getNumEntries() > 0 && functionNode.getEntry().getLink().getEntryByRow(0).getEntryKind() == EntryKind.INHERIT) {
+                    //get class for function definition
+                    functionName = functionNode.getEntry().getName();
+                    //get class name using inherit entry in function table
+                    className = functionNode.getEntry().getLink().getEntryByRow(0).getName();
+
+                    tableRow = globalTable.find(className,EntryKind.CLASS);
+                    if(tableRow != -1) {
+                        classTable = globalTable.getEntryByRow(tableRow).getLink();
+                        if(classTable!= null){
+                            tableRow = classTable.find(functionName, EntryKind.FUNCTION);
+                            if(tableRow != -1) {
+                                funcTable = classTable.getEntryByRow(tableRow).getLink();
+                                if (funcTable != null) {
+                                    funcTable.addEntry(functionNode.getEntry().getLink().getEntryByRow(0));
+                                }
+                            }
+                            else {
+                                hasError = true;
+                                errorOutput += "Function " + functionName + " not defined in class " + className;
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        hasError = true;
+                        errorOutput += "Class " + className + " not defined";
+                        break;
+                    }
+                }
+                else {
+                    globalTable.addEntry(functionNode.getEntry());
+                }
                 funcDefRep = functionNode.getRightSibling();
             }
         }
 
-        varDeclStatFuncRep.accept(this);
-        mainTable.addEntries(varDeclStatFuncRep.getEntries());
+        if(!hasError) {
+            varDeclStatFuncRep.accept(this);
+            mainTable.addEntries(varDeclStatFuncRep.getEntries());
 
-        globalTable.addEntry(new SymbolTableEntry("main", EntryKind.FUNCTION, null, mainTable));
-        astNode.setGlobalTable(globalTable);
+            globalTable.addEntry(new SymbolTableEntry("main", EntryKind.FUNCTION, null, mainTable));
+            astNode.setGlobalTable(globalTable);
+            visitorGlobalSymbol = globalTable;
+        }
 
     }
 

@@ -4,11 +4,13 @@ import syntacticAnalyzer.AST.semanticNodes.ProgASTNode;
 import utils.FileIOUtils;
 
 public class SemanticDriver {
-    private String outputLocation = "src/output/semanticOutput.txt";
+    private String creationOutputLocation = "src/output/semanticCreationOutput.txt";
+    private String typeOutputLocation = "src/output/semanticTypeOutput.txt";
 
     public void start(ProgASTNode progASTNode) {
         SemanticPhases semanticPhases = new SemanticPhases();
         semanticPhases.startPhases(progASTNode);
-        FileIOUtils.writeOutput(progASTNode.getGlobalTable().print(), outputLocation);
+        FileIOUtils.writeOutput(semanticPhases.getCreationOutput(), creationOutputLocation);
+        FileIOUtils.writeOutput(semanticPhases.getTypeOutput(), typeOutputLocation);
     }
 }

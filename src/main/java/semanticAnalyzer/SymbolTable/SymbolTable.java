@@ -31,6 +31,17 @@ public class SymbolTable {
         }
     }
 
+    public int getNumEntries() {
+        return symbolTableEntries.size();
+    }
+
+    public SymbolTableEntry getEntryByRow(int row) {
+        if(row < symbolTableEntries.size()){
+            return symbolTableEntries.get(row);
+        }
+        return null;
+    }
+
 
     public int find(String name, EntryKind entryKind){
         SymbolTableEntry temp;

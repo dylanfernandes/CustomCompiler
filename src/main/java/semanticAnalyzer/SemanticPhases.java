@@ -6,38 +6,52 @@ import semanticAnalyzer.visitor.TypeCheckingVisitor;
 import syntacticAnalyzer.AST.semanticNodes.ProgASTNode;
 
 public class SemanticPhases {
-    private SymbolTable symbolTable;
-    private String errorOutput;
+    private String creationOutput;
+    private String typeOutput;
     private  boolean hasError;
+    private SymbolTable symbolTable;
+
+    public SemanticPhases() {
+        creationOutput = "";
+        typeOutput = "";
+        hasError = false;
+    }
 
     public void startPhases(ProgASTNode progASTNode) {
         creation(progASTNode);
-        errorOutput = "";
-        hasError = false;
-        typeChecking(progASTNode);
+        if(!hasError)
+            typeChecking(progASTNode);
+        else
+            typeOutput = "Error in creation phase";
     }
     public void creation(ProgASTNode progASTNode) {
         SymTabCreationVisitor symTabCreationVisitor = new SymTabCreationVisitor();
         symTabCreationVisitor.visit(progASTNode);
         symbolTable = progASTNode.getGlobalTable();
+        creationOutput = symTabCreationVisitor.print();
+        hasError = symTabCreationVisitor.hasError();
     }
 
     private void typeChecking(ProgASTNode progASTNode) {
         TypeCheckingVisitor typeCheckingVisitor = new TypeCheckingVisitor();
         typeCheckingVisitor.visit(progASTNode);
-        errorOutput = typeCheckingVisitor.getErrorOutput();
+        typeOutput = typeCheckingVisitor.getErrorOutput();
         hasError = typeCheckingVisitor.hasError();
     }
 
-    public SymbolTable getSymbolTable() {
-        return symbolTable;
+    public String getCreationOutput() {
+        return creationOutput;
     }
 
-    public String getErrorOutput() {
-        return errorOutput;
+    public String getTypeOutput() {
+        return typeOutput;
     }
 
     public boolean hasError() {
         return hasError;
+    }
+
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
     }
 }
