@@ -348,6 +348,26 @@ public class SymTabCreationVisitorTest {
     }
 
     @Test
+    public void classFunctionInvalidClassDefHeader() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class bar{ integer blob();}; integer foo::blob(){};main {  };");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void classFunctionInvalidFunctionDefHeader() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class foo{ integer blob();}; integer foo::bar(){};main {  };");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
+    @Test
     public void functionDefHeaderParameter() {
         SymbolTableEntry func;
         SymbolTable funcTable;

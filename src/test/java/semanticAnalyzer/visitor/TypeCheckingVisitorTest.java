@@ -110,4 +110,15 @@ public class TypeCheckingVisitorTest {
         assertFalse(semanticPhases.hasError());
 
     }
+
+    @Test
+    public void classFuncClassNotDefined() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class test{integer func();}; integer blob::func(){}; main { };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
 }
