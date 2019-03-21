@@ -510,6 +510,13 @@ public class SymTabCreationVisitorTest {
         assertEquals(EntryKind.FUNCTION, func.getEntryKind());
         assertEquals("foo", func.getName());
         assertEquals("integer", func.getEntryType().getElementType().getType());
+        //first parameter type
+        assertEquals("bar",func.getEntryType().getParameterTypes().get(0).getType());
+        assertFalse(func.getEntryType().getParameterTypes().get(0).isArray());
+        //second parameter type
+        assertEquals("blob",func.getEntryType().getParameterTypes().get(1).getType());
+        assertTrue(func.getEntryType().getParameterTypes().get(1).isArray());
+
         assertEquals("foo", func.getLink().getName());
 
         funcTable = func.getLink();

@@ -204,6 +204,7 @@ public class SymTabCreationVisitor extends Visitor {
         if(!fParams.getFirstChild().getValue().equals("EPSILON")) {
             fParams.accept(this);
             funcTable.addEntries(fParams.getEntries());
+            funcTypes.setParameterTypes(fParams.getEntries());
         }
 
         varDeclStatFuncRepASTNode.accept(this);

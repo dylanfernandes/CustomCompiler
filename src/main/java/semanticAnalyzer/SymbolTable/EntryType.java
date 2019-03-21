@@ -1,5 +1,6 @@
 package semanticAnalyzer.SymbolTable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,8 +37,14 @@ public class EntryType {
         return parameterTypes;
     }
 
-    public void setParameterTypes(List<VariableType> parameterTypes) {
-        this.parameterTypes = parameterTypes;
+
+    public void setParameterTypes(List<SymbolTableEntry> entries) {
+        if (entries.size() > 0) {
+            parameterTypes = new ArrayList<VariableType>();
+            for(int i = 0;i < entries.size(); i++) {
+                parameterTypes.add(entries.get(i).getEntryType().getElementType());
+            }
+        }
     }
 
     public String print() {
