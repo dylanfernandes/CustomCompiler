@@ -196,7 +196,8 @@ public class SymTabCreationVisitor extends Visitor {
             funcName = id.getValue();
             fParams = (FParamsASTNode) id.getRightSibling().getRightSibling();
             funcTable = new SymbolTable(funcName);
-            funcTable.addEntry(classDef);
+            //funcTable.addEntry(classDef);
+            varDeclStatFuncRepASTNode.addEntry(classDef);
         }
 
 

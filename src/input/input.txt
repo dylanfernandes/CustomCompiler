@@ -1,1 +1,1 @@
-main {  for(integer id = 0; id < 5 ; id = id + 1) {read(id);};};
+class foo{ integer blob();}; integer foo::blob(){integer int;};main {  };

@@ -262,6 +262,9 @@ public class TypeCheckingVisitor extends Visitor {
         ASTNode head = astNode;
         String type = "";
         ASTNode var;
+        //create function table
+        SymbolTable currentTable = new SymbolTable("funcTable");
+        currentTable.addEntries(astNode.getEntries());
 
         while(head != null && head.getValue().equals("varDeclStatFuncRep")) {
             //type not ID
@@ -274,8 +277,32 @@ public class TypeCheckingVisitor extends Visitor {
                 //ID type
                 type = head.getFirstChild().getFirstChild().getValue();
                 verifyClass(type);
-            }
+            } else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("oldVarEndNest")){
+                //left child = verify integer indice
+                 // right child = verify instance attributes
+             }
             head = head.getFirstChild().getRightSibling();
         }
     }
+
+//    private void verifyIdProdNotDeclaration(ASTNode idProdRoot, SymbolTable functionTable) {
+//        //check if id in class or inherited classes
+//    }
+
+//    private void verifyIndice(ASTNode indiceRoot) {
+//        ASTNode head= indiceRoot;
+//        ASTNode exprNode;
+//        while(head.getValue().equals("indiceRep") && !head.getFirstChild().getValue().equals("EPSILON")) {
+//            head = head.getFirstChild();
+//            exprNode = head.getFirstChild().getRightSibling();
+//            //go to next indice rep
+//            head = head.getRightSibling();
+//        }
+//    }
+//
+//    private void verifyExpression() {
+//
+//    }
 }
+
+
