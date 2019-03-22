@@ -161,4 +161,23 @@ public class TypeCheckingVisitorTest {
 
     }
 
+    @Test
+    public void funcClassNotDefined() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class test{ }; bar func(){}; main { };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void funcClassDefined() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class bar{}; class test{ }; bar func(){}; main { };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
 }

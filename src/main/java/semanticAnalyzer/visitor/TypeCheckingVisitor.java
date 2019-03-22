@@ -144,6 +144,34 @@ public class TypeCheckingVisitor extends Visitor {
     }
 
     public void visit(FuncDefASTNode astNode) {
+        String typeStr;
+
+        ASTNode head = astNode.getFirstChild();
+        VarDeclStatFuncRepASTNode varDeclStatFuncRepASTNode = (VarDeclStatFuncRepASTNode) head.getRightSibling().getFirstChild().getRightSibling();
+        ASTNode type = head.getFirstChild();
+        ASTNode id = type.getRightSibling();
+        ASTNode headerChoice = type.getRightSibling().getRightSibling();
+        FParamsASTNode fParams;
+
+        typeStr = getType(type);
+        verifyClass(typeStr);
+        //free function definition
+        if(headerChoice.getFirstChild().getValue().equals("(")) {
+            fParams = (FParamsASTNode) id.getRightSibling().getFirstChild().getRightSibling();
+        } else {
+            //class function definition
+            //id was id of class
+            id = headerChoice.getFirstChild().getRightSibling();
+            fParams = (FParamsASTNode) id.getRightSibling().getRightSibling();
+        }
+
+
+        //add function paramters to function table
+        if(!fParams.getFirstChild().getValue().equals("EPSILON")) {
+            fParams.accept(this);
+        }
+
+        varDeclStatFuncRepASTNode.accept(this);
 
     }
 
