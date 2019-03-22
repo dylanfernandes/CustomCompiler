@@ -1,1 +1,1 @@
-class foo{ integer blob();}; integer foo::blob(){integer int;};main {  };
+main {  test = 1; };

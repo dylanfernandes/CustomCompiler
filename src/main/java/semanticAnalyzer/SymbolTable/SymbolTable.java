@@ -54,6 +54,12 @@ public class SymbolTable {
         return -1;
     }
 
+    public int hasInheritance(){
+        if(symbolTableEntries.get(0).getEntryKind() == EntryKind.INHERIT)
+            return 0;
+        return  -1;
+    }
+
 
     public int find(String name){
         SymbolTableEntry temp;

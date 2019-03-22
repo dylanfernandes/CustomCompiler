@@ -280,14 +280,24 @@ public class TypeCheckingVisitor extends Visitor {
             } else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("oldVarEndNest")){
                 //left child = verify integer indice
                  // right child = verify instance attributes
+                 verifyIdProdNotDeclaration(head.getFirstChild(), currentTable);
              }
             head = head.getFirstChild().getRightSibling();
         }
     }
 
-//    private void verifyIdProdNotDeclaration(ASTNode idProdRoot, SymbolTable functionTable) {
-//        //check if id in class or inherited classes
-//    }
+    private void verifyIdProdNotDeclaration(ASTNode idProdRoot, SymbolTable functionTable) {
+        //check if id in class or inherited classes
+        String variableId = idProdRoot.getFirstChild().getValue();
+        verifyVariableFunction(variableId, functionTable);
+    }
+
+    private void verifyVariableFunction(String varName, SymbolTable funcTable){
+        if(funcTable.find(varName, EntryKind.VARIABLE) == -1 && funcTable.find(varName, EntryKind.PARAMETER) == -1) {
+            hasError = true;
+            errorOutput += "Variable "+ varName + " is not defined in scope \n";
+        }
+    }
 
 //    private void verifyIndice(ASTNode indiceRoot) {
 //        ASTNode head= indiceRoot;

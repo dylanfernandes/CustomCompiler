@@ -221,4 +221,14 @@ public class TypeCheckingVisitorTest {
 
     }
 
+    @Test
+    public void mainVarNotDefined() {
+        List<Token> tokens = lexerDriver.getTokensFromInput(" main {  test = 1; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
 }
