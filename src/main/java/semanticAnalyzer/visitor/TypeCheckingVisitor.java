@@ -293,7 +293,27 @@ public class TypeCheckingVisitor extends Visitor {
     }
 
     private void verifyVariableFunction(String varName, SymbolTable funcTable){
-        if(funcTable.find(varName, EntryKind.VARIABLE) == -1 && funcTable.find(varName, EntryKind.PARAMETER) == -1) {
+        boolean defined = true;
+        SymbolTableEntry funcEntry;
+        SymbolTable classTable;
+
+        if(funcTable.find(varName, EntryKind.VARIABLE) == -1 && funcTable.find(varName, EntryKind.PARAMETER) == -1 && funcTable.hasInheritance() == -1) {
+            defined = false;
+        } else if(funcTable.hasInheritance() != -1){
+            for (int i = 0; i < funcTable.getNumEntries(); i++){
+                funcEntry = funcTable.getEntryByRow(i);
+                if (funcEntry.getEntryKind() == EntryKind.INHERIT) {
+                    //verify with inherited table
+                    classTable = globalSymbolTable.search(funcEntry.getName(), EntryKind.CLASS).getLink();
+                    if(classTable != null)
+                        verifyVariableFunction(varName, classTable);
+                    else
+                        defined = false;
+                }
+            }
+        }
+
+        if (!defined){
             hasError = true;
             errorOutput += "Variable "+ varName + " is not defined in scope \n";
         }

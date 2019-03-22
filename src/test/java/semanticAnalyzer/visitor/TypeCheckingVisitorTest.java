@@ -112,6 +112,26 @@ public class TypeCheckingVisitorTest {
     }
 
     @Test
+    public void classFuncVarDefined() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class test{integer classVar; integer func();}; integer test::func(){classVar = 1;}; main { };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void classFuncVarNotDefined() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class test{integer classVar; integer func();}; integer test::func(){classVarTwo = 1;}; main { };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
+    @Test
     public void classFuncDefinedValidParamsClass() {
         List<Token> tokens = lexerDriver.getTokensFromInput("class bar{}; class test{integer func(bar test);}; integer test::func(){}; main { };");
         parserDriver.start(tokens);
@@ -230,5 +250,17 @@ public class TypeCheckingVisitorTest {
         assertTrue(semanticPhases.hasError());
 
     }
+
+    @Test
+    public void mainVarDefined() {
+        List<Token> tokens = lexerDriver.getTokensFromInput(" main {  integer test; test = 1; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
+
+
 
 }

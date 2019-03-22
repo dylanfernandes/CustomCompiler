@@ -55,7 +55,7 @@ public class SymbolTable {
     }
 
     public int hasInheritance(){
-        if(symbolTableEntries.get(0).getEntryKind() == EntryKind.INHERIT)
+        if(symbolTableEntries.size() > 0 && symbolTableEntries.get(0).getEntryKind() == EntryKind.INHERIT)
             return 0;
         return  -1;
     }
