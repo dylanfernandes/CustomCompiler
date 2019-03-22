@@ -320,6 +320,7 @@ public class SymTabCreationVisitor extends Visitor {
         EntryType varEntry;
 
         while(head != null && head.getValue().equals("varDeclStatFuncRep")) {
+            //type not ID
             if(head.getFirstChild().getValue().equals("varDeclNotId") && head.getFirstChild().getFirstChild().getValue().equals("typeNotId")) {
                 var = head.getFirstChild().getFirstChild();
                 type = var.getFirstChild().getValue();
@@ -328,7 +329,16 @@ public class SymTabCreationVisitor extends Visitor {
                 varEntry = getArray(array, type);
                 symbolTableEntry = new SymbolTableEntry(id, EntryKind.VARIABLE, varEntry,null);
                 astNode.addEntry(symbolTableEntry);
-            } else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("varDeclId")) {
+            } else if(head.getFirstChild().getValue().equals("statementNoId") && head.getFirstChild().getFirstChild().getValue().equals("for")){
+                //for loop variable
+                type = getType(head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getRightSibling());
+                id = head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getRightSibling().getRightSibling().getValue();
+                varEntry = new EntryType(type);
+                symbolTableEntry = new SymbolTableEntry(id, EntryKind.VARIABLE, varEntry,null);
+                astNode.addEntry(symbolTableEntry);
+            }
+            else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("varDeclId")) {
+                //ID type
                 type = head.getFirstChild().getFirstChild().getValue();
                 var = head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getFirstChild();
                 id = var.getValue();

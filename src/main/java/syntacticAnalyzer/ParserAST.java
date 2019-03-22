@@ -446,7 +446,7 @@ public class ParserAST {
         VarDeclStatFuncRepASTNode varDeclStatFuncRepNode = new VarDeclStatFuncRepASTNode("varDeclStatFuncRep");
 
         ASTNode idProdNode = ASTNodeFactory.getASTNode("idProd");
-        ASTNode statementNoIdNode = ASTNodeFactory.getASTNode("statement");
+        ASTNode statementNoIdNode = ASTNodeFactory.getASTNode("statementNoId");
 
         if(!skipErrors(Arrays.asList(Token.TokenType.ID, Token.TokenType.FLOAT, Token.TokenType.INTEGER, Token.TokenType.FOR, Token.TokenType.IF, Token.TokenType.READ, Token.TokenType.RETURN, Token.TokenType.WRITE, Token.TokenType.EPSILON), Arrays.asList(Token.TokenType.CBRA))) {
             return false;

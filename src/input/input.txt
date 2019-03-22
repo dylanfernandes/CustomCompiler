@@ -1,1 +1,1 @@
-main {  Blob blob; Foo foo;};
+main {  for(integer id = 0; id < 5 ; id = id + 1) {read(id);};};

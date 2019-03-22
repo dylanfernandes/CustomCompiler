@@ -615,6 +615,31 @@ public class SymTabCreationVisitorTest {
     }
 
     @Test
+    public void mainVarFor() {
+        SymbolTable bar;
+        SymbolTableEntry main;
+
+        List<Token> tokens = lexerDriver.getTokensFromInput("main {  for(integer id = 0; id < 5 ; id = id + 1) {read(id);};};");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        symbolTable = semanticPhases.getSymbolTable();
+        assertEquals(0, symbolTable.find("main"));
+        main = symbolTable.search("main");
+
+        assertEquals(EntryKind.FUNCTION, main.getEntryKind());
+        assertEquals("main", main.getName());
+
+        bar = main.getLink();
+        assertEquals(0, bar.find("id"));
+        main = bar.search("id");
+
+        assertEquals("id", main.getName());
+        assertEquals(EntryKind.VARIABLE, main.getEntryKind());
+        assertEquals("integer", main.getEntryType().getElementType().getType());
+    }
+
+    @Test
     public void mainSeveralVarId() {
         SymbolTable bar;
         SymbolTableEntry main;
