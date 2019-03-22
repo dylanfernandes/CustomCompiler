@@ -63,6 +63,8 @@ public class TypeCheckingVisitor extends Visitor {
             }
         }
 
+        varDeclStatFuncRep.accept(this);
+
     }
 
     public void visit(ClassDeclASTNode astNode) {
@@ -257,6 +259,23 @@ public class TypeCheckingVisitor extends Visitor {
     }
 
     public void visit(VarDeclStatFuncRepASTNode astNode) {
+        ASTNode head = astNode;
+        String type = "";
+        ASTNode var;
 
+        while(head != null && head.getValue().equals("varDeclStatFuncRep")) {
+            //type not ID
+             if(head.getFirstChild().getValue().equals("statementNoId") && head.getFirstChild().getFirstChild().getValue().equals("for")){
+                //for loop variable
+                type = getType(head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getRightSibling());
+                verifyClass(type);
+            }
+            else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("varDeclId")) {
+                //ID type
+                type = head.getFirstChild().getFirstChild().getValue();
+                verifyClass(type);
+            }
+            head = head.getFirstChild().getRightSibling();
+        }
     }
 }

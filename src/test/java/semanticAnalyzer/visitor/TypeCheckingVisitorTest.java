@@ -180,4 +180,45 @@ public class TypeCheckingVisitorTest {
         assertFalse(semanticPhases.hasError());
 
     }
+
+    @Test
+    public void mainVarClassNotDefined() {
+        List<Token> tokens = lexerDriver.getTokensFromInput(" main { bar var; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void mainVarClassDefined() {
+        List<Token> tokens = lexerDriver.getTokensFromInput(" class bar{}; main { bar var; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void mainVarClassForLoopNotDefined() {
+        List<Token> tokens = lexerDriver.getTokensFromInput(" main {  for(bar id = 0; id < 5 ; id = id + 1) {read(id);};};");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void mainVarClassForLoopDefined() {
+        List<Token> tokens = lexerDriver.getTokensFromInput(" main {  for(integer id = 0; id < 5 ; id = id + 1) {read(id);};};");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
+
 }
