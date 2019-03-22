@@ -320,11 +320,19 @@ public class SymTabCreationVisitor extends Visitor {
         EntryType varEntry;
 
         while(head != null && head.getValue().equals("varDeclStatFuncRep")) {
-            if(head.getFirstChild().getValue().equals("varDeclNotId")) {
+            if(head.getFirstChild().getValue().equals("varDeclNotId") && head.getFirstChild().getFirstChild().getValue().equals("typeNotId")) {
                 var = head.getFirstChild().getFirstChild();
                 type = var.getFirstChild().getValue();
                 id = var.getRightSibling().getValue();
                 array = var.getRightSibling().getRightSibling().getFirstChild();
+                varEntry = getArray(array, type);
+                symbolTableEntry = new SymbolTableEntry(id, EntryKind.VARIABLE, varEntry,null);
+                astNode.addEntry(symbolTableEntry);
+            } else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("varDeclId")) {
+                type = head.getFirstChild().getFirstChild().getValue();
+                var = head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getFirstChild();
+                id = var.getValue();
+                array = var.getRightSibling().getFirstChild();
                 varEntry = getArray(array, type);
                 symbolTableEntry = new SymbolTableEntry(id, EntryKind.VARIABLE, varEntry,null);
                 astNode.addEntry(symbolTableEntry);

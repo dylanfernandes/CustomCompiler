@@ -114,7 +114,7 @@ public class TypeCheckingVisitor extends Visitor {
         }
         if (status == -1){
             hasError = true;
-            errorOutput += "Class "+ classCheck + "is not defined \n";
+            errorOutput += "Class "+ classCheck + " is not defined \n";
         }
         return status;
     }
@@ -130,13 +130,13 @@ public class TypeCheckingVisitor extends Visitor {
             status = classTable.find(functioName, EntryKind.FUNCTION);
             if(status == -1) {
                 hasError = true;
-                errorOutput += "Class function "+ functioName + "is not declared \n";
+                errorOutput += "Class function "+ functioName + " is not declared \n";
             } else {
                 funcTable = classTable.search(functioName, EntryKind.FUNCTION).getLink();
                 status = funcTable.find(classCheck, EntryKind.INHERIT);
                 if(status == -1){
                     hasError = true;
-                    errorOutput += "Class function "+ functioName + "is not defined \n";
+                    errorOutput += "Class function "+ functioName + " is not defined \n";
                 }
             }
         }
