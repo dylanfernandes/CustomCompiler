@@ -288,8 +288,39 @@ public class TypeCheckingVisitor extends Visitor {
 
     private void verifyIdProdNotDeclaration(ASTNode idProdRoot, SymbolTable functionTable) {
         //check if id in class or inherited classes
-        String variableId = idProdRoot.getFirstChild().getValue();
-        verifyVariableFunction(variableId, functionTable);
+        String variableId;
+        ASTNode oldVarEndNestNext;
+        EntryType varType;
+
+        while(idProdRoot.getValue().equals("idProd")) {
+            variableId = idProdRoot.getFirstChild().getValue();
+            verifyVariableFunction(variableId, functionTable);
+
+            if(idProdRoot.getFirstChild().getRightSibling().getFirstChild().getFirstChild().getRightSibling().getValue().equals("oldVarEndNestNext")) {
+                oldVarEndNestNext = idProdRoot.getFirstChild().getRightSibling().getFirstChild().getFirstChild().getRightSibling();
+                if(oldVarEndNestNext.getFirstChild() != null && oldVarEndNestNext.getFirstChild().getValue().equals(".")){
+                    //get class of type
+                    if(functionTable.find(variableId, EntryKind.VARIABLE) != -1) {
+                        varType = functionTable.search(variableId, EntryKind.VARIABLE).getEntryType();
+                        //type not integer or float
+                        if(verifyClass(varType.getElementType().getType()) == -2) {
+                            hasError = true;
+                            errorOutput += "Undefined member for "+ variableId + "\n";
+                            break;
+                        }
+                        else
+                            break;
+                    }
+                    else
+                        break;
+                    //get table of class
+                }
+                else
+                    break;
+            }
+            else
+                break;
+        }
     }
 
     private void verifyVariableFunction(String varName, SymbolTable funcTable){

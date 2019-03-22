@@ -1,1 +1,1 @@
-main {  test = 1; };
+class test{integer classVar; integer func2();}; bar test::func(){classVar2 = 1;}; main { };

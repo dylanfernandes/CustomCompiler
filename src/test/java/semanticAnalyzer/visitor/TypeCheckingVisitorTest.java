@@ -261,6 +261,16 @@ public class TypeCheckingVisitorTest {
 
     }
 
+    @Test
+    public void mainVarNoMember() {
+        List<Token> tokens = lexerDriver.getTokensFromInput(" main {  integer test; test.temp = 1; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
 
 
 }
