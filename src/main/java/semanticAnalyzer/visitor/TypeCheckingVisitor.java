@@ -289,6 +289,7 @@ public class TypeCheckingVisitor extends Visitor {
     private void verifyIdProdNotDeclaration(ASTNode idProdRoot, SymbolTable functionTable) {
         //check if id in class or inherited classes
         String variableId;
+        ASTNode oldVarEndNest;
         ASTNode oldVarEndNestNext;
         EntryType varType;
 
@@ -296,30 +297,35 @@ public class TypeCheckingVisitor extends Visitor {
             variableId = idProdRoot.getFirstChild().getValue();
             verifyVariableFunction(variableId, functionTable);
 
-            if(idProdRoot.getFirstChild().getRightSibling().getFirstChild().getFirstChild().getRightSibling().getValue().equals("oldVarEndNestNext")) {
-                oldVarEndNestNext = idProdRoot.getFirstChild().getRightSibling().getFirstChild().getFirstChild().getRightSibling();
+            if(functionTable.find(variableId, EntryKind.VARIABLE) != -1) {
+                varType = functionTable.search(variableId, EntryKind.VARIABLE).getEntryType();
+            } else
+                break;
+
+            oldVarEndNest = idProdRoot.getFirstChild().getRightSibling().getFirstChild();
+            //check indices
+            if(oldVarEndNest.getFirstChild().getValue().equals("indiceRep")){
+                verifyIndice(oldVarEndNest.getFirstChild(), varType, variableId);
+            }
+            //check dot operations
+            if(oldVarEndNest.getFirstChild().getRightSibling().getValue().equals("oldVarEndNestNext")) {
+                oldVarEndNestNext = oldVarEndNest.getFirstChild().getRightSibling();
                 if(oldVarEndNestNext.getFirstChild() != null && oldVarEndNestNext.getFirstChild().getValue().equals(".")){
-                    //get class of type
-                    if(functionTable.find(variableId, EntryKind.VARIABLE) != -1) {
-                        varType = functionTable.search(variableId, EntryKind.VARIABLE).getEntryType();
                         //type not integer or float
-                        if(verifyClass(varType.getElementType().getType()) == -2) {
-                            hasError = true;
-                            errorOutput += "Undefined member for "+ variableId + "\n";
-                            break;
-                        }
-                        else {
-                            //variable is of class type
-                            idProdRoot = oldVarEndNestNext.getFirstChild().getRightSibling();
-                            if(globalSymbolTable.find(varType.getElementType().getType(), EntryKind.CLASS) != -1){
-                                functionTable = globalSymbolTable.search(varType.getElementType().getType(), EntryKind.CLASS).getLink();
-                            }
-                            else
-                                break;
-                        }
-                    }
-                    else
+                    if(verifyClass(varType.getElementType().getType()) == -2) {
+                        hasError = true;
+                        errorOutput += "Undefined member for "+ variableId + "\n";
                         break;
+                    }
+                    else {
+                        //variable is of class type
+                        idProdRoot = oldVarEndNestNext.getFirstChild().getRightSibling();
+                        if(globalSymbolTable.find(varType.getElementType().getType(), EntryKind.CLASS) != -1){
+                            functionTable = globalSymbolTable.search(varType.getElementType().getType(), EntryKind.CLASS).getLink();
+                        }
+                        else
+                            break;
+                    }
                     //get table of class
                 }
                 else
@@ -357,16 +363,27 @@ public class TypeCheckingVisitor extends Visitor {
         }
     }
 
-//    private void verifyIndice(ASTNode indiceRoot) {
-//        ASTNode head= indiceRoot;
-//        ASTNode exprNode;
-//        while(head.getValue().equals("indiceRep") && !head.getFirstChild().getValue().equals("EPSILON")) {
-//            head = head.getFirstChild();
-//            exprNode = head.getFirstChild().getRightSibling();
-//            //go to next indice rep
-//            head = head.getRightSibling();
-//        }
-//    }
+    private void verifyIndice(ASTNode indiceRoot, EntryType varType, String varId) {
+        ASTNode head= indiceRoot;
+        ASTNode exprNode;
+        int numIndice = 0;
+        while(head.getValue().equals("indiceRep") && !head.getFirstChild().getValue().equals("EPSILON")) {
+            numIndice++;
+            head = head.getFirstChild();
+            exprNode = head.getFirstChild().getRightSibling();
+            //go to next indice rep
+            head = head.getRightSibling();
+        }
+
+        if(!varType.getElementType().isArray() && numIndice > 0){
+            hasError = true;
+            errorOutput +=  varId + " is not of type array \n";
+        }
+        else if (varType.getElementType().getNumDimensions() != numIndice ) {
+            hasError = true;
+            errorOutput +=  "Invalid number of dimensions for " + varId + ": " + varType.getElementType().getNumDimensions() + " needed " +  numIndice + " provided\n";
+        }
+    }
 //
 //    private void verifyExpression() {
 //

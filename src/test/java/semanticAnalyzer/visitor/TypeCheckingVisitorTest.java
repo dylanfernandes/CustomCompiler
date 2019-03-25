@@ -272,6 +272,36 @@ public class TypeCheckingVisitorTest {
     }
 
     @Test
+    public void mainVarNoArrayMember() {
+        List<Token> tokens = lexerDriver.getTokensFromInput(" main {  integer test; test[0]= 1; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void mainVarArrayMember() {
+        List<Token> tokens = lexerDriver.getTokensFromInput(" main {  integer test[2]; test[0]= 1; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void mainVarArraySeveralMember() {
+        List<Token> tokens = lexerDriver.getTokensFromInput(" main {  integer test[2][3][8]; test[0][1][0]= 1; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
+
+    @Test
     public void mainVarClassNoMember() {
         List<Token> tokens = lexerDriver.getTokensFromInput(" class blob{}; main {  blob test; test.temp = 1; };");
         parserDriver.start(tokens);
@@ -288,6 +318,26 @@ public class TypeCheckingVisitorTest {
 
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         assertFalse(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void mainVarClassMemberNested() {
+        List<Token> tokens = lexerDriver.getTokensFromInput(" class Bar{ integer temp; }; class blob{ Bar bar; }; main {  blob test; test.bar.temp = 1; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void mainVarNoClassMemberNested() {
+        List<Token> tokens = lexerDriver.getTokensFromInput(" class Bar{ integer temp; }; class blob{ Bar bar; }; main {  blob test; test.bar.temp2 = 1; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
 
     }
 
