@@ -274,7 +274,7 @@ public class TypeCheckingVisitor extends Visitor {
                 verifyClass(type);
             }
             else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("varDeclId")) {
-                //ID type
+                //ID type declaration
                 type = head.getFirstChild().getFirstChild().getValue();
                 verifyClass(type);
             } else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("oldVarEndNest")){
@@ -308,8 +308,15 @@ public class TypeCheckingVisitor extends Visitor {
                             errorOutput += "Undefined member for "+ variableId + "\n";
                             break;
                         }
-                        else
-                            break;
+                        else {
+                            //variable is of class type
+                            idProdRoot = oldVarEndNestNext.getFirstChild().getRightSibling();
+                            if(globalSymbolTable.find(varType.getElementType().getType(), EntryKind.CLASS) != -1){
+                                functionTable = globalSymbolTable.search(varType.getElementType().getType(), EntryKind.CLASS).getLink();
+                            }
+                            else
+                                break;
+                        }
                     }
                     else
                         break;
