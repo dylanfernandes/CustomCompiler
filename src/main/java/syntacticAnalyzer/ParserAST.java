@@ -558,6 +558,7 @@ public class ParserAST {
             return true;
         } else if (assignStatEnd(assignStatEndNode)) {
             addToSyntax("oldVarEndNestNext -> assignStatEnd");
+            currentRoot.makeFamily(assignStatEndNode);
             return true;
         }
 

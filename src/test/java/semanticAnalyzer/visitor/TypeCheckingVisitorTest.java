@@ -341,7 +341,45 @@ public class TypeCheckingVisitorTest {
 
     }
 
+    @Test
+    public void mainVarAssignBadType() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main {  integer test; test = 1.5; };");
+        parserDriver.start(tokens);
 
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void mainVarAssignGoodType() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main {  integer test; test = 1; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void mainVarAssignBadTypeFloat() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main {  float test; test = 1; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void mainVarAssignGoodTypeFloat() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main {  float test; test = 1.5; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
 
 
 }

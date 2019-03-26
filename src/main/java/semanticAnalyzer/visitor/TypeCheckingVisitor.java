@@ -291,6 +291,7 @@ public class TypeCheckingVisitor extends Visitor {
         String variableId;
         ASTNode oldVarEndNest;
         ASTNode oldVarEndNestNext;
+        ASTNode exprNode;
         EntryType varType;
 
         while(idProdRoot.getValue().equals("idProd")) {
@@ -310,21 +311,27 @@ public class TypeCheckingVisitor extends Visitor {
             //check dot operations
             if(oldVarEndNest.getFirstChild().getRightSibling().getValue().equals("oldVarEndNestNext")) {
                 oldVarEndNestNext = oldVarEndNest.getFirstChild().getRightSibling();
-                if(oldVarEndNestNext.getFirstChild() != null && oldVarEndNestNext.getFirstChild().getValue().equals(".")){
+                if(oldVarEndNestNext.getFirstChild() != null){
                         //type not integer or float
-                    if(verifyClass(varType.getElementType().getType()) == -2) {
-                        hasError = true;
-                        errorOutput += "Undefined member for "+ variableId + "\n";
-                        break;
-                    }
-                    else {
-                        //variable is of class type
-                        idProdRoot = oldVarEndNestNext.getFirstChild().getRightSibling();
-                        if(globalSymbolTable.find(varType.getElementType().getType(), EntryKind.CLASS) != -1){
-                            functionTable = globalSymbolTable.search(varType.getElementType().getType(), EntryKind.CLASS).getLink();
-                        }
-                        else
+                    if(oldVarEndNestNext.getFirstChild().getValue().equals(".")) {
+                        if (verifyClass(varType.getElementType().getType()) == -2) {
+                            hasError = true;
+                            errorOutput += "Undefined member for " + variableId + "\n";
                             break;
+                        } else {
+                            //variable is of class type
+                            idProdRoot = oldVarEndNestNext.getFirstChild().getRightSibling();
+                            if (globalSymbolTable.find(varType.getElementType().getType(), EntryKind.CLASS) != -1) {
+                                functionTable = globalSymbolTable.search(varType.getElementType().getType(), EntryKind.CLASS).getLink();
+                            } else
+                                break;
+                        }
+                    }
+                    else if (oldVarEndNestNext.getFirstChild().getValue().equals("assignStatEnd")) {
+                        exprNode = oldVarEndNestNext.getFirstChild().getFirstChild().getRightSibling();
+                        //verify expression is same type as var
+                        verifyExpression(exprNode, varType.getElementType());
+                        break;
                     }
                     //get table of class
                 }
@@ -366,11 +373,15 @@ public class TypeCheckingVisitor extends Visitor {
     private void verifyIndice(ASTNode indiceRoot, EntryType varType, String varId) {
         ASTNode head= indiceRoot;
         ASTNode exprNode;
+        VariableType variableType = new VariableType("integer");
+
         int numIndice = 0;
         while(head.getValue().equals("indiceRep") && !head.getFirstChild().getValue().equals("EPSILON")) {
             numIndice++;
             head = head.getFirstChild();
             exprNode = head.getFirstChild().getRightSibling();
+            //verify expression is int
+            verifyExpression(exprNode, variableType);
             //go to next indice rep
             head = head.getRightSibling();
         }
@@ -384,10 +395,38 @@ public class TypeCheckingVisitor extends Visitor {
             errorOutput +=  "Invalid number of dimensions for " + varId + ": " + varType.getElementType().getNumDimensions() + " needed " +  numIndice + " provided\n";
         }
     }
-//
-//    private void verifyExpression() {
-//
-//    }
+
+    private void verifyExpression(ASTNode exprNode, VariableType type) {
+        ASTNode head = exprNode.getFirstChild().getFirstChild();
+        ASTNode factor;
+        TokenASTNode baseFactor;
+        String tokenType;
+
+        while((head.getValue().equals("term") || head.getValue().equals("termPrime")) && !head.getFirstChild().getValue().equals("EPSILON")) {
+            if (head.getValue().equals("term")){
+                factor = head.getFirstChild();
+            } else {
+                factor = head.getFirstChild().getRightSibling();
+            }
+            if(factor.getFirstChild().getClass() == TokenASTNode.class) {
+                baseFactor = (TokenASTNode) factor.getFirstChild();
+                tokenType = baseFactor.getToken().getType().toString().toLowerCase();
+                if (tokenType.equals( "int")) {
+                    tokenType = "integer";
+                }
+                else if(tokenType.equals("flo")) {
+                    tokenType = "float";
+                }
+                if (!tokenType.equals(type.getType())){
+                    hasError = true;
+                    errorOutput +=  "Invalid type at line " + baseFactor.getToken().getLineNumber() + ": " + type.getType() + " needed " +  tokenType + " provided\n";
+
+                }
+            }
+            //two terms can't be reached within a expression, go to termPrime
+            head = head.getRightSibling();
+        }
+    }
 }
 
 
