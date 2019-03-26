@@ -397,7 +397,13 @@ public class TypeCheckingVisitor extends Visitor {
     }
 
     private void verifyExpression(ASTNode exprNode, VariableType type) {
-        ASTNode head = exprNode.getFirstChild().getFirstChild();
+        ASTNode head;
+        if (exprNode.getValue().equals("expr")) {
+            head = exprNode.getFirstChild().getFirstChild();
+        } else {
+            //arithExpr
+            head = exprNode.getFirstChild();
+        }
         ASTNode factor;
         TokenASTNode baseFactor;
         String tokenType;
