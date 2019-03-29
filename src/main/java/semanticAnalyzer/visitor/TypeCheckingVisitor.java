@@ -1,6 +1,7 @@
 package semanticAnalyzer.visitor;
 
 import semanticAnalyzer.SymbolTable.*;
+import sun.awt.Symbol;
 import syntacticAnalyzer.AST.ASTNode;
 import syntacticAnalyzer.AST.StringASTNode;
 import syntacticAnalyzer.AST.TokenASTNode;
@@ -306,7 +307,7 @@ public class TypeCheckingVisitor extends Visitor {
             oldVarEndNest = idProdRoot.getFirstChild().getRightSibling().getFirstChild();
             //check indices
             if(oldVarEndNest.getFirstChild().getValue().equals("indiceRep")){
-                verifyIndice(oldVarEndNest.getFirstChild(), varType, variableId);
+                verifyIndice(oldVarEndNest.getFirstChild(), varType, variableId, functionTable);
             }
             //check dot operations
             if(oldVarEndNest.getFirstChild().getRightSibling().getValue().equals("oldVarEndNestNext")) {
@@ -330,7 +331,7 @@ public class TypeCheckingVisitor extends Visitor {
                     else if (oldVarEndNestNext.getFirstChild().getValue().equals("assignStatEnd")) {
                         exprNode = oldVarEndNestNext.getFirstChild().getFirstChild().getRightSibling();
                         //verify expression is same type as var
-                        verifyExpression(exprNode, varType.getElementType());
+                        verifyExpression(exprNode, varType.getElementType(), functionTable);
                         break;
                     }
                     //get table of class
@@ -370,7 +371,7 @@ public class TypeCheckingVisitor extends Visitor {
         }
     }
 
-    private void verifyIndice(ASTNode indiceRoot, EntryType varType, String varId) {
+    private void verifyIndice(ASTNode indiceRoot, EntryType varType, String varId, SymbolTable functionTable) {
         ASTNode head= indiceRoot;
         ASTNode exprNode;
         VariableType variableType = new VariableType("integer");
@@ -381,7 +382,7 @@ public class TypeCheckingVisitor extends Visitor {
             head = head.getFirstChild();
             exprNode = head.getFirstChild().getRightSibling();
             //verify expression is int
-            verifyExpression(exprNode, variableType);
+            verifyExpression(exprNode, variableType, functionTable);
             //go to next indice rep
             head = head.getRightSibling();
         }
@@ -396,7 +397,7 @@ public class TypeCheckingVisitor extends Visitor {
         }
     }
 
-    private void verifyExpression(ASTNode exprNode, VariableType type) {
+    private void verifyExpression(ASTNode exprNode, VariableType type, SymbolTable functionTable) {
         ASTNode head;
         if (exprNode.getValue().equals("expr")) {
             head = exprNode.getFirstChild().getFirstChild();
