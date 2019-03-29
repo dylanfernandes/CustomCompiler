@@ -415,7 +415,10 @@ public class TypeCheckingVisitor extends Visitor {
             } else {
                 factor = head.getFirstChild().getRightSibling();
             }
-            if(factor.getFirstChild().getClass() == TokenASTNode.class) {
+            if(factor.getFirstChild().getValue().equals("varOrFuncCall")){
+                verifyVarOrFuncCall(factor.getFirstChild(), type, functionTable);
+            }
+            else if(factor.getFirstChild().getClass() == TokenASTNode.class) {
                 baseFactor = (TokenASTNode) factor.getFirstChild();
                 tokenType = baseFactor.getToken().getType().toString().toLowerCase();
                 if (tokenType.equals( "int")) {
@@ -433,6 +436,31 @@ public class TypeCheckingVisitor extends Visitor {
             //two terms can't be reached within a expression, go to termPrime
             head = head.getRightSibling();
         }
+    }
+
+    private void verifyVarOrFuncCall(ASTNode varOrFuncCall, VariableType type,SymbolTable symbolTable){
+        ASTNode head = varOrFuncCall.getFirstChild();
+        String elementName;
+        VariableType currentType;
+
+        //element can be variable or function
+        elementName = head.getValue();
+        head = head.getRightSibling().getFirstChild();
+
+        if(head.getValue().equals("EPSILON")) {
+            verifyVariableFunction(elementName, symbolTable);
+            //prevent type error if ID not found in fuction table
+            if(symbolTable.find(elementName, EntryKind.VARIABLE) != -1){
+                currentType = symbolTable.search(elementName, EntryKind.VARIABLE).getEntryType().getElementType();
+                if (!currentType.getType().equals(type.getType())){
+                    hasError = true;
+                    errorOutput +=  "Invalid type: " + type.getType() + " needed " +  currentType.getType() + " provided\n";
+
+                }
+
+            }
+        }
+
     }
 }
 
