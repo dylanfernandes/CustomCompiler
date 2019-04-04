@@ -30,6 +30,7 @@ hs_err_pid*
 /target
 /src/output/*.txt
 /src/input/*.txt
+/src/moon/*
 !/src/moon/*.c
 
 # User-specific stuff
