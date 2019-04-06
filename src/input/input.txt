@@ -1,1 +1,1 @@
-main {  integer test;  float val; test = val;};
+integer foo(){}; main { integer val; val = foo();};

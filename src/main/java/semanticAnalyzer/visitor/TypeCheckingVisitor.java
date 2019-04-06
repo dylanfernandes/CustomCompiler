@@ -344,23 +344,32 @@ public class TypeCheckingVisitor extends Visitor {
         }
     }
 
+    //verifies if variable is in current table or inherited table
     private void verifyVariableFunction(String varName, SymbolTable funcTable){
         boolean defined = true;
         SymbolTableEntry funcEntry;
         SymbolTable classTable;
+        boolean varDef = funcTable.find(varName, EntryKind.VARIABLE) != -1;
+        boolean paramDef= funcTable.find(varName, EntryKind.PARAMETER) != -1;
+        boolean hasInehrit = funcTable.hasInheritance() != -1;
 
-        if(funcTable.find(varName, EntryKind.VARIABLE) == -1 && funcTable.find(varName, EntryKind.PARAMETER) == -1 && funcTable.hasInheritance() == -1) {
-            defined = false;
-        } else if(funcTable.hasInheritance() != -1){
-            for (int i = 0; i < funcTable.getNumEntries(); i++){
-                funcEntry = funcTable.getEntryByRow(i);
-                if (funcEntry.getEntryKind() == EntryKind.INHERIT) {
-                    //verify with inherited table
-                    classTable = globalSymbolTable.search(funcEntry.getName(), EntryKind.CLASS).getLink();
-                    if(classTable != null)
-                        verifyVariableFunction(varName, classTable);
-                    else
-                        defined = false;
+        // Is variable in current function table
+        if(!varDef && !paramDef) {
+            if (!hasInehrit) {
+                defined = false;
+            }
+            //check inheritance tables if exist
+            else if (hasInehrit) {
+                for (int i = 0; i < funcTable.getNumEntries(); i++) {
+                    funcEntry = funcTable.getEntryByRow(i);
+                    if (funcEntry.getEntryKind() == EntryKind.INHERIT) {
+                        //verify with inherited table
+                        classTable = globalSymbolTable.search(funcEntry.getName(), EntryKind.CLASS).getLink();
+                        if (classTable != null)
+                            verifyVariableFunction(varName, classTable);
+                        else
+                            defined = false;
+                    }
                 }
             }
         }
@@ -370,6 +379,42 @@ public class TypeCheckingVisitor extends Visitor {
             errorOutput += "Variable "+ varName + " is not defined in scope \n";
         }
     }
+    //verifies if function is in current table, inherited table or global table
+    private void verifyFunctionFunction(String funcName, SymbolTable funcTable){
+        boolean defined = true;
+        SymbolTableEntry funcEntry;
+        SymbolTable classTable;
+        boolean funcDef= funcTable.find(funcName, EntryKind.FUNCTION) != -1 || globalSymbolTable.find(funcName, EntryKind.FUNCTION) != -1;
+        boolean hasInehrit = funcTable.hasInheritance() != -1;
+
+
+        // Is function in current function table
+        if(!funcDef) {
+            if (!hasInehrit) {
+                defined = false;
+            }
+            //check inheritance tables if exist
+            else if (hasInehrit) {
+                for (int i = 0; i < funcTable.getNumEntries(); i++) {
+                    funcEntry = funcTable.getEntryByRow(i);
+                    if (funcEntry.getEntryKind() == EntryKind.INHERIT) {
+                        //verify with inherited table
+                        classTable = globalSymbolTable.search(funcEntry.getName(), EntryKind.CLASS).getLink();
+                        if (classTable != null)
+                            verifyFunctionFunction(funcName, classTable);
+                        else
+                            defined = false;
+                    }
+                }
+            }
+        }
+
+        if (!defined){
+            hasError = true;
+            errorOutput += "Function "+ funcName + " is not defined in scope \n";
+        }
+    }
+
 
     private void verifyIndice(ASTNode indiceRoot, EntryType varType, String varId, SymbolTable functionTable) {
         ASTNode head= indiceRoot;
@@ -459,7 +504,18 @@ public class TypeCheckingVisitor extends Visitor {
                 }
 
             }
+        } else if(head.getValue().equals("(")){
+            //element name is function name
+            verifyFunctionFunction(elementName, symbolTable);
         }
+
+    }
+
+    private void verifyVarFuncParams() {
+
+    }
+
+    private void verifyVarStart(ASTNode varStart, VariableType type,SymbolTable symbolTable){
 
     }
 }

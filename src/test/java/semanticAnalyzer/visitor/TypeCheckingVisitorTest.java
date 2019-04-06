@@ -431,5 +431,25 @@ public class TypeCheckingVisitorTest {
 
     }
 
+    @Test
+    public void mainVarAssignFunctionExist() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("integer foo(){}; main { integer val; val = foo();};");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void mainVarAssignFunctionNotExist() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { integer val; val = foo();};");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
 
 }

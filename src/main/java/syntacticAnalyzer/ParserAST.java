@@ -1133,7 +1133,7 @@ public class ParserAST {
 
         Token cpar = new Token();
 
-        if(!skipErrors(Arrays.asList( Token.TokenType.OPAR, Token.TokenType.FLO, Token.TokenType.INT, Token.TokenType.NOT, Token.TokenType.ID, Token.TokenType.ADD, Token.TokenType.SUB),Collections.<Token.TokenType>emptyList())) {
+        if(!skipErrors(Arrays.asList( Token.TokenType.OPAR, Token.TokenType.CPAR, Token.TokenType.FLO, Token.TokenType.INT, Token.TokenType.NOT, Token.TokenType.ID, Token.TokenType.ADD, Token.TokenType.SUB),Collections.<Token.TokenType>emptyList())) {
             return false;
         }
 
