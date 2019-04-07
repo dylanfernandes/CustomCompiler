@@ -5,17 +5,18 @@ import java.util.List;
 
 public class SymbolTable {
     List<SymbolTableEntry> symbolTableEntries;
+    List<SymbolTableEntry> parameters;
     String name;
-    int numParams;
 
     public SymbolTable(String name) {
         this.name = name;
-        numParams = 0;
         symbolTableEntries = new ArrayList<SymbolTableEntry>();
+        parameters = new ArrayList<SymbolTableEntry>();
     }
 
     public SymbolTable(List<SymbolTableEntry> symbolTableEntries, String name) {
         this.symbolTableEntries = symbolTableEntries;
+        parameters = new ArrayList<SymbolTableEntry>();
         this.name = name;
     }
 
@@ -25,7 +26,7 @@ public class SymbolTable {
 
     public void addEntry(SymbolTableEntry newEntry) {
         if(newEntry.entryKind.equals(EntryKind.PARAMETER)){
-            numParams++;
+            parameters.add(newEntry);
         }
         symbolTableEntries.add(newEntry);
     }
@@ -36,8 +37,12 @@ public class SymbolTable {
         }
     }
 
+    public List<SymbolTableEntry> getParameters() {
+        return parameters;
+    }
+
     public int getNumParams() {
-        return numParams;
+        return parameters.size();
     }
 
     public int getNumEntries() {

@@ -500,7 +500,6 @@ public class TypeCheckingVisitor extends Visitor {
         ASTNode head = varOrFuncCall.getFirstChild();
         String elementName;
         VariableType currentType;
-        SymbolTable funcTable;
 
         //element can be variable or function
         elementName = head.getValue();
@@ -519,19 +518,54 @@ public class TypeCheckingVisitor extends Visitor {
             }
         } else if(head.getValue().equals("(")){
             //element name is function name
-            funcTable = verifyFunctionFunction(elementName, symbolTable);
-            if(funcTable != null) {
-                verifyVarFuncParams(head.getRightSibling(), funcTable);
-            }
+            verifyVarFuncParams(head.getRightSibling(), elementName, symbolTable);
         }
 
     }
 
-    private void verifyVarFuncParams(ASTNode varFuncParams, SymbolTable symbolTable) {
+    private void verifyVarFuncParams(ASTNode varFuncParams, String funcName, SymbolTable symbolTable) {
+        SymbolTable funcTable = verifyFunctionFunction(funcName, symbolTable);
         int paramsFound = 0;
+        int paramsExpected;
         ASTNode head= varFuncParams.getFirstChild();
+        ASTNode expr;
+        List<SymbolTableEntry> params;
+
+        if(funcTable == null){
+            paramsExpected = 0;
+        } else{
+            paramsExpected = funcTable.getNumParams();
+        }
+        //function call without parameters
         if(head.getFirstChild().getValue().equals("EPSILON")){
-            paramLengthCheck(symbolTable.getName(), paramsFound, symbolTable.getNumParams());
+            paramLengthCheck(symbolTable.getName(), paramsFound, paramsExpected);
+        } else if(paramsExpected > 0){
+            params = funcTable.getParameters();
+            //expr of aParams
+            expr = head.getFirstChild();
+            if(paramsFound < params.size())
+                verifyExpression(expr, params.get(paramsFound).getEntryType().getElementType(), symbolTable);
+            else{
+                hasError = true;
+                errorOutput +=  "Invalid number of parameters for function " + funcTable.getName() + " : " + paramsExpected + " needed\n";
+            }
+            paramsFound++;
+            head = expr.getRightSibling();
+            while(!head.getFirstChild().getValue().equals("EPSILON")){
+                expr = head.getFirstChild().getFirstChild().getRightSibling();
+                if(paramsFound < params.size())
+                    verifyExpression(expr, params.get(paramsFound).getEntryType().getElementType(), symbolTable);
+                else{
+                    hasError = true;
+                    errorOutput +=  "Invalid number of parameters for function " + funcTable.getName() + " : " + paramsExpected + " needed\n";
+                }
+                paramsFound++;
+                head = head.getFirstChild().getRightSibling();
+            }
+        }
+        else{
+            hasError = true;
+            errorOutput +=  "Invalid number of parameters for function " + funcTable.getName() + " : " + paramsExpected + " needed\n";
         }
     }
 

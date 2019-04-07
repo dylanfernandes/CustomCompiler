@@ -461,5 +461,45 @@ public class TypeCheckingVisitorTest {
 
     }
 
+    @Test
+    public void functionParamsValid() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("integer foo(integer blob){}; main { integer val; val = foo(val);};");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void functionParamsValidSeveral() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("integer foo(integer blob, integer blob2){}; main { integer val; val = foo(val, val);};");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void functionParamsInalidSeveral() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("integer foo(integer blob, float blob2){}; main { integer val; val = foo(val, val);};");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void functionParamsCallInvalid() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("integer foo(){}; main { integer val; val = foo(val);};");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
 
 }
