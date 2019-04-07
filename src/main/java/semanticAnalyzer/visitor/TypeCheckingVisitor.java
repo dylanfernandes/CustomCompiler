@@ -345,7 +345,7 @@ public class TypeCheckingVisitor extends Visitor {
     }
 
     //verifies if variable is in current table or inherited table
-    private void verifyVariableFunction(String varName, SymbolTable funcTable){
+    private boolean verifyVariableFunction(String varName, SymbolTable funcTable){
         boolean defined = true;
         SymbolTableEntry funcEntry;
         SymbolTable classTable;
@@ -378,13 +378,18 @@ public class TypeCheckingVisitor extends Visitor {
             hasError = true;
             errorOutput += "Variable "+ varName + " is not defined in scope \n";
         }
+        return defined;
     }
     //verifies if function is in current table, inherited table or global table
-    private void verifyFunctionFunction(String funcName, SymbolTable funcTable){
+    private SymbolTable verifyFunctionFunction(String funcName, SymbolTable funcTable){
         boolean defined = true;
         SymbolTableEntry funcEntry;
         SymbolTable classTable;
-        boolean funcDef= funcTable.find(funcName, EntryKind.FUNCTION) != -1 || globalSymbolTable.find(funcName, EntryKind.FUNCTION) != -1;
+        SymbolTable definitionTable = null;
+
+        boolean currDef = funcTable.find(funcName, EntryKind.FUNCTION) != -1;
+        boolean globalDef = globalSymbolTable.find(funcName, EntryKind.FUNCTION) != -1;
+        boolean funcDef = currDef || globalDef;
         boolean hasInehrit = funcTable.hasInheritance() != -1;
 
 
@@ -396,23 +401,31 @@ public class TypeCheckingVisitor extends Visitor {
             //check inheritance tables if exist
             else if (hasInehrit) {
                 for (int i = 0; i < funcTable.getNumEntries(); i++) {
+                    //get rows of table
                     funcEntry = funcTable.getEntryByRow(i);
                     if (funcEntry.getEntryKind() == EntryKind.INHERIT) {
                         //verify with inherited table
                         classTable = globalSymbolTable.search(funcEntry.getName(), EntryKind.CLASS).getLink();
                         if (classTable != null)
-                            verifyFunctionFunction(funcName, classTable);
+                            definitionTable = verifyFunctionFunction(funcName, classTable);
                         else
                             defined = false;
                     }
                 }
             }
+        } else if(funcDef){
+            if(currDef) {
+                definitionTable = funcTable.search(funcName, EntryKind.FUNCTION).getLink();
+            }
+            else
+                definitionTable = globalSymbolTable.search(funcName, EntryKind.FUNCTION).getLink();
         }
 
         if (!defined){
             hasError = true;
             errorOutput += "Function "+ funcName + " is not defined in scope \n";
         }
+        return definitionTable;
     }
 
 
@@ -487,15 +500,15 @@ public class TypeCheckingVisitor extends Visitor {
         ASTNode head = varOrFuncCall.getFirstChild();
         String elementName;
         VariableType currentType;
+        SymbolTable funcTable;
 
         //element can be variable or function
         elementName = head.getValue();
         head = head.getRightSibling().getFirstChild();
 
         if(head.getValue().equals("EPSILON")) {
-            verifyVariableFunction(elementName, symbolTable);
             //prevent type error if ID not found in fuction table
-            if(symbolTable.find(elementName, EntryKind.VARIABLE) != -1){
+            if(verifyVariableFunction(elementName, symbolTable)){
                 currentType = symbolTable.search(elementName, EntryKind.VARIABLE).getEntryType().getElementType();
                 if (!currentType.getType().equals(type.getType())){
                     hasError = true;
@@ -506,13 +519,27 @@ public class TypeCheckingVisitor extends Visitor {
             }
         } else if(head.getValue().equals("(")){
             //element name is function name
-            verifyFunctionFunction(elementName, symbolTable);
+            funcTable = verifyFunctionFunction(elementName, symbolTable);
+            if(funcTable != null) {
+                verifyVarFuncParams(head.getRightSibling(), funcTable);
+            }
         }
 
     }
 
-    private void verifyVarFuncParams() {
+    private void verifyVarFuncParams(ASTNode varFuncParams, SymbolTable symbolTable) {
+        int paramsFound = 0;
+        ASTNode head= varFuncParams.getFirstChild();
+        if(head.getFirstChild().getValue().equals("EPSILON")){
+            paramLengthCheck(symbolTable.getName(), paramsFound, symbolTable.getNumParams());
+        }
+    }
 
+    private void paramLengthCheck(String funcName, int provided, int desired){
+        if(provided != desired){
+            hasError = true;
+            errorOutput +=  "Invalid number of parameters for function " + funcName + " : " + desired + " needed " +  provided + " provided\n";
+        }
     }
 
     private void verifyVarStart(ASTNode varStart, VariableType type,SymbolTable symbolTable){

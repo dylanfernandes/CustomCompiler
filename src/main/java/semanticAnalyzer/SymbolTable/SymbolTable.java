@@ -6,9 +6,11 @@ import java.util.List;
 public class SymbolTable {
     List<SymbolTableEntry> symbolTableEntries;
     String name;
+    int numParams;
 
     public SymbolTable(String name) {
         this.name = name;
+        numParams = 0;
         symbolTableEntries = new ArrayList<SymbolTableEntry>();
     }
 
@@ -22,6 +24,9 @@ public class SymbolTable {
     }
 
     public void addEntry(SymbolTableEntry newEntry) {
+        if(newEntry.entryKind.equals(EntryKind.PARAMETER)){
+            numParams++;
+        }
         symbolTableEntries.add(newEntry);
     }
 
@@ -29,6 +34,10 @@ public class SymbolTable {
         for (int i = 0; i < entries.size(); i++) {
             addEntry(entries.get(i));
         }
+    }
+
+    public int getNumParams() {
+        return numParams;
     }
 
     public int getNumEntries() {

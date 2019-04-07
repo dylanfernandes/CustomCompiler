@@ -1,1 +1,1 @@
-integer foo(){}; main { integer val; val = foo();};
+integer foo(integer blob){}; main { integer val; val = foo();};

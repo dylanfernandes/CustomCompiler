@@ -451,5 +451,15 @@ public class TypeCheckingVisitorTest {
 
     }
 
+    @Test
+    public void functionParamsInvalid() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("integer foo(integer blob){}; main { integer val; val = foo();};");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
 
 }
