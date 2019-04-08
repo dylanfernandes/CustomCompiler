@@ -1,3 +1,4 @@
+import codeGeneration.CodeGenerationDriver;
 import lexer.LexerDriver;
 import semanticAnalyzer.SemanticDriver;
 import syntacticAnalyzer.AST.semanticNodes.ProgASTNode;
@@ -11,11 +12,16 @@ public class Main {
         LexerDriver lex = new LexerDriver();
         ParserDriver parserDriver = new ParserDriver();
         SemanticDriver semanticDriver = new SemanticDriver();
+        CodeGenerationDriver codeGenerationDriver = new CodeGenerationDriver();
 
         lex.start();
         parserDriver.start(lex.getTokens());
 
         if(parserDriver.isParseGood())
             semanticDriver.start((ProgASTNode) parserDriver.getAST());
+
+        if(!semanticDriver.hasError())
+            codeGenerationDriver.start((ProgASTNode) parserDriver.getAST());
+
     }
 }
