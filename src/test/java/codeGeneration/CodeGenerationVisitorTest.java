@@ -48,7 +48,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        String[] moonLines = codeGenerationVisitor.getMoonCode().split(System.getProperty("line.separator"));
+        String[] moonLines = codeGenerationVisitor.getMoonCode().split("\n");
 
         assertEquals(2, moonLines.length);
         assertEquals("blob res 4", moonLines[0]);
@@ -74,7 +74,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        String[] moonLines = codeGenerationVisitor.getMoonCode().split(System.getProperty("line.separator"));
+        String[] moonLines = codeGenerationVisitor.getMoonCode().split("\n");
 
         assertEquals(2, moonLines.length);
         assertEquals("blob res 8", moonLines[0]);
@@ -89,11 +89,55 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        String[] moonLines = codeGenerationVisitor.getMoonCode().split(System.getProperty("line.separator"));
+        String[] moonLines = codeGenerationVisitor.getMoonCode().split("\n");
 
         assertEquals(2, moonLines.length);
         assertEquals("blob res 4", moonLines[0]);
         assertEquals("bar res 8", moonLines[1]);
+    }
+
+    @Test
+    public void integerArrayMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { integer blob[2]; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        assertEquals("blob res 8", codeGenerationVisitor.getMoonCode().trim());
+    }
+
+    @Test
+    public void integerArrayLargeMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { integer blob[12]; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        assertEquals("blob res 48", codeGenerationVisitor.getMoonCode().trim());
+    }
+
+    @Test
+    public void floatArrayMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { float blob[5]; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        assertEquals("blob res 40", codeGenerationVisitor.getMoonCode().trim());
+    }
+
+    @Test
+    public void floatArrayLargeMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { float blob[15]; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        assertEquals("blob res 120", codeGenerationVisitor.getMoonCode().trim());
     }
 
 }

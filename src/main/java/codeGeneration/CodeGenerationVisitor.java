@@ -1,5 +1,8 @@
 package codeGeneration;
 
+import semanticAnalyzer.SymbolTable.EntryKind;
+import semanticAnalyzer.SymbolTable.SymbolTable;
+import semanticAnalyzer.SymbolTable.VariableType;
 import semanticAnalyzer.visitor.Visitor;
 import syntacticAnalyzer.AST.ASTNode;
 import syntacticAnalyzer.AST.StringASTNode;
@@ -80,6 +83,10 @@ public class CodeGenerationVisitor extends Visitor {
         ASTNode var;
         ASTNode array;
         String id = "";
+        VariableType variableType;
+
+        SymbolTable currentTable = new SymbolTable("funcTable");
+        currentTable.addEntries(astNode.getEntries());
 
         while(head != null && head.getValue().equals("varDeclStatFuncRep")) {
             //type not ID
@@ -87,21 +94,31 @@ public class CodeGenerationVisitor extends Visitor {
                 var = head.getFirstChild().getFirstChild();
                 type = var.getFirstChild().getValue();
                 id = var.getRightSibling().getValue();
-                array = var.getRightSibling().getRightSibling().getFirstChild();
-
-                allocateBasic(type, id);
+                variableType = currentTable.search(id, EntryKind.VARIABLE).getEntryType().getElementType();
+                //production guaranteed to produce int or float
+                allocateBasic(variableType, id);
             }
             head = head.getFirstChild().getRightSibling();
         }
     }
 
-    private void allocateBasic(String type, String id){
-        String allocSize = "0";
+
+    private void allocateBasic(VariableType variableType, String id) {
+        int allocSize = 0;
+        int baseSize = 0;
+        String type = variableType.getType();
         if(type.equals("integer")) {
-            allocSize = intSize;
+            baseSize = Integer.parseInt(intSize);
         } else if(type.equals("float")){
-            allocSize = floatSize;
+            baseSize = Integer.parseInt(floatSize);
         }
+        if(variableType.isArray()) {
+            for (int i = 0; i < variableType.getNumDimensions(); i++) {
+                allocSize += baseSize * Integer.parseInt(variableType.getSingleDimension(i));
+            }
+        }
+        else
+            allocSize += baseSize;
         moonCode += id + " res " + allocSize + "\n";
     }
 }
