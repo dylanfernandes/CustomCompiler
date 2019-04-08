@@ -8,6 +8,8 @@ import syntacticAnalyzer.AST.semanticNodes.*;
 
 public class CodeGenerationVisitor extends Visitor {
     private String moonCode;
+    private String intSize = "4";
+    private String floatSize = "8";
 
     public CodeGenerationVisitor() {
         moonCode = "";
@@ -94,9 +96,12 @@ public class CodeGenerationVisitor extends Visitor {
     }
 
     private void allocateBasic(String type, String id){
+        String allocSize = "0";
         if(type.equals("integer")) {
-            moonCode += id + " res " + "4\n";
+            allocSize = intSize;
+        } else if(type.equals("float")){
+            allocSize = floatSize;
         }
-
+        moonCode += id + " res " + allocSize + "\n";
     }
 }
