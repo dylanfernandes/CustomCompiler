@@ -1,11 +1,15 @@
 package semanticAnalyzer.SymbolTable;
 
+import codeGeneration.CodeGenerationVisitor;
+import codeGeneration.GenerationInformation;
+
 public class SymbolTableEntry {
     String name;
     EntryKind entryKind;
     EntryType entryType;
     SymbolTable link;
     boolean hasLink;
+    GenerationInformation generationInformation;
 
     public SymbolTableEntry(String name, EntryKind entryKind, EntryType entryType, SymbolTable link) {
         this.name = name;
@@ -13,6 +17,27 @@ public class SymbolTableEntry {
         this.entryType = entryType;
         this.link = link;
         hasLink();
+        generationInformation = new GenerationInformation();
+    }
+
+    public void setGenerationInformation(GenerationInformation generationInformation) {
+        this.generationInformation = generationInformation;
+    }
+
+    public void setSize(int size){
+        generationInformation.setSize(size);
+    }
+
+    public void setOffset(int offset){
+        generationInformation.setOffset(offset);
+    }
+
+    public int getSize() {
+        return generationInformation.getSize();
+    }
+
+    public int getOffset() {
+        return generationInformation.getOffset();
     }
 
     public String getName() {
@@ -56,6 +81,7 @@ public class SymbolTableEntry {
 
         return hasLink;
     }
+
 
     public String print(){
         String entry = "";

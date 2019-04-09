@@ -4,19 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SymbolTable {
+    //List sorted with order of declaration in code
     List<SymbolTableEntry> symbolTableEntries;
     List<SymbolTableEntry> parameters;
+    List<SymbolTableEntry> inheritances;
+    List<SymbolTableEntry> variables;
+    List<SymbolTableEntry> classes;
     String name;
 
     public SymbolTable(String name) {
         this.name = name;
         symbolTableEntries = new ArrayList<SymbolTableEntry>();
         parameters = new ArrayList<SymbolTableEntry>();
+        inheritances = new ArrayList<SymbolTableEntry>();
+        variables = new ArrayList<SymbolTableEntry>();
+        classes = new ArrayList<SymbolTableEntry>();
     }
 
     public SymbolTable(List<SymbolTableEntry> symbolTableEntries, String name) {
         this.symbolTableEntries = symbolTableEntries;
         parameters = new ArrayList<SymbolTableEntry>();
+        inheritances = new ArrayList<SymbolTableEntry>();
+        variables = new ArrayList<SymbolTableEntry>();
+        classes = new ArrayList<SymbolTableEntry>();
         this.name = name;
     }
 
@@ -27,6 +37,12 @@ public class SymbolTable {
     public void addEntry(SymbolTableEntry newEntry) {
         if(newEntry.entryKind.equals(EntryKind.PARAMETER)){
             parameters.add(newEntry);
+        } else if(newEntry.entryKind.equals(EntryKind.INHERIT)){
+            inheritances.add(newEntry);
+        } else if(newEntry.entryKind.equals(EntryKind.VARIABLE)){
+            variables.add(newEntry);
+        } else if(newEntry.entryKind.equals(EntryKind.CLASS)){
+            classes.add(newEntry);
         }
         symbolTableEntries.add(newEntry);
     }
@@ -37,12 +53,29 @@ public class SymbolTable {
         }
     }
 
+
+    public List<SymbolTableEntry> getClasses() {
+        return classes;
+    }
+
+    public List<SymbolTableEntry> getVariables() {
+        return variables;
+    }
+
     public List<SymbolTableEntry> getParameters() {
         return parameters;
     }
 
     public int getNumParams() {
         return parameters.size();
+    }
+
+    public List<SymbolTableEntry> getInheritances() {
+        return inheritances;
+    }
+
+    public int getNumInheritances() {
+        return inheritances.size();
     }
 
     public int getNumEntries() {
