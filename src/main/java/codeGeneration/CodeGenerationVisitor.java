@@ -107,7 +107,7 @@ public class CodeGenerationVisitor extends Visitor {
                 id = var.getValue();
                 variableType = currentTable.search(id, EntryKind.VARIABLE).getEntryType().getElementType();
                 //get size of class from generation table
-                generateAllocateCode(id, generationTable.search(variableType.getType(), EntryKind.CLASS).getSize());
+                generateAllocateCode(id, getObjectSize(variableType));
             }
             head = head.getFirstChild().getRightSibling();
         }
@@ -123,14 +123,31 @@ public class CodeGenerationVisitor extends Visitor {
         } else if(type.equals("float")){
             baseSize = floatSize;
         }
+
+        return getArrayAllocation(baseSize, variableType);
+    }
+
+    private int getObjectSize(VariableType varType){
+        int allocSize = 0;
+        int baseSize = generationTable.search(varType.getType(), EntryKind.CLASS).getSize();
+
+
+        return getArrayAllocation(baseSize, varType);
+    }
+
+    //sets allocation according to if type array(regular allocation if not an array)
+    private int getArrayAllocation(int baseSize, VariableType variableType){
+        int allocSize = 0;
+        int prod = 1;
         if(variableType.isArray()) {
+            //get number of indices in array
             for (int i = 0; i < variableType.getNumDimensions(); i++) {
-                allocSize += baseSize * Integer.parseInt(variableType.getSingleDimension(i));
+                prod *=  Integer.parseInt(variableType.getSingleDimension(i));
             }
+            allocSize = prod * baseSize;
         }
         else
             allocSize += baseSize;
-
         return allocSize;
     }
 

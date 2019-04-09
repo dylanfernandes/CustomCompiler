@@ -145,6 +145,17 @@ public class CodeGenerationVisitorTest {
 
         assertEquals("blob res 120", codeGenerationVisitor.getMoonCode().trim());
     }
+    @Test
+    public void multiArrayMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { float blob[5][4]; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        assertEquals("blob res 160", codeGenerationVisitor.getMoonCode().trim());
+    }
+
 
     /*************************************
      5.1.3 Object Basic Types
@@ -182,5 +193,54 @@ public class CodeGenerationVisitorTest {
         assertEquals("blob res 12", codeGenerationVisitor.getMoonCode().trim());
     }
 
+    @Test
+    public void severalObjectMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob{integer var;}; class Bar{float temp;}; main { Blob blob; Bar bar;};");
+        parserDriver.start(tokens);
 
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        String[] moonLines = codeGenerationVisitor.getMoonCode().split("\n");
+
+        assertEquals(2, moonLines.length);
+        assertEquals("blob res 4", moonLines[0]);
+        assertEquals("bar res 8", moonLines[1]);
+    }
+
+    /*************************************
+     5.1.6 Object Array Types
+     *************************************/
+    @Test
+    public void objectArrayMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob{integer var;}; main { Blob blob[2]; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        assertEquals("blob res 8", codeGenerationVisitor.getMoonCode().trim());
+    }
+
+    @Test
+    public void objectArraySeveralVarsMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob{integer var; float temp;}; main { Blob blob[2]; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        assertEquals("blob res 24", codeGenerationVisitor.getMoonCode().trim());
+    }
+
+    @Test
+    public void objectMultiArraySeveralVarsMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob{integer var; float temp;}; main { Blob blob[2][4]; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        assertEquals("blob res 96", codeGenerationVisitor.getMoonCode().trim());
+    }
 }
