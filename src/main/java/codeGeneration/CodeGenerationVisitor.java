@@ -35,8 +35,8 @@ public class CodeGenerationVisitor extends Visitor {
     }
 
     public void visit(ProgASTNode astNode) {
-        decorateClasses(astNode);
         generationTable = astNode.getGlobalTable();
+        decorateClasses(astNode);
 
         ASTNode classDeclRep = astNode.getFirstChild();
         ASTNode funcDefRep = classDeclRep.getRightSibling();
@@ -162,8 +162,11 @@ public class CodeGenerationVisitor extends Visitor {
         SymbolTableEntry classEntry;
         for(int i = 0;i < classes.size();i++){
             classEntry = classes.get(i);
-            classSize = decorateAClass(classEntry.getLink());
-            classEntry.setSize(classSize);
+            //decorate if not set
+            if(classEntry.getSize() == -1) {
+                classSize = decorateAClass(classEntry.getLink());
+                classEntry.setSize(classSize);
+            }
         }
 
     }
@@ -176,6 +179,9 @@ public class CodeGenerationVisitor extends Visitor {
         VariableType variableType;
         int currVarSize = 0;
 
+        //add inheritance size
+        classSize += getInheritanceSize(symbolTable.getInheritances());
+
         for(int i = 0;i < classVariables.size();i++){
             variableEntry = classVariables.get(i);
             variableType = variableEntry.getEntryType().getElementType();
@@ -184,11 +190,33 @@ public class CodeGenerationVisitor extends Visitor {
             }
             //TODO implement for objects(not defined case)
             variableEntry.setSize(currVarSize);
-            //offset cor current variable is size of class at this point
+            //offset for current variable is size of class at this point
             variableEntry.setOffset(classSize);
             classSize += currVarSize;
         }
+
         return classSize;
+    }
+
+    private int getInheritanceSize(List<SymbolTableEntry> inheritedVariables){
+        int allocSize = 0;
+        int classSize;
+        SymbolTableEntry inheritedEntry;
+        SymbolTableEntry classEnrry;
+
+        //TODO add inherited class vars + offsets to class
+        for(int i = 0; i < inheritedVariables.size();i++){
+            if(inheritedVariables.size() != -1){
+                inheritedEntry = inheritedVariables.get(i);
+                classEnrry = generationTable.search(inheritedEntry.getName(), EntryKind.CLASS);
+                if(classEnrry.getSize() == -1) {
+                    classSize = decorateAClass(classEnrry.getLink());
+                    classEnrry.setSize(classSize);
+                }
+                allocSize += classEnrry.getSize();
+            }
+        }
+        return allocSize;
     }
 
     private boolean isBasicType(VariableType variableType){

@@ -209,6 +209,42 @@ public class CodeGenerationVisitorTest {
     }
 
     /*************************************
+     5.1.6 Inherited Object Types
+     *************************************/
+    @Test
+    public void objectInheritMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Foo{integer foo;}; class Blob:Foo{integer var;}; main { Blob blob; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        assertEquals("blob res 8", codeGenerationVisitor.getMoonCode().trim());
+    }
+
+    @Test
+    public void objectInheritAfterMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob:Foo{integer var;}; class Foo{integer foo;}; main { Blob blob; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        assertEquals("blob res 8", codeGenerationVisitor.getMoonCode().trim());
+    }
+
+    @Test
+    public void objectEmptyInheritAfterMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob:Foo{}; class Foo{integer foo; float bar; float temp;}; main { Blob blob; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        assertEquals("blob res 20", codeGenerationVisitor.getMoonCode().trim());
+    }
+
+    /*************************************
      5.1.6 Object Array Types
      *************************************/
     @Test
