@@ -10,17 +10,26 @@ import syntacticAnalyzer.AST.semanticNodes.*;
 import java.util.List;
 
 public class CodeGenerationVisitor extends Visitor {
-    private String moonCode;
+    private String moonInit;
+    private String moonMain;
     private int intSize = 4;
     private int floatSize = 8;
     private SymbolTable generationTable;
 
     public CodeGenerationVisitor() {
-        moonCode = "";
+        moonInit = "";
+        moonMain = "";
     }
 
-    public String getMoonCode() {
-        return moonCode;
+    public String getMoonInitCode() {
+        return moonInit;
+    }
+    public String getMoonMain(){
+        return moonMain;
+    }
+
+    public String getMoonCode(){
+        return  moonInit + moonMain;
     }
 
     public void visit(StringASTNode astNode) {
@@ -152,7 +161,7 @@ public class CodeGenerationVisitor extends Visitor {
     }
 
     private void generateAllocateCode(String id, int allocSize){
-        moonCode += id + " res " + allocSize + "\n";
+        moonInit += id + " res " + allocSize + "\n";
     }
 
     //sets total size of class + calls decoration for individual class

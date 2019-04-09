@@ -40,7 +40,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 4", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 4", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        String[] moonLines = codeGenerationVisitor.getMoonCode().split("\n");
+        String[] moonLines = codeGenerationVisitor.getMoonInitCode().split("\n");
 
         assertEquals(2, moonLines.length);
         assertEquals("blob res 4", moonLines[0]);
@@ -66,7 +66,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 8", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 8", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        String[] moonLines = codeGenerationVisitor.getMoonCode().split("\n");
+        String[] moonLines = codeGenerationVisitor.getMoonInitCode().split("\n");
 
         assertEquals(2, moonLines.length);
         assertEquals("blob res 8", moonLines[0]);
@@ -92,7 +92,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        String[] moonLines = codeGenerationVisitor.getMoonCode().split("\n");
+        String[] moonLines = codeGenerationVisitor.getMoonInitCode().split("\n");
 
         assertEquals(2, moonLines.length);
         assertEquals("blob res 4", moonLines[0]);
@@ -110,7 +110,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 8", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 8", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     @Test
@@ -121,7 +121,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 48", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 48", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     @Test
@@ -132,7 +132,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 40", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 40", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     @Test
@@ -143,7 +143,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 120", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 120", codeGenerationVisitor.getMoonInitCode().trim());
     }
     @Test
     public void multiArrayMemoryAllocation() {
@@ -153,7 +153,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 160", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 160", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
 
@@ -168,7 +168,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 4", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 4", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     @Test
@@ -179,7 +179,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 16", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 16", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     @Test
@@ -190,7 +190,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 12", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 12", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     @Test
@@ -201,7 +201,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        String[] moonLines = codeGenerationVisitor.getMoonCode().split("\n");
+        String[] moonLines = codeGenerationVisitor.getMoonInitCode().split("\n");
 
         assertEquals(2, moonLines.length);
         assertEquals("blob res 4", moonLines[0]);
@@ -219,7 +219,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 8", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 8", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     @Test
@@ -230,7 +230,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 8", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 8", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     @Test
@@ -241,7 +241,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 20", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 20", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     /*************************************
@@ -255,7 +255,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 4", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 4", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     @Test
@@ -266,7 +266,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 4", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 4", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     @Test
@@ -277,7 +277,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 12", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 12", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     /*************************************
@@ -291,7 +291,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 8", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 8", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     @Test
@@ -302,7 +302,7 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 24", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 24", codeGenerationVisitor.getMoonInitCode().trim());
     }
 
     @Test
@@ -313,6 +313,6 @@ public class CodeGenerationVisitorTest {
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
-        assertEquals("blob res 96", codeGenerationVisitor.getMoonCode().trim());
+        assertEquals("blob res 96", codeGenerationVisitor.getMoonInitCode().trim());
     }
 }

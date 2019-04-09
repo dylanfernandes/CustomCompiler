@@ -1,1 +1,1 @@
-integer foo(integer blob, float blob2){}; main { integer val; val = foo(val, val);};
+main{integer test;};

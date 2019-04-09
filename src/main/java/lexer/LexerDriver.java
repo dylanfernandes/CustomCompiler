@@ -22,8 +22,10 @@ public class LexerDriver {
     }
 
     public LexerDriver(String location) {
-        new LexerDriver();
-        inputLocation = location;
+        tokens = new ArrayList<Token>();
+        hasTokens= false;
+        if(location.length() > 0)
+            inputLocation = location;
     }
 
     public void start(String input) throws FileNotFoundException {
