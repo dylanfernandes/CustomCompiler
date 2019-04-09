@@ -1,9 +1,6 @@
 package codeGeneration;
 
-import semanticAnalyzer.SymbolTable.EntryKind;
-import semanticAnalyzer.SymbolTable.SymbolTable;
-import semanticAnalyzer.SymbolTable.SymbolTableEntry;
-import semanticAnalyzer.SymbolTable.VariableType;
+import semanticAnalyzer.SymbolTable.*;
 import semanticAnalyzer.visitor.Visitor;
 import syntacticAnalyzer.AST.ASTNode;
 import syntacticAnalyzer.AST.StringASTNode;
@@ -128,9 +125,12 @@ public class CodeGenerationVisitor extends Visitor {
     }
 
     private int getObjectSize(VariableType varType){
-        int allocSize = 0;
-        int baseSize = generationTable.search(varType.getType(), EntryKind.CLASS).getSize();
-
+        SymbolTableEntry objectEntry = generationTable.search(varType.getType(), EntryKind.CLASS);
+        int baseSize = objectEntry.getSize();
+        if(baseSize == -1) {
+            baseSize = decorateAClass(objectEntry.getLink());
+            objectEntry.setSize(baseSize);
+        }
 
         return getArrayAllocation(baseSize, varType);
     }
@@ -188,7 +188,9 @@ public class CodeGenerationVisitor extends Visitor {
             if(isBasicType(variableType)){
                 currVarSize = getBasicSize(variableType);
             }
-            //TODO implement for objects(not defined case)
+            else{
+                currVarSize = getObjectSize(variableType);
+            }
             variableEntry.setSize(currVarSize);
             //offset for current variable is size of class at this point
             variableEntry.setOffset(classSize);

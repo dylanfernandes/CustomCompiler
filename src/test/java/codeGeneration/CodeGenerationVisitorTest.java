@@ -209,7 +209,7 @@ public class CodeGenerationVisitorTest {
     }
 
     /*************************************
-     5.1.6 Inherited Object Types
+     5.1.4 Inherited Object Types
      *************************************/
     @Test
     public void objectInheritMemoryAllocation() {
@@ -242,6 +242,42 @@ public class CodeGenerationVisitorTest {
         codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
 
         assertEquals("blob res 20", codeGenerationVisitor.getMoonCode().trim());
+    }
+
+    /*************************************
+     5.1.5 Object with Object Member Types
+     *************************************/
+    @Test
+    public void objectMemberMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Foo{integer foo;}; class Blob{Foo var;}; main { Blob blob; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        assertEquals("blob res 4", codeGenerationVisitor.getMoonCode().trim());
+    }
+
+    @Test
+    public void objectMemberAfterMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob{Foo var;}; class Foo{integer foo;}; main { Blob blob; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        assertEquals("blob res 4", codeGenerationVisitor.getMoonCode().trim());
+    }
+
+    @Test
+    public void objectMemberAfterComplexMemoryAllocation() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob{Foo var; float temp;}; class Foo{integer foo;}; main { Blob blob; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        codeGenerationVisitor.visit((ProgASTNode) parserDriver.getAST());
+
+        assertEquals("blob res 12", codeGenerationVisitor.getMoonCode().trim());
     }
 
     /*************************************
