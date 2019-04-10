@@ -1,5 +1,6 @@
 main
 {
 integer val;
+val = 5;
 write(val);
 };

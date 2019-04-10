@@ -16,7 +16,8 @@ public class CodeGenerationVisitor extends Visitor {
     private int floatSize = 8;
     private SymbolTable generationTable;
     private String ZERO = "r0";
-    private String TEMP = "r2";
+    private String TEMP_LOAD = "r2";
+    private String TEMP_CALC = "r3";
 
     public CodeGenerationVisitor() {
         moonInit = "";
@@ -126,9 +127,65 @@ public class CodeGenerationVisitor extends Visitor {
             else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("oldVarEndNest")){
                 //left child = verify integer indice
                 // right child = verify instance attributes
-                //verifyIdProdNotDeclaration(head.getFirstChild(), currentTable);
+                verifyIdProdNotDeclaration(head.getFirstChild());
             }
             head = head.getFirstChild().getRightSibling();
+        }
+    }
+
+    private void verifyIdProdNotDeclaration(ASTNode idProdRoot) {
+        //check if id in class or inherited classes
+        String variableId;
+        ASTNode oldVarEndNest;
+        ASTNode oldVarEndNestNext;
+        ASTNode exprNode;
+        String value;
+
+        while(idProdRoot.getValue().equals("idProd")) {
+            variableId = idProdRoot.getFirstChild().getValue();
+            //verifyVariableFunction(variableId, functionTable);
+
+
+            oldVarEndNest = idProdRoot.getFirstChild().getRightSibling().getFirstChild();
+            //check indices
+//            if(oldVarEndNest.getFirstChild().getValue().equals("indiceRep")){
+//                verifyIndice(oldVarEndNest.getFirstChild(), varType, variableId, functionTable);
+//            }
+            //check dot operations
+            if(oldVarEndNest.getFirstChild().getRightSibling().getValue().equals("oldVarEndNestNext")) {
+                oldVarEndNestNext = oldVarEndNest.getFirstChild().getRightSibling();
+                if(oldVarEndNestNext.getFirstChild() != null){
+                    //type not integer or float
+//                    if(oldVarEndNestNext.getFirstChild().getValue().equals(".")) {
+//                        if (verifyClass(varType.getElementType().getType()) == -2) {
+//                            hasError = true;
+//                            errorOutput += "Undefined member for " + variableId + "\n";
+//                            break;
+//                        } else {
+//                            //variable is of class type
+//                            idProdRoot = oldVarEndNestNext.getFirstChild().getRightSibling();
+//                            if (globalSymbolTable.find(varType.getElementType().getType(), EntryKind.CLASS) != -1) {
+//                                functionTable = globalSymbolTable.search(varType.getElementType().getType(), EntryKind.CLASS).getLink();
+//                            } else
+//                                continue;
+//                        }
+//                    }
+//                    else
+                    if (oldVarEndNestNext.getFirstChild().getValue().equals("assignStatEnd")) {
+                        exprNode = oldVarEndNestNext.getFirstChild().getFirstChild().getRightSibling();
+                        value = exprNode.getFirstChild().getFirstChild().getFirstChild().getFirstChild().getValue();
+                        setVariableWithIntNum(variableId, value);
+                        //verify expression is same type as var
+                        //verifyExpression(exprNode, varType.getElementType(), functionTable);
+                        break;
+                    }
+                    //get table of class
+                }
+                else
+                    break;
+            }
+            else
+                break;
         }
     }
 
@@ -252,7 +309,11 @@ public class CodeGenerationVisitor extends Visitor {
         moonMain += "lw " + r1 + ", " + tag + "(" + r2 + ") \n";
     }
     private void printInt(String tag){
-        loadWord("r1", TEMP, tag);
+        loadWord("r1", TEMP_LOAD, tag);
         moonMain += "jl r15, putint\n";
+    }
+    private void setVariableWithIntNum(String var, String intNum){
+        moonMain += "addi " + TEMP_CALC + ", " + ZERO + ", " + intNum + "\n";
+        moonMain += "sw " + var + "(" + TEMP_LOAD + "), " + TEMP_CALC + "\n";;
     }
 }
