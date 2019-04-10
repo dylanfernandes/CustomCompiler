@@ -1,0 +1,16 @@
+class Test:::Blob
+{
+    integer func();
+};
+
+main
+{
+    var = bar */ 2;
+    if
+};
+
+/*
+3.2.1 Several Error detections
+3.2.2 Error messages with information
+*/
+

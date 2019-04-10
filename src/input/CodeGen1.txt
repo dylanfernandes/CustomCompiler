@@ -5,6 +5,8 @@
 main
 {
 integer val;
-val = 5*7;
+val = 5;
+write(val);
+val = 7;
 write(val);
 };

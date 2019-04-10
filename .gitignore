@@ -29,7 +29,6 @@ hs_err_pid*
 .idea/
 /target
 /src/output/*.txt
-/src/input/*.txt
 /src/moon/*
 !/src/moon/*.c
 !/src/moon/template.m

@@ -1,5 +1,6 @@
 package codeGeneration;
 
+import org.apache.commons.lang3.StringUtils;
 import semanticAnalyzer.SymbolTable.*;
 import semanticAnalyzer.visitor.Visitor;
 import syntacticAnalyzer.AST.ASTNode;
@@ -173,10 +174,8 @@ public class CodeGenerationVisitor extends Visitor {
 //                    else
                     if (oldVarEndNestNext.getFirstChild().getValue().equals("assignStatEnd")) {
                         exprNode = oldVarEndNestNext.getFirstChild().getFirstChild().getRightSibling();
-                        value = exprNode.getFirstChild().getFirstChild().getFirstChild().getFirstChild().getValue();
-                        setVariableWithIntNum(variableId, value);
-                        //verify expression is same type as var
-                        //verifyExpression(exprNode, varType.getElementType(), functionTable);
+                        //factor value
+                        generateExpression(exprNode, variableId);
                         break;
                     }
                     //get table of class
@@ -186,6 +185,31 @@ public class CodeGenerationVisitor extends Visitor {
             }
             else
                 break;
+        }
+    }
+
+    private void generateExpression(ASTNode exprNode, String variableId){
+        String value;
+        String operator;
+        String operand;
+        ASTNode term = exprNode.getFirstChild().getFirstChild();
+        ASTNode termPrime = term.getFirstChild().getRightSibling();
+        TokenASTNode operatorToken;
+        value= term.getFirstChild().getFirstChild().getValue();
+        //can set value directly if numeric
+        if(StringUtils.isNumeric(value) && termPrime.getFirstChild().getValue().equals("EPSILON"))
+            setVariableWithIntNum(variableId, value);
+        else {
+            while (!termPrime.getFirstChild().getValue().equals("EPSILON")){
+                operatorToken = (TokenASTNode) termPrime.getFirstChild().getFirstChild();
+                operand = termPrime.getFirstChild().getRightSibling().getFirstChild().getValue();
+                operator = operatorToken.getValue();
+                if(StringUtils.isNumeric(operand)){
+                    setValueWithMultOp(variableId,value, operand, operator);
+                    value = String.valueOf(Integer.parseInt(value)*Integer.parseInt(operand));
+                }
+                termPrime = termPrime.getFirstChild().getRightSibling().getRightSibling();
+            }
         }
     }
 
@@ -315,5 +339,17 @@ public class CodeGenerationVisitor extends Visitor {
     private void setVariableWithIntNum(String var, String intNum){
         moonMain += "addi " + TEMP_CALC + ", " + ZERO + ", " + intNum + "\n";
         moonMain += "sw " + var + "(" + TEMP_LOAD + "), " + TEMP_CALC + "\n";;
+    }
+    private void setValueWithMultOp(String var, String op1, String op2, String operand){
+        if(operand.equals("*")){
+            moonMain += "addi " + TEMP_CALC + ", " + ZERO + ", " + op1 + "\n";
+            moonMain += "muli " + TEMP_CALC + ", " + TEMP_CALC + ", " + op2 + "\n";
+            moonMain += "sw " + var + "(" + TEMP_LOAD + "), " + TEMP_CALC + "\n";;
+
+        } else if(operand.equals("/")){
+            moonMain += "addi " + TEMP_CALC + ", " + ZERO + ", " + op1 + "\n";
+            moonMain += "divi " + TEMP_CALC + ", " + TEMP_CALC + ", " + op2 + "\n";
+            moonMain += "sw " + var + "(" + TEMP_LOAD + "), " + TEMP_CALC + "\n";;
+        }
     }
 }
