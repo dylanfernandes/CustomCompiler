@@ -42,6 +42,16 @@ public class LexerDriver {
     }
 
     public List<Token> getTokens() {
+        return removeComments(tokens);
+    }
+
+    public List<Token> removeComments(List<Token> tokens){
+        Token aToken;
+        for (int i = 0;i < tokens.size();i++){
+            aToken = tokens.get(i);
+            if(aToken.getType().equals(Token.TokenType.CMT))
+                tokens.remove(aToken);
+        }
         return tokens;
     }
 

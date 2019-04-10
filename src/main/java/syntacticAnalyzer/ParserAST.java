@@ -28,7 +28,11 @@ public class ParserAST {
     }
 
     public ParserAST(List<Token> tokens) {
-        new Parser();
+        position = 0;
+        syntax = "";
+        parseGood = false;
+        foundError = false;
+        root = null;
         tokenList = tokens;
         if(tokenList.size() > 0) {
             lookahead = tokenList.get(0);
@@ -44,9 +48,13 @@ public class ParserAST {
     }
 
     public String printAST() {
-        if(root != null)
+        if(root != null) {
+            if (syntax.length() > 0)
+                return root.print() + "\n" + syntax;
             return root.print();
-        return "";
+        }
+        else
+            return syntax;
     }
 
     public void setTokenList(List<Token> tokenList) {
@@ -133,7 +141,7 @@ public class ParserAST {
     }
 
     public void addToSyntax(String newSyntax) {
-        syntax = newSyntax + "\n" + syntax;
+        syntax += newSyntax + "\n" ;
     }
 
     public String parse() {
@@ -158,7 +166,7 @@ public class ParserAST {
         }
 
         if (classDeclRep(classDeclRepNode) && funcDefRep(funcDefRepNode) && matchAndSave(Token.TokenType.MAIN, main) && funcBody(funcBodyNode) && matchAndSave(Token.TokenType.SEMI, semi)) {
-            addToSyntax("prog -> classDeclRep funcDefRep 'main' funcBody ';'");
+            //addToSyntax("prog -> classDeclRep funcDefRep 'main' funcBody ';'");
             root.makeFamily(classDeclRepNode, funcDefRepNode, ASTNodeFactory.getASTNode(main), funcBodyNode, ASTNodeFactory.getASTNode(semi));
             return true;
         }
@@ -175,11 +183,11 @@ public class ParserAST {
 
         if(peekMatch(Token.TokenType.ID) || peekMatch(Token.TokenType.FLOAT) || peekMatch(Token.TokenType.INTEGER) || peekMatch(Token.TokenType.MAIN)){
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
-            addToSyntax("classDeclRep -> EPSILON");
+            //addToSyntax("classDeclRep -> EPSILON");
             return true;
         }else if(classDecl(classDeclNode) && classDeclRep(classDeclRepNode)) {
             currentRoot.makeFamily(classDeclNode, classDeclRepNode);
-            addToSyntax("classDeclRep -> classDecl classDeclRep");
+            //addToSyntax("classDeclRep -> classDecl classDeclRep");
             return true;
         }
         return false;
@@ -202,7 +210,7 @@ public class ParserAST {
         }
         if(matchAndSave(Token.TokenType.CLASS, classT) && matchAndSave(Token.TokenType.ID, id) && classExOpt(classExOptNode) && matchAndSave(Token.TokenType.OBRA, oBra) && varOrFuncCheck(varOrFuncCheckNode) && matchAndSave(Token.TokenType.CBRA, cBra) && matchAndSave(Token.TokenType.SEMI, semi)) {
 
-            addToSyntax("classDecl -> 'class' 'id' classExOpt '{' varOrFuncCheck '}' ';'");
+            //addToSyntax("classDecl -> 'class' 'id' classExOpt '{' varOrFuncCheck '}' ';'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(classT), ASTNodeFactory.getASTNode(id), classExOptNode, ASTNodeFactory.getASTNode(oBra), varOrFuncCheckNode, ASTNodeFactory.getASTNode(cBra), ASTNodeFactory.getASTNode(semi));
             return true;
         }
@@ -217,11 +225,11 @@ public class ParserAST {
             return false;
         }
         if(peekMatch(Token.TokenType.MAIN)) {
-            addToSyntax("funcDefRep -> EPSILON");
+            //addToSyntax("funcDefRep -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if(funcDef(funcDefNode) && funcDefRep(funcDefRepNode)) {
-            addToSyntax("funcDefRep -> funcDef funcDefRep");
+            //addToSyntax("funcDefRep -> funcDef funcDefRep");
             currentRoot.makeFamily(funcDefNode, funcDefRepNode);
             return true;
         }
@@ -238,11 +246,11 @@ public class ParserAST {
             return false;
         }
         if(peekMatch(Token.TokenType.CBRA)) {
-            addToSyntax("varOrFuncCheck -> EPSILON");
+            //addToSyntax("varOrFuncCheck -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if(type(typeNode) && matchAndSave(Token.TokenType.ID, id) && varCheckNext(varCheckNextNode)) {
-            addToSyntax("varOrFuncCheck -> type 'id' varCheckNext");
+            //addToSyntax("varOrFuncCheck -> type 'id' varCheckNext");
             currentRoot.makeFamily(typeNode, ASTNodeFactory.getASTNode(id), varCheckNextNode);
             return true;
         }
@@ -265,11 +273,11 @@ public class ParserAST {
         }
 
         if(arraySizeRep(false, arraySizeRepNode) && matchAndSave(Token.TokenType.SEMI, semi) && varOrFuncCheck(varOrFuncCheckNode)) {
-            addToSyntax("varCheckNext -> arraySizeRep varOrFuncCheck  ';'");
+            //addToSyntax("varCheckNext -> arraySizeRep varOrFuncCheck  ';'");
             currentRoot.makeFamily(arraySizeRepNode, ASTNodeFactory.getASTNode(semi), varOrFuncCheckNode);
             return true;
         }else if(matchAndSave(Token.TokenType.OPAR, opar) && fParams(fParamsNode) && matchAndSave(Token.TokenType.CPAR, cpar) && matchAndSave(Token.TokenType.SEMI, semi) && funcDeclRep(funcDeclRepNode)) {
-            addToSyntax("varCheckNext -> '(' fParams ')' ';' funcDeclRep ");
+            //addToSyntax("varCheckNext -> '(' fParams ')' ';' funcDeclRep ");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(opar), fParamsNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(semi), funcDeclRepNode);
             return true;
         }
@@ -288,11 +296,11 @@ public class ParserAST {
         }
 
         if(peekMatch(Token.TokenType.OBRA)) {
-            addToSyntax("classExOpt -> EPSILON");
+            //addToSyntax("classExOpt -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if(matchAndSave(Token.TokenType.COLO, colo) && matchAndSave(Token.TokenType.ID, id) && classExMoreRep(classExMoreRepNode)) {
-            addToSyntax("classExOpt ->  ':' 'id' classExMoreRep");
+            //addToSyntax("classExOpt ->  ':' 'id' classExMoreRep");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(colo), ASTNodeFactory.getASTNode(id), classExMoreRepNode);
             return true;
         }
@@ -309,11 +317,11 @@ public class ParserAST {
             return false;
         }
         if(peekMatch(Token.TokenType.OBRA)) {
-            addToSyntax("classExMoreRep -> EPSILON");
+            //addToSyntax("classExMoreRep -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if(matchAndSave(Token.TokenType.COMM, comm) && matchAndSave(Token.TokenType.ID, id) && classExMoreRep(classExMoreRepNode)) {
-            addToSyntax("classExMoreRep -> ',' 'id' classExMoreRep");
+            //addToSyntax("classExMoreRep -> ',' 'id' classExMoreRep");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(comm), ASTNodeFactory.getASTNode(id), classExMoreRepNode);
             return true;
         }
@@ -329,11 +337,11 @@ public class ParserAST {
         }
 
         if (peekMatch(Token.TokenType.CBRA)) {
-            addToSyntax("funcDeclRep -> EPSILON");
+            //addToSyntax("funcDeclRep -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         }else if (funcDecl(funcDeclNode) && funcDeclRep(funcDeclRepNode)) {
-            addToSyntax("funcDeclRep -> funcDecl funcDeclRep");
+            //addToSyntax("funcDeclRep -> funcDecl funcDeclRep");
             currentRoot.makeFamily(funcDeclNode, funcDeclRepNode);
             return true;
         }
@@ -355,7 +363,7 @@ public class ParserAST {
         }
 
         if(type(typeNode) && matchAndSave(Token.TokenType.ID, id) && matchAndSave(Token.TokenType.OPAR, opar) && fParams(fParamsNode) && matchAndSave(Token.TokenType.CPAR, cpar) && matchAndSave(Token.TokenType.SEMI, semi)) {
-            addToSyntax("funcDecl -> type 'id' '(' fParams ')' ';' ");
+            //addToSyntax("funcDecl -> type 'id' '(' fParams ')' ';' ");
             currentRoot.makeFamily(typeNode, ASTNodeFactory.getASTNode(id), ASTNodeFactory.getASTNode(opar), fParamsNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(semi));
             return true;
         }
@@ -373,7 +381,7 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.OBRA, oBra) && varDeclStatFuncRep(varDeclStatFuncRepNode) && matchAndSave(Token.TokenType.CBRA,cBra)) {
-            addToSyntax("funcBody -> '{' varDeclStatFuncRep '}'");
+            //addToSyntax("funcBody -> '{' varDeclStatFuncRep '}'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(oBra), varDeclStatFuncRepNode, ASTNodeFactory.getASTNode(cBra));
             return true;
         }
@@ -391,7 +399,7 @@ public class ParserAST {
         }
 
         if(type(typeNode) && matchAndSave(Token.TokenType.ID, id) && funcHeadChoice(funcHeadChoiceNode)) {
-            addToSyntax("funcHead -> type 'id' funcHeadChoice");
+            //addToSyntax("funcHead -> type 'id' funcHeadChoice");
             currentRoot.makeFamily(typeNode, ASTNodeFactory.getASTNode(id),funcHeadChoiceNode);
             return true;
         }
@@ -411,11 +419,11 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.DCOLO, dcolo) && matchAndSave(Token.TokenType.ID, id) && matchAndSave(Token.TokenType.OPAR, opar) && fParams(fParamsNode) && matchAndSave(Token.TokenType.CPAR, cpar)) {
-            addToSyntax("funcHeadChoice -> 'sr' 'id' '(' fParams ')'");
+            //addToSyntax("funcHeadChoice -> 'sr' 'id' '(' fParams ')'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(dcolo), ASTNodeFactory.getASTNode(id), ASTNodeFactory.getASTNode(opar), fParamsNode, ASTNodeFactory.getASTNode(cpar));
             return true;
         } else if (matchAndSave(Token.TokenType.OPAR, opar) && fParams(fParamsNode) && matchAndSave(Token.TokenType.CPAR, cpar)) {
-            addToSyntax("funcHeadChoice -> '(' fParams ')'");
+            //addToSyntax("funcHeadChoice -> '(' fParams ')'");
             currentRoot.makeFamily( ASTNodeFactory.getASTNode(opar), fParamsNode, ASTNodeFactory.getASTNode(cpar));
             return true;
         }
@@ -434,7 +442,7 @@ public class ParserAST {
         }
 
         if(funcHead(funcHeadNode) && funcBody(funcBodyNode) && matchAndSave(Token.TokenType.SEMI, semi)) {
-            addToSyntax("funcDef -> funcHead funcBody ';'");
+            //addToSyntax("funcDef -> funcHead funcBody ';'");
             currentRoot.makeFamily(funcHeadNode, funcBodyNode, ASTNodeFactory.getASTNode(semi));
             return true;
         }
@@ -453,19 +461,19 @@ public class ParserAST {
         }
 
         if(peekMatch(Token.TokenType.CBRA)) {
-            addToSyntax("varDeclStatFuncRep -> EPSILON");
+            //addToSyntax("varDeclStatFuncRep -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return  true;
         } else if(varDeclNotId(false, varDeclNotIdNode) && varDeclStatFuncRep(varDeclStatFuncRepNode)) {
-            addToSyntax("varDeclStatFuncRep -> varDeclNotId varDeclStatFuncRep");
+            //addToSyntax("varDeclStatFuncRep -> varDeclNotId varDeclStatFuncRep");
             currentRoot.makeFamily(varDeclNotIdNode, varDeclStatFuncRepNode);
             return true;
         } else if(idProd(false, idProdNode) && varDeclStatFuncRep(varDeclStatFuncRepNode)) {
-            addToSyntax("varDeclStatFuncRep -> idProd varDeclStatFuncRep");
+            //addToSyntax("varDeclStatFuncRep -> idProd varDeclStatFuncRep");
             currentRoot.makeFamily(idProdNode, varDeclStatFuncRepNode);
             return true;
         } else  if(statementNoId(statementNoIdNode) && varDeclStatFuncRep(varDeclStatFuncRepNode)) {
-            addToSyntax("varDeclStatFuncRep -> statementNoId varDeclStatFuncRep");
+            //addToSyntax("varDeclStatFuncRep -> statementNoId varDeclStatFuncRep");
             currentRoot.makeFamily(statementNoIdNode, varDeclStatFuncRepNode);
             return true;
         }
@@ -482,7 +490,7 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.ID,id) && idProdNext(idProdNextNode)) {
-            addToSyntax("idProd -> 'id' idProdNext");
+            //addToSyntax("idProd -> 'id' idProdNext");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(id), idProdNextNode);
             return true;
         }
@@ -504,16 +512,16 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.OPAR, opar) && aParams(aParamsNode) && matchAndSave(Token.TokenType.CPAR, cpar) && matchAndSave(Token.TokenType.POIN, poin) && idProd(true, idProdNode)) {
-            addToSyntax("idProdNext -> '(' aParams ')' '.' idProd ");
+            //addToSyntax("idProdNext -> '(' aParams ')' '.' idProd ");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(opar), aParamsNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(poin), idProdNode);
             return  true;
         } else if(varDeclId(false, varDeclIdNode)) {
-            addToSyntax("idProdNext -> varDeclId");
+            //addToSyntax("idProdNext -> varDeclId");
             currentRoot.makeFamily(varDeclIdNode);
             return  true;
         }
         else if(oldVarEndNest(oldVarEndNestNode)) {
-            addToSyntax("idProdNext -> oldVarEndNest");
+            //addToSyntax("idProdNext -> oldVarEndNest");
             currentRoot.makeFamily(oldVarEndNestNode);
             return  true;
         }
@@ -530,7 +538,7 @@ public class ParserAST {
         }
 
         if(indiceRep(indiceRepNode) && oldVarEndNestNext(oldVarEndNestNextNode)){
-            addToSyntax("oldVarEndNest -> indiceRep oldVarEndNestNext");
+            //addToSyntax("oldVarEndNest -> indiceRep oldVarEndNestNext");
             currentRoot.makeFamily(indiceRepNode, oldVarEndNestNextNode);
             return true;
         }
@@ -549,15 +557,15 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.SEMI, semi)) {
-            addToSyntax("oldVarEndNestNext -> ';'");
+            //addToSyntax("oldVarEndNestNext -> ';'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(semi));
             return true;
         } else if(matchAndSave(Token.TokenType.POIN, poin) && idProd(true, idProdNode)) {
-            addToSyntax("oldVarEndNestNext -> '.' idProd");
+            //addToSyntax("oldVarEndNestNext -> '.' idProd");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(poin), idProdNode);
             return true;
         } else if (assignStatEnd(assignStatEndNode)) {
-            addToSyntax("oldVarEndNestNext -> assignStatEnd");
+            //addToSyntax("oldVarEndNestNext -> assignStatEnd");
             currentRoot.makeFamily(assignStatEndNode);
             return true;
         }
@@ -579,7 +587,7 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.ID, id) && varDeclNext(varDeclNextNode)) {
-            addToSyntax("varDeclId -> 'id' varDeclNext");
+            //addToSyntax("varDeclId -> 'id' varDeclNext");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(id), varDeclNextNode);
             return true;
         }
@@ -598,7 +606,7 @@ public class ParserAST {
         }
 
         if(assignOp(assignOpNode) && expr(exprNode) && matchAndSave(Token.TokenType.SEMI, semi)) {
-            addToSyntax("assignStatEnd -> assignOp expr ';'");
+            //addToSyntax("assignStatEnd -> assignOp expr ';'");
             currentRoot.makeFamily(assignOpNode, exprNode, ASTNodeFactory.getASTNode(semi));
             return true;
         }
@@ -621,7 +629,7 @@ public class ParserAST {
         }
 
         if(typeNotId(typeNotIdNode) && matchAndSave(Token.TokenType.ID, id) && varDeclNext(varDeclNextNode)) {
-            addToSyntax("varDeclNotId -> typeNotId 'id' varDeclNext");
+            //addToSyntax("varDeclNotId -> typeNotId 'id' varDeclNext");
             currentRoot.makeFamily(typeNotIdNode, ASTNodeFactory.getASTNode(id), varDeclNextNode);
             return true;
         }
@@ -639,7 +647,7 @@ public class ParserAST {
         }
 
         if(arraySizeRep(arraySizeRepNode) && matchAndSave(Token.TokenType.SEMI, semi)) {
-            addToSyntax("varDeclNext -> arraySizeRep ';'");
+            //addToSyntax("varDeclNext -> arraySizeRep ';'");
             currentRoot.makeFamily(arraySizeRepNode, ASTNodeFactory.getASTNode(semi));
             return  true;
         }
@@ -659,11 +667,11 @@ public class ParserAST {
         }
 
         if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM))) {
-            addToSyntax("arraySizeRep -> EPSILON");
+            //addToSyntax("arraySizeRep -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else  if (arraySize(arraySizeNode) && arraySizeRep(arraySizeRepNode)) {
-            addToSyntax("arraySizeRep -> arraySize arraySizeRep");
+            //addToSyntax("arraySizeRep -> arraySize arraySizeRep");
             currentRoot.makeFamily(arraySizeNode, arraySizeRepNode);
             return true;
         }
@@ -679,12 +687,12 @@ public class ParserAST {
         }
 
         if(statementNoId(false, statementNoIdNode)) {
-            addToSyntax("statement -> statementNoId");
+            //addToSyntax("statement -> statementNoId");
             currentRoot.makeFamily(statementNoIdNode);
             return true;
 
         } else if (statementId(statementIdNode)) {
-            addToSyntax("statement -> statementIdNode");
+            //addToSyntax("statement -> statementIdNode");
             currentRoot.makeFamily(statementIdNode);
             return true;
         }
@@ -702,7 +710,7 @@ public class ParserAST {
         }
 
         if(assignStat(assignStatNode) && matchAndSave(Token.TokenType.SEMI, semi)) {
-            addToSyntax("statementId -> assignStat;");
+            //addToSyntax("statementId -> assignStat;");
             currentRoot.makeFamily(assignStatNode, ASTNodeFactory.getASTNode(semi));
             return true;
         }
@@ -732,23 +740,23 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.IF, reservedWord) && ifRest(ifRestNode)) {
-            addToSyntax("statementNoId -> 'if' ifRest");
+            //addToSyntax("statementNoId -> 'if' ifRest");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(reservedWord), ifRestNode);
             return true;
         } else if(matchAndSave(Token.TokenType.FOR, reservedWord) && forRest(forRestNode)) {
-            addToSyntax("statementNoId -> 'for' forRest");
+            //addToSyntax("statementNoId -> 'for' forRest");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(reservedWord), forRestNode);
             return true;
         } else if(matchAndSave(Token.TokenType.READ, reservedWord) && matchAndSave(Token.TokenType.OPAR, opar) && varStart(varStartNode) && matchAndSave(Token.TokenType.CPAR, cpar) && matchAndSave(Token.TokenType.SEMI, semi)) {
-            addToSyntax("statementNoId -> 'read' '(' variable ')' ';'");
+            //addToSyntax("statementNoId -> 'read' '(' variable ')' ';'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(reservedWord), ASTNodeFactory.getASTNode(opar),varStartNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(semi));
             return true;
         } else if(matchAndSave(Token.TokenType.WRITE, reservedWord) && matchAndSave(Token.TokenType.OPAR, opar) && expr(exprNode) && matchAndSave(Token.TokenType.CPAR, cpar) && matchAndSave(Token.TokenType.SEMI, semi)) {
-            addToSyntax("statementNoId -> 'write' '(' expr ')' ';'");
+            //addToSyntax("statementNoId -> 'write' '(' expr ')' ';'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(reservedWord), ASTNodeFactory.getASTNode(opar),exprNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(semi));
             return  true;
         } else if(matchAndSave(Token.TokenType.RETURN, reservedWord) && matchAndSave(Token.TokenType.OPAR, opar) && expr(exprNode) && matchAndSave(Token.TokenType.CPAR, cpar) && matchAndSave(Token.TokenType.SEMI, semi)) {
-            addToSyntax("statementNoId -> 'return' '(' expr ')' ';'");
+            //addToSyntax("statementNoId -> 'return' '(' expr ')' ';'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(reservedWord), ASTNodeFactory.getASTNode(opar),exprNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(semi));
             return true;
         }
@@ -772,7 +780,7 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.OPAR, opar) && expr(exprNode) && matchAndSave(Token.TokenType.CPAR, cpar) && matchAndSave(Token.TokenType.THEN, thenToken) && statBlock(ifStatBlockNode) && matchAndSave(Token.TokenType.ELSE, elseToken) && statBlock(elseStatBlockNode) && matchAndSave(Token.TokenType.SEMI, semi)){
-            addToSyntax("ifRest -> '(' expr ')' 'then' statBlock 'else' statBlock ';'");
+            //addToSyntax("ifRest -> '(' expr ')' 'then' statBlock 'else' statBlock ';'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(opar), exprNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(thenToken), ifStatBlockNode, ASTNodeFactory.getASTNode(elseToken), elseStatBlockNode,ASTNodeFactory.getASTNode(semi));
             return true;
         }
@@ -799,7 +807,7 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.OPAR, opar) && type(typeNode) && matchAndSave(Token.TokenType.ID, id) && assignOp(assignOpNode) && expr(exprNode) && matchAndSave(Token.TokenType.SEMI, semiVar) && relExpr(relExprNode) && matchAndSave(Token.TokenType.SEMI, semiCond) && assignStat(assignStatNode) && matchAndSave(Token.TokenType.CPAR, cpar) && statBlock(statBlockNode) && matchAndSave(Token.TokenType.SEMI, semiEnd)){
-            addToSyntax("forRest -> '(' type 'id' assignOp expr ';' relExpr ';' assignStat ')' statBlock ';'");
+            //addToSyntax("forRest -> '(' type 'id' assignOp expr ';' relExpr ';' assignStat ')' statBlock ';'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(opar), typeNode, ASTNodeFactory.getASTNode(id), assignOpNode, exprNode, ASTNodeFactory.getASTNode(semiVar), relExprNode, ASTNodeFactory.getASTNode(semiCond), assignStatNode, ASTNodeFactory.getASTNode(opar), statBlockNode,ASTNodeFactory.getASTNode(semiEnd));
             return true;
         }
@@ -815,11 +823,11 @@ public class ParserAST {
         }
 
         if(peekMatch(Token.TokenType.CBRA)) {
-            addToSyntax("statementRep -> EPSILON");
+            //addToSyntax("statementRep -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if(statement(statementNode) && statementRep(statementRepNode)) {
-            addToSyntax("statementRep -> statement statementRep");
+            //addToSyntax("statementRep -> statement statementRep");
             currentRoot.makeFamily(statementNode, statementRepNode);
             return true;
         }
@@ -836,7 +844,7 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.OSBRA, osbra) && matchAndSave(Token.TokenType.INT, intToken) && matchAndSave(Token.TokenType.CSBRA, csbra)) {
-            addToSyntax(" arraySize -> '[' 'intNum' ']'");
+            //addToSyntax(" arraySize -> '[' 'intNum' ']'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(osbra), ASTNodeFactory.getASTNode(intToken), ASTNodeFactory.getASTNode(csbra));
             return true;
         }
@@ -853,7 +861,7 @@ public class ParserAST {
         }
 
         if(varStart(varStartNode) && assignOp(assignOpNode) && expr(exprNode)) {
-            addToSyntax("assignStat -> varStart assignOp expr");
+            //addToSyntax("assignStat -> varStart assignOp expr");
             currentRoot.makeFamily(varStartNode, assignOpNode, exprNode);
             return true;
         }
@@ -872,15 +880,15 @@ public class ParserAST {
         }
 
         if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.ELSE))) {
-            addToSyntax("statBlock -> EPSILON");
+            //addToSyntax("statBlock -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if (matchAndSave(Token.TokenType.OBRA, obra) && statementRep(statementRepNode) && matchAndSave(Token.TokenType.CBRA,cbra)) {
-            addToSyntax("statBlock -> '{' statementRep '}'");
+            //addToSyntax("statBlock -> '{' statementRep '}'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(obra), statementRepNode, ASTNodeFactory.getASTNode(cbra));
             return true;
         } else if(statement(statementNode)) {
-            addToSyntax("statBlock -> statement");
+            //addToSyntax("statBlock -> statement");
             currentRoot.makeFamily(statementNode);
             return true;
         }
@@ -896,7 +904,7 @@ public class ParserAST {
         }
 
         if(arithExpr(arithExprNode) && exprNext(exprNextNode)) {
-            addToSyntax("expr -> arithExpr exprNext");
+            //addToSyntax("expr -> arithExpr exprNext");
             currentRoot.makeFamily(arithExprNode, exprNextNode);
             return true;
         }
@@ -912,11 +920,11 @@ public class ParserAST {
         }
 
         if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM))) {
-            addToSyntax("exprNext -> EPSILON");
+            //addToSyntax("exprNext -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if(relOp(relOpNode) && arithExpr(arithExprNode)) {
-            addToSyntax("exprNext -> relOp arithExpr");
+            //addToSyntax("exprNext -> relOp arithExpr");
             return true;
         }
         return false;
@@ -932,7 +940,7 @@ public class ParserAST {
         }
 
         if(arithExpr(arithExprStartNode) && relOp(relOpNode) && arithExpr(arithExprEndNode) ) {
-            addToSyntax("relExpr -> arithExpr relOp arithExpr");
+            //addToSyntax("relExpr -> arithExpr relOp arithExpr");
             currentRoot.makeFamily(arithExprStartNode, relOpNode, arithExprEndNode);
             return true;
         }
@@ -949,7 +957,7 @@ public class ParserAST {
         }
 
         if(term(termNode) && arithExprPrime(arithExprPrimeNode)) {
-            addToSyntax("arithExpr -> term arithExprPrime");
+            //addToSyntax("arithExpr -> term arithExprPrime");
             currentRoot.makeFamily(termNode, arithExprPrimeNode);
             return true;
         }
@@ -967,11 +975,11 @@ public class ParserAST {
         }
 
         if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GRE, Token.TokenType.GREEQ, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA))) {
-            addToSyntax("arithExprPrime -> EPSILON");
+            //addToSyntax("arithExprPrime -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if(addOp(addOpNode) && term(termNode) && arithExprPrime(arithExprPrimeNode)) {
-            addToSyntax("arithExprPrime -> addOp term arithExprPrime");
+            //addToSyntax("arithExprPrime -> addOp term arithExprPrime");
             currentRoot.makeFamily(addOpNode, termNode, arithExprPrimeNode);
             return true;
         }
@@ -988,11 +996,11 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.ADD, op)) {
-            addToSyntax("sign -> '+'");
+            //addToSyntax("sign -> '+'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(op));
             return true;
         } else if(matchAndSave(Token.TokenType.SUB, op)) {
-            addToSyntax("sign -> '-'");
+            //addToSyntax("sign -> '-'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(op));
             return true;
         }
@@ -1008,7 +1016,7 @@ public class ParserAST {
         }
 
         if(factor(factorNode) && termPrime(termPrimeNode)) {
-            addToSyntax("term -> factor termPrime");
+            //addToSyntax("term -> factor termPrime");
             currentRoot.makeFamily(factorNode, termPrimeNode);
             return true;
         }
@@ -1025,11 +1033,11 @@ public class ParserAST {
         }
 
         if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GRE, Token.TokenType.GREEQ, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR))) {
-            addToSyntax("termPrime -> EPSILON");
+            //addToSyntax("termPrime -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if(multOp(multOpNode) && factor(factorNode) && termPrime(termPrimeNode)) {
-            addToSyntax("termPrime -> multOp factor termPrime");
+            //addToSyntax("termPrime -> multOp factor termPrime");
             currentRoot.makeFamily(multOpNode, factorNode, termPrimeNode);
             return true;
         }
@@ -1051,27 +1059,27 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.INT, start)) {
-            addToSyntax("factor -> 'intNum'");
+            //addToSyntax("factor -> 'intNum'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(start));
             return true;
         } else if(matchAndSave(Token.TokenType.FLO, start)) {
-            addToSyntax("factor -> 'floatNum'");
+            //addToSyntax("factor -> 'floatNum'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(start));
             return true;
         } else if(matchAndSave(Token.TokenType.OPAR, start) && arithExpr(arithExprNode) && matchAndSave(Token.TokenType.CPAR, end)) {
-            addToSyntax("'factor -> (' arithExpr ')'");
+            //addToSyntax("'factor -> (' arithExpr ')'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(start), arithExprNode, ASTNodeFactory.getASTNode(end));
             return true;
         } else if(matchAndSave(Token.TokenType.NOT, start) && factor(factorNode)) {
-            addToSyntax("factor -> 'not' factor");
+            //addToSyntax("factor -> 'not' factor");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(start), factorNode);
             return true;
         } else if(sign(false, signNode) && factor(factorNode)) {
-            addToSyntax("factor -> sign factor");
+            //addToSyntax("factor -> sign factor");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(start), factorNode);
             return true;
         } else  if(varOrFuncCall(varOrFuncCallNode)) {
-            addToSyntax("factor -> varOrFuncCall");
+            //addToSyntax("factor -> varOrFuncCall");
             currentRoot.makeFamily(varOrFuncCallNode);
             return true;
         }
@@ -1088,7 +1096,7 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.ID, id) && varOrFuncCallNext(varOrFuncCallNextNode)) {
-            addToSyntax("varOrFuncCall -> 'id' varOrFuncCallNext");
+            //addToSyntax("varOrFuncCall -> 'id' varOrFuncCallNext");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(id), varOrFuncCallNextNode);
             return true;
         }
@@ -1107,19 +1115,19 @@ public class ParserAST {
         }
 
         if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LESSEQ, Token.TokenType.LES, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.AND))) {
-            addToSyntax("varOrFuncCallNext -> EPSILON");
+            //addToSyntax("varOrFuncCallNext -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if(matchAndSave(Token.TokenType.OPAR, start) && varFuncParams(varFuncParamsNode)) {
-            addToSyntax("varOrFuncCallNext -> '(' varFuncParams");
+            //addToSyntax("varOrFuncCallNext -> '(' varFuncParams");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(start), varFuncParamsNode);
             return true;
         } else if(matchAndSave(Token.TokenType.POIN, start) && varStart(varStartNode)) {
-            addToSyntax("varOrFuncCallNext -> '.' varStart");
+            //addToSyntax("varOrFuncCallNext -> '.' varStart");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(start), varStartNode);
             return true;
         } else if(varIndice(varIndiceNode)) {
-            addToSyntax("varOrFuncCallNext -> varIndice");
+            //addToSyntax("varOrFuncCallNext -> varIndice");
             currentRoot.makeFamily(varIndiceNode);
             return true;
         }
@@ -1138,7 +1146,7 @@ public class ParserAST {
         }
 
         if(aParams(aParamsNode) && matchAndSave(Token.TokenType.CPAR, cpar) && varFuncParamsNext(varFuncParamsNextNode)) {
-            addToSyntax("varFuncParams ->  aParams ')' varFuncParamsNext");
+            //addToSyntax("varFuncParams ->  aParams ')' varFuncParamsNext");
             currentRoot.makeFamily(aParamsNode, ASTNodeFactory.getASTNode(cpar), varFuncParamsNextNode);
             return true;
         }
@@ -1155,11 +1163,11 @@ public class ParserAST {
         }
 
         if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LESSEQ, Token.TokenType.LES, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.AND))) {
-            addToSyntax("varFuncParamsNext -> EPSILON");
+            //addToSyntax("varFuncParamsNext -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if(matchAndSave(Token.TokenType.POIN, poin) && varOrFuncCall(varOrFuncCallNode)) {
-            addToSyntax("varFuncParamsNext -> '.' varOrFuncCall");
+            //addToSyntax("varFuncParamsNext -> '.' varOrFuncCall");
             return true;
         }
         return false;
@@ -1175,7 +1183,7 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.ID, id) && varNext(varNextNode)) {
-            addToSyntax("varStart -> 'id' varNext");
+            //addToSyntax("varStart -> 'id' varNext");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(id), varNextNode);
             return true;
         }
@@ -1194,19 +1202,19 @@ public class ParserAST {
         }
 
         if(peekListMatch( Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.ADD, Token.TokenType.ASSGN))) {
-            addToSyntax("varNext -> EPSILON");
+            //addToSyntax("varNext -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if(matchAndSave(Token.TokenType.OPAR, start) && varAParams(varAParamsNode)) {
-            addToSyntax("varNext -> '(' varAParams");
+            //addToSyntax("varNext -> '(' varAParams");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(start), varAParamsNode);
             return true;
         } else if(matchAndSave(Token.TokenType.POIN, start) && varStart(varStartNode)) {
-            addToSyntax("varNext -> '.' varStart");
+            //addToSyntax("varNext -> '.' varStart");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(start), varStartNode);
             return true;
         } else if(varIndice(varIndiceNode)) {
-            addToSyntax("varNext -> varIndice");
+            //addToSyntax("varNext -> varIndice");
             currentRoot.makeFamily( varIndiceNode);
             return true;
         }
@@ -1223,7 +1231,7 @@ public class ParserAST {
         }
 
         if(indice(indiceNode) && varIndiceNext(varIndiceNextNode)) {
-            addToSyntax("varIndice -> indice varIndiceNext");
+            //addToSyntax("varIndice -> indice varIndiceNext");
             currentRoot.makeFamily(indiceNode, varIndiceNextNode);
             return true;
         }
@@ -1239,15 +1247,15 @@ public class ParserAST {
         }
 
         if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.ADD, Token.TokenType.ASSGN))) {
-            addToSyntax(" varIndiceNext -> EPSILON");
+            //addToSyntax(" varIndiceNext -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if(varIndice(varIndiceNode)) {
-            addToSyntax(" varIndiceNext -> varIndice");
+            //addToSyntax(" varIndiceNext -> varIndice");
             currentRoot.makeFamily(varIndiceNode);
             return true;
         } else if(varIndiceNextNext(varIndiceNextNextNode)) {
-            addToSyntax("varIndiceNext -> varIndiceNextNext");
+            //addToSyntax("varIndiceNext -> varIndiceNextNext");
             currentRoot.makeFamily(varIndiceNextNextNode);
             return true;
         }
@@ -1264,11 +1272,11 @@ public class ParserAST {
         }
 
         if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.AND, Token.TokenType.ASSGN))) {
-            addToSyntax(" varIndiceNextNext -> EPSILON");
+            //addToSyntax(" varIndiceNextNext -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if(matchAndSave(Token.TokenType.POIN, poin) && varStart(varStartNode)) {
-            addToSyntax("varIndiceNextNext -> '.' varStart");
+            //addToSyntax("varIndiceNextNext -> '.' varStart");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(poin), varStartNode);
             return true;
         }
@@ -1285,7 +1293,7 @@ public class ParserAST {
         }
 
         if(aParams(aParamsNode) && matchAndSave(Token.TokenType.CPAR, cpar)  && varAParamsNext(varAParamsNextNode)) {
-            addToSyntax("varAParams ->  aParams ')'  varAParamsNext");
+            //addToSyntax("varAParams ->  aParams ')'  varAParamsNext");
             currentRoot.makeFamily(aParamsNode, ASTNodeFactory.getASTNode(cpar), varAParamsNextNode);
             return true;
         }
@@ -1301,11 +1309,11 @@ public class ParserAST {
         }
 
         if(peekListMatch(Arrays.asList(Token.TokenType.SEMI, Token.TokenType.CPAR, Token.TokenType.COMM, Token.TokenType.EQ, Token.TokenType.GREEQ, Token.TokenType.GRE, Token.TokenType.LES, Token.TokenType.LESSEQ, Token.TokenType.NEQ, Token.TokenType.CSBRA, Token.TokenType.ADD, Token.TokenType.SUB, Token.TokenType.OR, Token.TokenType.MULT, Token.TokenType.DIV, Token.TokenType.AND, Token.TokenType.ASSGN))) {
-            addToSyntax(" varAParamsNext -> EPSILON");
+            //addToSyntax(" varAParamsNext -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if( matchAndSave(Token.TokenType.POIN, poin)  && varStart(varStartNode)) {
-            addToSyntax("varAParams ->  aParams ')'  varAParamsNext");
+            //addToSyntax("varAParams ->  aParams ')'  varAParamsNext");
             currentRoot.makeFamily(varStartNode, ASTNodeFactory.getASTNode(poin));
             return true;
         }
@@ -1322,11 +1330,11 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.ID, id)) {
-            addToSyntax("type -> 'id'");
+            //addToSyntax("type -> 'id'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(id));
             return true;
         } else if(typeNotId(typeNotIdNode)) {
-            addToSyntax("type -> typeNotId");
+            //addToSyntax("type -> typeNotId");
             currentRoot.makeFamily(typeNotIdNode);
             return true;
         }
@@ -1340,12 +1348,12 @@ public class ParserAST {
             return false;
         }
         if(matchAndSave(Token.TokenType.INTEGER, type)) {
-            addToSyntax("typeNotId -> 'integer'");
+            //addToSyntax("typeNotId -> 'integer'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(type));
             return true;
         }
         else if(matchAndSave(Token.TokenType.FLOAT, type)) {
-            addToSyntax("typeNotId -> 'float' ");
+            //addToSyntax("typeNotId -> 'float' ");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(type));
             return true;
         }
@@ -1361,11 +1369,11 @@ public class ParserAST {
         }
 
         if(peekListMatch(Arrays.asList(Token.TokenType.POIN, Token.TokenType.ASSGN, Token.TokenType.SEMI))) {
-            addToSyntax("indiceRep -> EPSILON");
+            //addToSyntax("indiceRep -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         }else if(indice(indiceNode) && indiceRep(indiceRepNode)) {
-            addToSyntax("indiceRep -> indice indiceRep");
+            //addToSyntax("indiceRep -> indice indiceRep");
             currentRoot.makeFamily(indiceNode, indiceRepNode);
             return true;
         }
@@ -1383,7 +1391,7 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.OSBRA, osbra) && arithExpr(arithExprNode) && matchAndSave(Token.TokenType.CSBRA, csbra)) {
-            addToSyntax("indice -> '[' arithExpr ']'");
+            //addToSyntax("indice -> '[' arithExpr ']'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(osbra), arithExprNode, ASTNodeFactory.getASTNode(csbra));
             return true;
         }
@@ -1402,12 +1410,12 @@ public class ParserAST {
         }
 
         if(peekMatch(Token.TokenType.CPAR)) {
-            addToSyntax("fParams -> EPSILON");
+            //addToSyntax("fParams -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         }
         else if(type(typeNode) && matchAndSave(Token.TokenType.ID, id) && arraySizeRep(arraySizeRepNode) && fParamsTailRep(fParamsTailRepNode)) {
-            addToSyntax("fParams -> type 'id' arraySizeRep fParamsTailRep");
+            //addToSyntax("fParams -> type 'id' arraySizeRep fParamsTailRep");
             currentRoot.makeFamily(typeNode, ASTNodeFactory.getASTNode(id), arraySizeRepNode, fParamsTailRepNode);
             return true;
         }
@@ -1423,11 +1431,11 @@ public class ParserAST {
         }
 
         if(peekMatch(Token.TokenType.CPAR)) {
-            addToSyntax("fParamsTailRep -> EPSILON");
+            //addToSyntax("fParamsTailRep -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return  true;
         } else if(fParamsTail(fParamsTailNode) && fParamsTailRep(fParamsTailRepNode)) {
-            addToSyntax("fParamsTailRep -> fParamsTail fParamsTailRep");
+            //addToSyntax("fParamsTailRep -> fParamsTail fParamsTailRep");
             currentRoot.makeFamily(fParamsTailNode, fParamsTailRepNode);
             return  true;
         }
@@ -1446,7 +1454,7 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.COMM, comm) && type(typeNode) && matchAndSave(Token.TokenType.ID, id) && arraySizeRep(arraySizeRepNode)) {
-            addToSyntax("fParamsTail -> ',' type 'id' arraySizeRep");
+            //addToSyntax("fParamsTail -> ',' type 'id' arraySizeRep");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(comm), typeNode, ASTNodeFactory.getASTNode(id), arraySizeRepNode);
             return true;
         }
@@ -1462,11 +1470,11 @@ public class ParserAST {
         }
 
         if(peekMatch(Token.TokenType.CPAR)) {
-            addToSyntax("aParams -> EPSILON");
+            //addToSyntax("aParams -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return  true;
         } else if(expr(exprNode) && aParamsTailRep(aParamsTailRepNode)) {
-            addToSyntax("aParams -> expr aParamsTailRep");
+            //addToSyntax("aParams -> expr aParamsTailRep");
             currentRoot.makeFamily(exprNode, aParamsTailRepNode);
             return true;
         }
@@ -1482,11 +1490,11 @@ public class ParserAST {
         }
 
         if(peekMatch(Token.TokenType.CPAR)) {
-            addToSyntax("aParamsTailRep -> EPSILON");
+            //addToSyntax("aParamsTailRep -> EPSILON");
             currentRoot.adoptChildren(ASTNodeFactory.getASTNode("EPSILON"));
             return true;
         } else if(aParamsTail(aParamsTailNode) && aParamsTailRep(aParamsTailRepNode)) {
-            addToSyntax("aParamsTailRep -> aParamsTail aParamsTailRep");
+            //addToSyntax("aParamsTailRep -> aParamsTail aParamsTailRep");
             currentRoot.makeFamily(aParamsTailNode, aParamsTailRepNode);
             return true;
         }
@@ -1503,7 +1511,7 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.COMM, comm) && expr(exprNode)) {
-            addToSyntax("aParamsTail -> ',' expr");
+            //addToSyntax("aParamsTail -> ',' expr");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(comm), exprNode);
             return true;
         }
@@ -1518,7 +1526,7 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.ASSGN, assign)) {
-            addToSyntax("assignOp -> '='");
+            //addToSyntax("assignOp -> '='");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(assign));
             return true;
         }
@@ -1533,27 +1541,27 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.NEQ, relOpToken)) {
-            addToSyntax("relOp -> 'eq'");
+            //addToSyntax("relOp -> 'eq'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(relOpToken));
             return true;
         } else if( matchAndSave(Token.TokenType.NEQ, relOpToken)) {
-            addToSyntax("relOp -> 'neq'");
+            //addToSyntax("relOp -> 'neq'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(relOpToken));
             return true;
         } else if(matchAndSave(Token.TokenType.LES, relOpToken)) {
-            addToSyntax("relOp -> 'lt'");
+            //addToSyntax("relOp -> 'lt'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(relOpToken));
             return true;
         } else if(matchAndSave(Token.TokenType.GRE, relOpToken)) {
-            addToSyntax("relOp -> 'gt'");
+            //addToSyntax("relOp -> 'gt'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(relOpToken));
             return true;
         } else if(matchAndSave(Token.TokenType.LESSEQ, relOpToken)) {
-            addToSyntax("relOp -> 'leq'");
+            //addToSyntax("relOp -> 'leq'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(relOpToken));
             return true;
         } else if(matchAndSave(Token.TokenType.GREEQ, relOpToken)) {
-            addToSyntax("relOp -> 'geq'");
+            //addToSyntax("relOp -> 'geq'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(relOpToken));
             return true;
         }
@@ -1568,15 +1576,15 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.ADD, addOpToken)) {
-            addToSyntax("addOp -> '+'");
+            //addToSyntax("addOp -> '+'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(addOpToken));
             return true;
         } else  if(matchAndSave(Token.TokenType.SUB, addOpToken)) {
-            addToSyntax("addOp -> '-'");
+            //addToSyntax("addOp -> '-'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(addOpToken));
             return true;
         } else if(matchAndSave(Token.TokenType.OR, addOpToken)) {
-            addToSyntax("addOp -> 'or");
+            //addToSyntax("addOp -> 'or");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(addOpToken));
             return true;
         }
@@ -1591,15 +1599,15 @@ public class ParserAST {
         }
 
         if(matchAndSave(Token.TokenType.AND, multOpToken)) {
-            addToSyntax("multOp -> 'and'");
+            //addToSyntax("multOp -> 'and'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(multOpToken));
             return true;
         } else if(matchAndSave(Token.TokenType.DIV, multOpToken)) {
-            addToSyntax("multOp -> '/'");
+            //addToSyntax("multOp -> '/'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(multOpToken));
             return true;
         } else if(matchAndSave(Token.TokenType.MULT, multOpToken)) {
-            addToSyntax("multOp -> '*'");
+            //addToSyntax("multOp -> '*'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(multOpToken));
             return true;
         }

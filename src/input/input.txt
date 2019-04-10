@@ -1,5 +1,11 @@
+class Test:::Blob
+{
+    integer func();
+};
+
 main
 {
-    integer test;
-    integer test;
+    var = bar */ 2;
+    if
 };
+
