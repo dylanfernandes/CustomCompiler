@@ -55,6 +55,13 @@ public class SymTabCreationVisitor extends Visitor {
         ClassDeclASTNode classNode;
         FuncDefASTNode functionNode;
 
+        /*************************************
+         4.1.1 Semantic actions triggered:
+         Function searches for selected AST nodes
+         and delegates semantic responsibilities
+         to found nodes
+         *************************************/
+
         while(classDeclRep.getValue().equals("classDeclRep") ) {
             classDeclRep = classDeclRep.getFirstChild();
             if(classDeclRep.getClass() == ClassDeclASTNode.class) {

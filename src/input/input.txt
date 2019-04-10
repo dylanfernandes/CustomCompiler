@@ -1,1 +1,13 @@
-main{integer test;};
+class Foo
+{
+    integer temp;
+};
+class Blob:Foo
+{
+    integer var;
+};
+main
+{
+    integer test;
+    Blob blob;
+};

@@ -314,4 +314,109 @@ public class DemoTests {
         assertFalse(parser.isFoundError());
         assertTrue(parser.isParseGood());
     }
+    /*************************************
+     3.1.9 Read/Write/Return Statements
+     *************************************/
+    @Test
+    public void validReadProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "read(var);};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+    @Test
+    public void validWriteProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "write(var*var);};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+    @Test
+    public void validReturnProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "return(var*var/var+1);};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+    /*************************************
+     3.1.10 Class Member Access
+     *************************************/
+    @Test
+    public void validClassAccessProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "var = blob.bar;" +
+                "};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+    @Test
+    public void validClassAccessNestedProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "var = blob.bar.foo;" +
+                "};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+    @Test
+    public void validClassAccessNestedArrayProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "var = blob.bar.foo[5];" +
+                "};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+    /*************************************
+     3.1.11 Array Access
+     *************************************/
+    @Test
+    public void validArrayAccessProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "var = blob[5];" +
+                "};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+    @Test
+    public void validArrayMultiDimensionAccessProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "var = blob[5][4][7];" +
+                "};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+    @Test
+    public void validArrayMultiDimensionExpressionAccessProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "var = blob[5*7/bar][4][7-temp/foo];" +
+                "};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
 }
