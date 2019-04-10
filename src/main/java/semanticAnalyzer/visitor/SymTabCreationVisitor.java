@@ -96,15 +96,17 @@ public class SymTabCreationVisitor extends Visitor {
                             }
                             else {
                                 hasError = true;
-                                errorOutput += "Function " + functionName + " not defined in class " + className;
-                                break;
+                                errorOutput += "Function " + functionName + " not defined in class " + className + "\n";
+                                funcDefRep = functionNode.getRightSibling();
+                                continue;
                             }
                         }
                     }
                     else {
                         hasError = true;
-                        errorOutput += "Class " + className + " not defined";
-                        break;
+                        errorOutput += "Class " + className + " not defined\n";
+                        funcDefRep = functionNode.getRightSibling();
+                        continue;
                     }
                 }
                 else {
@@ -114,14 +116,13 @@ public class SymTabCreationVisitor extends Visitor {
             }
         }
 
-        if(!hasError) {
-            varDeclStatFuncRep.accept(this);
-            mainTable.addEntries(varDeclStatFuncRep.getEntries());
+        varDeclStatFuncRep.accept(this);
+        mainTable.addEntries(varDeclStatFuncRep.getEntries());
 
-            globalTable.addEntry(new SymbolTableEntry("main", EntryKind.FUNCTION, null, mainTable));
-            astNode.setGlobalTable(globalTable);
-            visitorGlobalSymbol = globalTable;
-        }
+        globalTable.addEntry(new SymbolTableEntry("main", EntryKind.FUNCTION, null, mainTable));
+        astNode.setGlobalTable(globalTable);
+        visitorGlobalSymbol = globalTable;
+
 
     }
 
@@ -340,7 +341,7 @@ public class SymTabCreationVisitor extends Visitor {
                     astNode.addEntry(symbolTableEntry);
                 else {
                     hasError = true;
-                    errorOutput += "variable " + id + "is already defined in function scope\n";
+                    errorOutput += "variable " + id + " is already defined in function scope\n";
                 }
             } else if(head.getFirstChild().getValue().equals("statementNoId") && head.getFirstChild().getFirstChild().getValue().equals("for")){
                 //for loop variable
@@ -352,7 +353,7 @@ public class SymTabCreationVisitor extends Visitor {
                     astNode.addEntry(symbolTableEntry);
                 else {
                     hasError = true;
-                    errorOutput += "variable " + id + "is already defined in function scope\n";
+                    errorOutput += "variable " + id + " is already defined in function scope\n";
                 }
             }
             else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("varDeclId")) {

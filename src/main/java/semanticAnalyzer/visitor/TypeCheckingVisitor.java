@@ -325,7 +325,7 @@ public class TypeCheckingVisitor extends Visitor {
                             if (globalSymbolTable.find(varType.getElementType().getType(), EntryKind.CLASS) != -1) {
                                 functionTable = globalSymbolTable.search(varType.getElementType().getType(), EntryKind.CLASS).getLink();
                             } else
-                                break;
+                                continue;
                         }
                     }
                     else if (oldVarEndNestNext.getFirstChild().getValue().equals("assignStatEnd")) {
