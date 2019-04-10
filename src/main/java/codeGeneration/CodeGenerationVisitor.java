@@ -15,6 +15,8 @@ public class CodeGenerationVisitor extends Visitor {
     private int intSize = 4;
     private int floatSize = 8;
     private SymbolTable generationTable;
+    private String ZERO = "r0";
+    private String TEMP = "r2";
 
     public CodeGenerationVisitor() {
         moonInit = "";
@@ -29,7 +31,7 @@ public class CodeGenerationVisitor extends Visitor {
     }
 
     public String getMoonCode(){
-        return  moonInit + moonMain;
+        return  moonInit + "entry\n" + moonMain + "hlt";
     }
 
     public void visit(StringASTNode astNode) {
@@ -107,13 +109,24 @@ public class CodeGenerationVisitor extends Visitor {
                 variableType = currentTable.search(id, EntryKind.VARIABLE).getEntryType().getElementType();
                 //production guaranteed to produce int or float
                 generateAllocateCode(id, getBasicSize(variableType));
-            } else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("varDeclId")) {
+            }else if(head.getFirstChild().getValue().equals("statementNoId") && head.getFirstChild().getFirstChild().getValue().equals("write")){
+                //for loop variable
+                id = head.getFirstChild().getFirstChild().getRightSibling().getRightSibling().getFirstChild().getFirstChild().getFirstChild().getFirstChild().getFirstChild().getValue();
+                printInt(id);
+
+            }
+            else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("varDeclId")) {
                 //ID type
                 var = head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getFirstChild();
                 id = var.getValue();
                 variableType = currentTable.search(id, EntryKind.VARIABLE).getEntryType().getElementType();
                 //get size of class from generation table
                 generateAllocateCode(id, getObjectSize(variableType));
+            }
+            else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("oldVarEndNest")){
+                //left child = verify integer indice
+                // right child = verify instance attributes
+                //verifyIdProdNotDeclaration(head.getFirstChild(), currentTable);
             }
             head = head.getFirstChild().getRightSibling();
         }
@@ -233,5 +246,13 @@ public class CodeGenerationVisitor extends Visitor {
     private boolean isBasicType(VariableType variableType){
         String type= variableType.getType();
         return type.equals("integer") || type.equals("float");
+    }
+
+    private void loadWord(String r1, String r2, String tag){
+        moonMain += "lw " + r1 + ", " + tag + "(" + r2 + ") \n";
+    }
+    private void printInt(String tag){
+        loadWord("r1", TEMP, tag);
+        moonMain += "jl r15, putint\n";
     }
 }
