@@ -129,7 +129,7 @@ public class ParserAST {
     }
 
     public boolean peekMatch(Token.TokenType expectedTokenType) {
-        return lookahead != null && lookahead.getType() == expectedTokenType;
+        return lookahead != null && lookahead.getType().equals(expectedTokenType);
     }
 
     public void addToSyntax(String newSyntax) {
@@ -702,7 +702,7 @@ public class ParserAST {
         }
 
         if(assignStat(assignStatNode) && matchAndSave(Token.TokenType.SEMI, semi)) {
-            addToSyntax("statementId -> assignStat");
+            addToSyntax("statementId -> assignStat;");
             currentRoot.makeFamily(assignStatNode, ASTNodeFactory.getASTNode(semi));
             return true;
         }
@@ -771,7 +771,7 @@ public class ParserAST {
             return false;
         }
 
-        if(matchAndSave(Token.TokenType.OPAR, opar) && expr(exprNode) && matchAndSave(Token.TokenType.CPAR, cpar) &&matchAndSave(Token.TokenType.THEN, thenToken) && statBlock(ifStatBlockNode) && matchAndSave(Token.TokenType.ELSE, elseToken) && statBlock(elseStatBlockNode) && matchAndSave(Token.TokenType.SEMI, semi)){
+        if(matchAndSave(Token.TokenType.OPAR, opar) && expr(exprNode) && matchAndSave(Token.TokenType.CPAR, cpar) && matchAndSave(Token.TokenType.THEN, thenToken) && statBlock(ifStatBlockNode) && matchAndSave(Token.TokenType.ELSE, elseToken) && statBlock(elseStatBlockNode) && matchAndSave(Token.TokenType.SEMI, semi)){
             addToSyntax("ifRest -> '(' expr ')' 'then' statBlock 'else' statBlock ';'");
             currentRoot.makeFamily(ASTNodeFactory.getASTNode(opar), exprNode, ASTNodeFactory.getASTNode(cpar), ASTNodeFactory.getASTNode(thenToken), ifStatBlockNode, ASTNodeFactory.getASTNode(elseToken), elseStatBlockNode,ASTNodeFactory.getASTNode(semi));
             return true;

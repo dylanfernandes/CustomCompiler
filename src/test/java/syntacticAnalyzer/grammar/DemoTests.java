@@ -42,7 +42,7 @@ public class DemoTests {
     }
 
     /*************************************
-     3.1.1 Free Functions
+     3.1.3 Free Functions
      *************************************/
 
     @Test
@@ -79,6 +79,235 @@ public class DemoTests {
                 "float temp;" +
                 "};" +
                 "main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    /*************************************
+     3.1.4 Member Functions
+     *************************************/
+    @Test
+    public void validMemberFunctionDeclarationProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("integer Blob::func()" +
+                "{" +
+                "integer foo; " +
+                "float temp;" +
+                "};" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validMemberFunctionWithVarsAndParamsDeclarationProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("integer Blob::func(integer var, float bar)" +
+                "{" +
+                "integer foo; " +
+                "float temp;" +
+                "};" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    /*************************************
+     3.1.5 Class Declarations
+     *************************************/
+    @Test
+    public void validClassDeclarationProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class test{};" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validClassDeclarationMembersProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class test{" +
+                "integer bar;" +
+                "float temp;" +
+                "Foo foo;};" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validClassDeclarationMembersMethodsProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class test{" +
+                "integer bar;" +
+                "float temp;" +
+                "Foo foo;" +
+                "integer Calc();" +
+                "Foo compute(integer a[5], float b);};" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validClassDeclarationInheritProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class test:Blob{};" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validClassDeclarationInheritSeveralProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("class test:Blob, Foo{};" +
+                "main { };");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    /*************************************
+     3.1.6 Expressions
+     *************************************/
+    @Test
+    public void validExpressionArithProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "integer foo;" +
+                "integer bar;" +
+                "foo = 5 * 7 /9 + bar;};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+    @Test
+    public void validExpressionRelAndLogicProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "foo = bar < 7 && !bar;};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+    @Test
+    public void validExpressionRelAndLogic2Program() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "foo = bar <> 7 || !bar;};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+    @Test
+    public void validExpressionRelAndLogic3Program() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "foo = bar > 7 || !bar;};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validExpressionRelAndLogic4Program() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "foo = bar <= 7 && bar;};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    /*************************************
+     3.1.7 Conditional Statements
+     *************************************/
+    @Test
+    public void validCondStatementProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "if(1)then else;};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+    @Test
+    public void validCondStatementBodyProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "if(1)then{var = 1;}else{var =2;};};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    @Test
+    public void validCondStatementNestedBodyProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "if(1)then{if(1)then else;}else{var =2;};};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+
+    /*************************************
+     3.1.8 Loop Statements
+     *************************************/
+    @Test
+    public void validLoopStatementEmptyProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "for(integer i = 0;i > 4;i = i - 1);" +
+                "};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+    @Test
+    public void validLoopStatementProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "for(integer i = 0;i > 4;i = i - 1){var =1;};" +
+                "};");
+        parser .setTokenList(tokens);
+
+        parser.parse();
+        assertFalse(parser.isFoundError());
+        assertTrue(parser.isParseGood());
+    }
+    @Test
+    public void validLoopStatementNestedProgram() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("main { " +
+                "for(integer i = 0;i > 4;i = i - 1)" +
+                "for(integer i = 0;i > 4;i = i - 1);;" +
+                "};");
         parser .setTokenList(tokens);
 
         parser.parse();
