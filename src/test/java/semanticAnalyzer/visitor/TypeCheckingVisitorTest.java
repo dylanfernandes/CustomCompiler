@@ -3,6 +3,7 @@ package semanticAnalyzer.visitor;
 import lexer.LexerDriver;
 import lexer.Token;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import semanticAnalyzer.SemanticPhases;
 import semanticAnalyzer.SymbolTable.EntryKind;
@@ -241,6 +242,9 @@ public class TypeCheckingVisitorTest {
 
     }
 
+    /*************************************
+     4.2.10 Undeclared variable used
+     *************************************/
     @Test
     public void mainVarNotDefined() {
         List<Token> tokens = lexerDriver.getTokensFromInput(" main {  test = 1; };");
@@ -260,7 +264,9 @@ public class TypeCheckingVisitorTest {
         assertFalse(semanticPhases.hasError());
 
     }
-
+    /*************************************
+     4.2.6 Class Members
+     *************************************/
     @Test
     public void mainVarNoMember() {
         List<Token> tokens = lexerDriver.getTokensFromInput(" main {  integer test; test.temp = 1; };");
@@ -268,6 +274,16 @@ public class TypeCheckingVisitorTest {
 
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
         assertTrue(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void mainVarClassMember() {
+        List<Token> tokens = lexerDriver.getTokensFromInput(" class blob{ integer temp; }; main {  blob test; test.temp = 1; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
 
     }
 
@@ -300,7 +316,9 @@ public class TypeCheckingVisitorTest {
         assertFalse(semanticPhases.hasError());
 
     }
-
+    /*************************************
+     4.2.11 Member Declaration
+     *************************************/
     @Test
     public void mainVarClassNoMember() {
         List<Token> tokens = lexerDriver.getTokensFromInput(" class blob{}; main {  blob test; test.temp = 1; };");
@@ -311,15 +329,6 @@ public class TypeCheckingVisitorTest {
 
     }
 
-    @Test
-    public void mainVarClassMember() {
-        List<Token> tokens = lexerDriver.getTokensFromInput(" class blob{ integer temp; }; main {  blob test; test.temp = 1; };");
-        parserDriver.start(tokens);
-
-        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
-        assertFalse(semanticPhases.hasError());
-
-    }
 
     @Test
     public void mainVarClassMemberNested() {
@@ -341,6 +350,19 @@ public class TypeCheckingVisitorTest {
 
     }
 
+    @Test
+    public void mainVarClassMemberNested2() {
+        List<Token> tokens = lexerDriver.getTokensFromInput(" class Foo{integer temp2;}; class Bar{ Foo temp; }; class blob{ Bar bar; }; main {  blob test; test.bar.temp.temp2 = 1; };");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertFalse(semanticPhases.hasError());
+
+    }
+
+    /*************************************
+     4.2.1 Type Checking
+     *************************************/
     @Test
     public void mainVarAssignBadType() {
         List<Token> tokens = lexerDriver.getTokensFromInput("main {  integer test; test = 1.5; };");
@@ -381,6 +403,9 @@ public class TypeCheckingVisitorTest {
 
     }
 
+    /*************************************
+     4.2.4 Array Indice
+     *************************************/
     @Test
     public void mainVarArrayIndiceValid() {
         List<Token> tokens = lexerDriver.getTokensFromInput("main {  integer test[2]; test[1] = 1;};");
@@ -441,6 +466,9 @@ public class TypeCheckingVisitorTest {
 
     }
 
+    /*************************************
+     4.2.8 Undeclared Function
+     *************************************/
     @Test
     public void mainVarAssignFunctionNotExist() {
         List<Token> tokens = lexerDriver.getTokensFromInput("main { integer val; val = foo();};");
@@ -451,6 +479,17 @@ public class TypeCheckingVisitorTest {
 
     }
 
+//    @Ignore
+//    @Test
+//    public void classFunctionNotExist() {
+//        List<Token> tokens = lexerDriver.getTokensFromInput("class Blob{}; main { Blob blob; integer val; val = blob.foo();};");
+//        parserDriver.start(tokens);
+//
+//        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+//        assertTrue(semanticPhases.hasError());
+//
+//    }
+
     @Test
     public void functionParamsInvalid() {
         List<Token> tokens = lexerDriver.getTokensFromInput("integer foo(integer blob){}; main { integer val; val = foo();};");
@@ -460,7 +499,9 @@ public class TypeCheckingVisitorTest {
         assertTrue(semanticPhases.hasError());
 
     }
-
+    /*************************************
+     4.2.2 Function Call Parameters
+     *************************************/
     @Test
     public void functionParamsValid() {
         List<Token> tokens = lexerDriver.getTokensFromInput("integer foo(integer blob){}; main { integer val; val = foo(val);};");
@@ -482,8 +523,18 @@ public class TypeCheckingVisitorTest {
     }
 
     @Test
-    public void functionParamsInalidSeveral() {
+    public void functionParamsInvalidSeveral() {
         List<Token> tokens = lexerDriver.getTokensFromInput("integer foo(integer blob, float blob2){}; main { integer val; val = foo(val, val);};");
+        parserDriver.start(tokens);
+
+        semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());
+        assertTrue(semanticPhases.hasError());
+
+    }
+
+    @Test
+    public void functionParamsInvalidSeveral2() {
+        List<Token> tokens = lexerDriver.getTokensFromInput("integer foo(integer blob, float blob2){}; main { integer val; val = foo(val);};");
         parserDriver.start(tokens);
 
         semanticPhases.startPhases((ProgASTNode) parserDriver.getAST());

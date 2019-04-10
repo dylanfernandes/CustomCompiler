@@ -562,6 +562,10 @@ public class TypeCheckingVisitor extends Visitor {
                 paramsFound++;
                 head = head.getFirstChild().getRightSibling();
             }
+            if(paramsFound < params.size()) {
+                hasError = true;
+                errorOutput +=  "Invalid number of parameters for function " + funcTable.getName() + " : " + paramsExpected + " needed\n";
+            }
         }
         else{
             hasError = true;

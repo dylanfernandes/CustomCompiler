@@ -755,4 +755,45 @@ public class SymTabCreationVisitorTest {
         assertEquals(EntryKind.VARIABLE, main.getEntryKind());
         assertEquals("float", main.getEntryType().getElementType().getType());
     }
+    /*************************************
+     4.2.9 Wrong function declaration
+     *************************************/
+    @Test
+    public void classFunctionNotDeclared(){
+        List<Token> tokens = lexerDriver.getTokensFromInput("class Foo {}; integer Foo::calc(){}; main { };");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        symbolTable = semanticPhases.getSymbolTable();
+        assertTrue(semanticPhases.hasError());
+    }
+    /*************************************
+     4.2.12 Multiple declared variable
+     *************************************/
+    @Test
+    public void varDeclaredTwice(){
+        List<Token> tokens = lexerDriver.getTokensFromInput("main\n" +
+                "{\n" +
+                "    integer test;\n" +
+                "    integer test;\n" +
+                "};");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        symbolTable = semanticPhases.getSymbolTable();
+        assertTrue(semanticPhases.hasError());
+    }
+    @Test
+    public void varDeclaredDiffTypeTwice(){
+        List<Token> tokens = lexerDriver.getTokensFromInput("main\n" +
+                "{\n" +
+                "    integer test;\n" +
+                "    float test;\n" +
+                "};");
+        parserDriver.start(tokens);
+
+        semanticPhases.creation((ProgASTNode) parserDriver.getAST());
+        symbolTable = semanticPhases.getSymbolTable();
+        assertTrue(semanticPhases.hasError());
+    }
 }

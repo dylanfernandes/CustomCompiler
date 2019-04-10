@@ -21,6 +21,14 @@ public class VarDeclStatFuncRepASTNode extends BasicASTNode {
         entries = new ArrayList<SymbolTableEntry>();
     }
 
+    public boolean hasConflict(String id){
+        for (int i = 0;i < entries.size();i++){
+            if(entries.get(i).getName().equals(id))
+                return true;
+        }
+        return false;
+    }
+
     public List<SymbolTableEntry> getEntries() {
         return entries;
     }

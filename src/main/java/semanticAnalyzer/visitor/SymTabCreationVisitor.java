@@ -336,14 +336,24 @@ public class SymTabCreationVisitor extends Visitor {
                 array = var.getRightSibling().getRightSibling().getFirstChild();
                 varEntry = getArray(array, type);
                 symbolTableEntry = new SymbolTableEntry(id, EntryKind.VARIABLE, varEntry,null);
-                astNode.addEntry(symbolTableEntry);
+                if(!astNode.hasConflict(id))
+                    astNode.addEntry(symbolTableEntry);
+                else {
+                    hasError = true;
+                    errorOutput += "variable " + id + "is already defined in function scope\n";
+                }
             } else if(head.getFirstChild().getValue().equals("statementNoId") && head.getFirstChild().getFirstChild().getValue().equals("for")){
                 //for loop variable
                 type = getType(head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getRightSibling());
                 id = head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getRightSibling().getRightSibling().getValue();
                 varEntry = new EntryType(type);
                 symbolTableEntry = new SymbolTableEntry(id, EntryKind.VARIABLE, varEntry,null);
-                astNode.addEntry(symbolTableEntry);
+                if(!astNode.hasConflict(id))
+                    astNode.addEntry(symbolTableEntry);
+                else {
+                    hasError = true;
+                    errorOutput += "variable " + id + "is already defined in function scope\n";
+                }
             }
             else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("varDeclId")) {
                 //ID type
@@ -353,7 +363,12 @@ public class SymTabCreationVisitor extends Visitor {
                 array = var.getRightSibling().getFirstChild();
                 varEntry = getArray(array, type);
                 symbolTableEntry = new SymbolTableEntry(id, EntryKind.VARIABLE, varEntry,null);
-                astNode.addEntry(symbolTableEntry);
+                if(!astNode.hasConflict(id))
+                    astNode.addEntry(symbolTableEntry);
+                else {
+                    hasError = true;
+                    errorOutput += "variable " + id + " is already defined in function scope\n";
+                }
             }
             head = head.getFirstChild().getRightSibling();
         }
