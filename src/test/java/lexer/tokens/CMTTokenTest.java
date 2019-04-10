@@ -8,6 +8,9 @@ import static org.junit.Assert.assertEquals;
 
 public class CMTTokenTest {
 
+    /*************************************
+     2.1.2 Comments
+     *************************************/
     /********************************
      SINGLE COMMENT TEST
      ********************************/
@@ -77,6 +80,7 @@ public class CMTTokenTest {
         assertEquals("/*This is a multiline comment*/", token.getLexeme());
         assertEquals(0, token.getLineNumber());
     }
+
 
     @Test
     public void MultiCommentTest_GoodEmpty(){

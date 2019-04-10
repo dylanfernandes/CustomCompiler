@@ -7,6 +7,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class INTTokenTest {
+    /*************************************
+     2.1.1 Integers
+     *************************************/
 
     /********************************
      INT TEST

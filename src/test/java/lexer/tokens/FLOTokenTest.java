@@ -7,6 +7,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class FLOTokenTest {
+    /*************************************
+     2.1.1 Floats
+     *************************************/
 
     /********************************
      FLOAT TEST

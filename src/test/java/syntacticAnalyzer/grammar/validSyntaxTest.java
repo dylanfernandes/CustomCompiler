@@ -28,6 +28,9 @@ public class validSyntaxTest {
         parser = new ParserAST();
     }
 
+    /*************************************
+     3.1.2 Main Function
+     *************************************/
     @Test
     public void validEmptyProgram() {
         List<Token> tokens = lexerDriver.getTokensFromInput("main { };");

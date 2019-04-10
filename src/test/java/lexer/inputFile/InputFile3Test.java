@@ -11,6 +11,9 @@ import java.io.FileNotFoundException;
 import static org.junit.Assert.assertEquals;
 
 public class InputFile3Test {
+    /*************************************
+     2.2.1 - 2.2.2 Lexical Errors
+     *************************************/
 
     @Test
     public void testTokenRetriveal() throws FileNotFoundException {
