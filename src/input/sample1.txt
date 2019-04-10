@@ -1,0 +1,33 @@
+/*
+3.3.1 AST Generation
+3.3.2 AST Derivation
+4.1.2 Global Scope
+4.1.3 global symbol table
+4.1.4 Functions
+4.1.5 Variable scopes
+4.4.1 Symbol table output
+*/
+class Foo
+{
+    integer temp;
+};
+
+class Blob:Foo
+{
+    integer var;
+    integer calc();
+};
+
+integer Blob::calc(){
+    float fVar;
+};
+
+float compute(integer x, float y){
+
+};
+
+main
+{
+    integer test;
+    Blob blob;
+};
