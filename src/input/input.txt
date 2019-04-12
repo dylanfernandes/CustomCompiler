@@ -5,6 +5,8 @@
 main
 {
 integer val;
-val = 5*7;
-write(val);
+integer foo;
+val = 5;
+foo = 7;
+write(foo);
 };

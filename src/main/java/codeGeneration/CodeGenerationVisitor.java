@@ -17,8 +17,13 @@ public class CodeGenerationVisitor extends Visitor {
     private int floatSize = 8;
     private SymbolTable generationTable;
     private String ZERO = "r0";
-    private String TEMP_LOAD = "r2";
+    private String TEMP_LOAD0 = "r1";
+    private String TEMP_LOAD1 = "r2";
     private String TEMP_CALC = "r3";
+    private String EXPR_TAG = "expr";
+    private String EXPR_BRANCH = "expr_branch";
+    private int exprNum = 0;
+    private int exprbranchNum = 0;
 
     public CodeGenerationVisitor() {
         moonInit = "";
@@ -194,23 +199,24 @@ public class CodeGenerationVisitor extends Visitor {
         String operand;
         ASTNode term = exprNode.getFirstChild().getFirstChild();
         ASTNode termPrime = term.getFirstChild().getRightSibling();
+        ASTNode factor = term.getFirstChild();
         TokenASTNode operatorToken;
-        value= term.getFirstChild().getFirstChild().getValue();
+
         //can set value directly if numeric
-        if(StringUtils.isNumeric(value) && termPrime.getFirstChild().getValue().equals("EPSILON"))
-            setVariableWithIntNum(variableId, value);
-        else {
-            while (!termPrime.getFirstChild().getValue().equals("EPSILON")){
-                operatorToken = (TokenASTNode) termPrime.getFirstChild().getFirstChild();
-                operand = termPrime.getFirstChild().getRightSibling().getFirstChild().getValue();
-                operator = operatorToken.getValue();
-                if(StringUtils.isNumeric(operand)){
-                    setValueWithMultOp(variableId,value, operand, operator);
-                    value = String.valueOf(Integer.parseInt(value)*Integer.parseInt(operand));
-                }
-                termPrime = termPrime.getFirstChild().getRightSibling().getRightSibling();
-            }
-        }
+        if(termPrime.getFirstChild().getValue().equals("EPSILON"))
+            setVariableSimple(variableId, factor);
+//        else {
+//            while (!termPrime.getFirstChild().getValue().equals("EPSILON")){
+//                operatorToken = (TokenASTNode) termPrime.getFirstChild().getFirstChild();
+//                operand = termPrime.getFirstChild().getRightSibling().getFirstChild().getValue();
+//                operator = operatorToken.getValue();
+//                if(StringUtils.isNumeric(operand)){
+//                    setValueWithMultOp(variableId,value, operand, operator);
+//                    value = String.valueOf(Integer.parseInt(value)*Integer.parseInt(operand));
+//                }
+//                termPrime = termPrime.getFirstChild().getRightSibling().getRightSibling();
+//            }
+//        }
     }
 
 
@@ -333,23 +339,68 @@ public class CodeGenerationVisitor extends Visitor {
         moonMain += "lw " + r1 + ", " + tag + "(" + r2 + ") \n";
     }
     private void printInt(String tag){
-        loadWord("r1", TEMP_LOAD, tag);
+        loadWord("r1", TEMP_LOAD1, tag);
         moonMain += "jl r15, putint\n";
     }
-    private void setVariableWithIntNum(String var, String intNum){
-        moonMain += "addi " + TEMP_CALC + ", " + ZERO + ", " + intNum + "\n";
-        moonMain += "sw " + var + "(" + TEMP_LOAD + "), " + TEMP_CALC + "\n";;
+    private void setVariableSimple(String var, ASTNode factor){
+        String operand;
+        if(factor.getFirstChild().getFirstChild() == null) {
+            operand = factor.getFirstChild().getValue();
+            if(StringUtils.isNumeric(operand)) {
+                moonMain += "addi " + TEMP_CALC + ", " + ZERO + ", " + operand + "\n";
+                moonMain += "sw " + var + "(" + TEMP_LOAD1 + "), " + TEMP_CALC + "\n";
+            }
+        } else {
+            operand = factor.getFirstChild().getFirstChild().getValue();
+            loadWord(TEMP_LOAD0, ZERO, operand);
+            moonMain += "add " + TEMP_CALC + ", " + ZERO + ", " + TEMP_LOAD0 + "\n";
+            moonMain += "sw " + var + "(" + TEMP_LOAD1 + "), " + TEMP_CALC + "\n";
+        }
     }
     private void setValueWithMultOp(String var, String op1, String op2, String operand){
         if(operand.equals("*")){
             moonMain += "addi " + TEMP_CALC + ", " + ZERO + ", " + op1 + "\n";
             moonMain += "muli " + TEMP_CALC + ", " + TEMP_CALC + ", " + op2 + "\n";
-            moonMain += "sw " + var + "(" + TEMP_LOAD + "), " + TEMP_CALC + "\n";;
+            moonMain += "sw " + var + "(" + TEMP_LOAD1 + "), " + TEMP_CALC + "\n";;
 
         } else if(operand.equals("/")){
             moonMain += "addi " + TEMP_CALC + ", " + ZERO + ", " + op1 + "\n";
             moonMain += "divi " + TEMP_CALC + ", " + TEMP_CALC + ", " + op2 + "\n";
-            moonMain += "sw " + var + "(" + TEMP_LOAD + "), " + TEMP_CALC + "\n";;
+            moonMain += "sw " + var + "(" + TEMP_LOAD1 + "), " + TEMP_CALC + "\n";;
+        }
+    }
+
+    private String generateBranchTag(){
+        String currExprBranchTag = EXPR_BRANCH + exprbranchNum;
+        exprNum++;
+        return currExprBranchTag;
+    }
+
+    //uses r1 for operand and r3 for result
+    private void evaluateNot(String operandId){
+        String currExprBranchTag = generateBranchTag();
+        String endCurrExprBranchTag = currExprBranchTag + "_end";
+
+        moonMain += "lw " + TEMP_CALC + ", " + operandId + "("+ ZERO + ")\n";
+        moonMain += "not " + TEMP_CALC + ", " + TEMP_LOAD0 + "\n";
+        moonMain += "bz " + TEMP_CALC + ", " + currExprBranchTag + "\n";
+        moonMain += "addi " + TEMP_CALC + ", " + ZERO + ", 1\n";
+        moonMain += "sw " + currExprBranchTag + " (" + ZERO + "), " + TEMP_CALC + "\n";
+        moonMain += "j " + endCurrExprBranchTag + "\n";
+        moonMain += currExprBranchTag + " sw " + currExprBranchTag + " (" + ZERO + "), " + ZERO + "\n";
+        moonMain += endCurrExprBranchTag + "\n";
+    }
+
+    private void evaluateExpression(List<String> operands, List<String> operators) {
+        String currExprTag = EXPR_TAG + exprNum;
+        exprNum++;
+        moonInit += currExprTag + " res 4";
+        int currentOperand = 0;
+        for(int i =0;i < operators.size();i++){
+            if(operators.get(i).equals("!")){
+                evaluateNot(operands.get(currentOperand));
+                currentOperand++;
+            }
         }
     }
 }
