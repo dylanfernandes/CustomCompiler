@@ -485,7 +485,7 @@ public class TypeCheckingVisitor extends Visitor {
                 else if(tokenType.equals("flo")) {
                     tokenType = "float";
                 }
-                if (!tokenType.equals(type.getType())){
+                if (!tokenType.equals(type.getType()) && !tokenType.equals("not")){
                     hasError = true;
                     errorOutput +=  "Invalid type at line " + baseFactor.getToken().getLineNumber() + ": " + type.getType() + " needed " +  tokenType + " provided\n";
 

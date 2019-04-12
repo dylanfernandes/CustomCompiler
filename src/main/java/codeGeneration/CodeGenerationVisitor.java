@@ -8,6 +8,7 @@ import syntacticAnalyzer.AST.StringASTNode;
 import syntacticAnalyzer.AST.TokenASTNode;
 import syntacticAnalyzer.AST.semanticNodes.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CodeGenerationVisitor extends Visitor {
@@ -344,17 +345,21 @@ public class CodeGenerationVisitor extends Visitor {
     }
     private void setVariableSimple(String var, ASTNode factor){
         String operand;
-        if(factor.getFirstChild().getFirstChild() == null) {
-            operand = factor.getFirstChild().getValue();
-            if(StringUtils.isNumeric(operand)) {
+        List<String> operands = extractFromFactor(factor);
+        if(operands.size() == 1) {
+            operand = operands.get(0);
+            if (StringUtils.isNumeric(operand)) {
                 moonMain += "addi " + TEMP_CALC + ", " + ZERO + ", " + operand + "\n";
-                moonMain += "sw " + var + "(" + TEMP_LOAD1 + "), " + TEMP_CALC + "\n";
+                moonMain += "sw " + var + "(" + ZERO + "), " + TEMP_CALC + "\n";
             }
-        } else {
-            operand = factor.getFirstChild().getFirstChild().getValue();
-            loadWord(TEMP_LOAD0, ZERO, operand);
-            moonMain += "add " + TEMP_CALC + ", " + ZERO + ", " + TEMP_LOAD0 + "\n";
-            moonMain += "sw " + var + "(" + TEMP_LOAD1 + "), " + TEMP_CALC + "\n";
+             else {
+                loadWord(TEMP_LOAD0, ZERO, operand);
+                moonMain += "add " + TEMP_CALC + ", " + ZERO + ", " + TEMP_LOAD0 + "\n";
+                moonMain += "sw " + var + "(" + ZERO + "), " + TEMP_CALC + "\n";
+            }
+        }
+        else if(operands.size() == 2){
+            evaluateNot(operands.get(1), var);
         }
     }
     private void setValueWithMultOp(String var, String op1, String op2, String operand){
@@ -377,30 +382,59 @@ public class CodeGenerationVisitor extends Visitor {
     }
 
     //uses r1 for operand and r3 for result
-    private void evaluateNot(String operandId){
+    private String evaluateNot(String operandId, String exprTag){
         String currExprBranchTag = generateBranchTag();
         String endCurrExprBranchTag = currExprBranchTag + "_end";
 
-        moonMain += "lw " + TEMP_CALC + ", " + operandId + "("+ ZERO + ")\n";
+        moonMain += "lw " + TEMP_LOAD0 + ", " + operandId + "("+ ZERO + ")\n";
         moonMain += "not " + TEMP_CALC + ", " + TEMP_LOAD0 + "\n";
         moonMain += "bz " + TEMP_CALC + ", " + currExprBranchTag + "\n";
         moonMain += "addi " + TEMP_CALC + ", " + ZERO + ", 1\n";
-        moonMain += "sw " + currExprBranchTag + " (" + ZERO + "), " + TEMP_CALC + "\n";
+        moonMain += "sw " + exprTag + " (" + ZERO + "), " + TEMP_CALC + "\n";
         moonMain += "j " + endCurrExprBranchTag + "\n";
-        moonMain += currExprBranchTag + " sw " + currExprBranchTag + " (" + ZERO + "), " + ZERO + "\n";
+        moonMain += currExprBranchTag + " sw " + exprTag + " (" + ZERO + "), " + ZERO + "\n";
         moonMain += endCurrExprBranchTag + "\n";
+
+        return currExprBranchTag;
     }
 
-    private void evaluateExpression(List<String> operands, List<String> operators) {
+    private String allocateExpression(){
         String currExprTag = EXPR_TAG + exprNum;
         exprNum++;
         moonInit += currExprTag + " res 4";
+        return currExprTag;
+    }
+
+    private void evaluateExpression(List<String> operands, List<String> operators) {
+        String currExprTag = allocateExpression();
         int currentOperand = 0;
         for(int i =0;i < operators.size();i++){
             if(operators.get(i).equals("!")){
-                evaluateNot(operands.get(currentOperand));
+                evaluateNot(operands.get(currentOperand), currExprTag);
                 currentOperand++;
             }
         }
+    }
+
+    //Not operand can be child of factor so list needed
+    private List<String> extractFromFactor(ASTNode factor){
+        String child;
+        List<String> children = new ArrayList<String>();
+        if(factor.getFirstChild().getFirstChild() == null) {
+            child = factor.getFirstChild().getValue();
+            if(StringUtils.isNumeric(child)) {
+                //number
+                children.add(child);
+            } else {
+                //add not
+                children.add(child);
+                //add operand
+                children.addAll(extractFromFactor(factor.getFirstChild().getRightSibling()));
+            }
+        } else {
+            //variable ID
+            children.add(factor.getFirstChild().getFirstChild().getValue());
+        }
+        return children;
     }
 }
