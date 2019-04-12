@@ -6,7 +6,10 @@ main
 {
     integer val;
     integer foo;
-    val = 5*2;
+    integer temp;
+
+    temp = 5;
+    val = temp*2*3*4;
     write(val);
     foo = !0;
 

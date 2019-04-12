@@ -473,7 +473,10 @@ public class CodeGenerationVisitor extends Visitor {
                 if (operators.get(i).equals("!")) {
                     evaluateNot(operands.get(currentOperand), currExprTag);
                 } else if (operators.get(i).equals("*") || operators.get(i).equals("/")) {
-                    evaluateMultOp(currExprTag, operands.get(currentOperand), operands.get(currentOperand+1), operators.get(i));
+                    if(currentOperand == 0)
+                        evaluateMultOp(currExprTag, operands.get(currentOperand), operands.get(currentOperand+1), operators.get(i));
+                    else
+                        evaluateMultOp(currExprTag, currExprTag, operands.get(currentOperand+1), operators.get(i));
                     currentOperand++;
                 }
             }
