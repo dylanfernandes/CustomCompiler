@@ -223,22 +223,40 @@ public class CodeGenerationVisitor extends Visitor {
         ASTNode termPrime = term.getFirstChild().getRightSibling();
         ASTNode factor = term.getFirstChild();
         TokenASTNode operatorToken;
+        List<String> operators = new ArrayList<String>();
+        List<String> operands = new ArrayList<String>();
+        List<String> factors;
 
         //can set value directly if numeric
         if(termPrime.getFirstChild().getValue().equals("EPSILON"))
             setVariableSimple(variableId, factor);
-//        else {
-//            while (!termPrime.getFirstChild().getValue().equals("EPSILON")){
-//                operatorToken = (TokenASTNode) termPrime.getFirstChild().getFirstChild();
-//                operand = termPrime.getFirstChild().getRightSibling().getFirstChild().getValue();
-//                operator = operatorToken.getValue();
-//                if(StringUtils.isNumeric(operand)){
-//                    setValueWithMultOp(variableId,value, operand, operator);
-//                    value = String.valueOf(Integer.parseInt(value)*Integer.parseInt(operand));
-//                }
-//                termPrime = termPrime.getFirstChild().getRightSibling().getRightSibling();
-//            }
-//        }
+        else {
+            factors = extractFromFactor(factor);
+            if(factors.size() == 2){
+                operands.add(factors.get(1));
+                operators.add(factors.get(0));
+            }
+            else
+                operands.add(factors.get(0));
+            while (!termPrime.getFirstChild().getValue().equals("EPSILON")){
+                if(termPrime.getFirstChild().getValue().equals("multOp")) {
+                    factor = termPrime.getFirstChild().getRightSibling();
+                    factors = extractFromFactor(factor);
+                    if(factors.size() == 2){
+                        operands.add(factors.get(1));
+                        operators.add(factors.get(0));
+                    }
+                    else {
+                        operands.add(factors.get(0));
+                        operatorToken = (TokenASTNode) termPrime.getFirstChild().getFirstChild();
+                        operators.add(operatorToken.getValue());
+                    }
+
+                    termPrime = termPrime.getFirstChild().getRightSibling().getRightSibling();
+                }
+            }
+            evaluateExpression(variableId, operands, operators);
+        }
     }
 
 
@@ -361,7 +379,7 @@ public class CodeGenerationVisitor extends Visitor {
         moonMain += "lw " + r1 + ", " + tag + "(" + r2 + ") \n";
     }
     private void printInt(String tag){
-        loadWord("r1", TEMP_LOAD1, tag);
+        loadWord("r1", ZERO, tag);
         moonMain += "jl r15, putint\n";
     }
     private void setVariableSimple(String var, ASTNode factor){
@@ -383,17 +401,25 @@ public class CodeGenerationVisitor extends Visitor {
             evaluateNot(operands.get(1), var);
         }
     }
-    private void setValueWithMultOp(String var, String op1, String op2, String operand){
-        if(operand.equals("*")){
-            moonMain += "addi " + TEMP_CALC + ", " + ZERO + ", " + op1 + "\n";
-            moonMain += "muli " + TEMP_CALC + ", " + TEMP_CALC + ", " + op2 + "\n";
-            moonMain += "sw " + var + "(" + TEMP_LOAD1 + "), " + TEMP_CALC + "\n";;
+    private void evaluateMultOp(String var, String op1, String op2, String operand){
+        String operation;
+        if(operand.equals("*"))
+            operation = "mul";
+        else
+            operation = "div";
 
-        } else if(operand.equals("/")){
-            moonMain += "addi " + TEMP_CALC + ", " + ZERO + ", " + op1 + "\n";
-            moonMain += "divi " + TEMP_CALC + ", " + TEMP_CALC + ", " + op2 + "\n";
-            moonMain += "sw " + var + "(" + TEMP_LOAD1 + "), " + TEMP_CALC + "\n";;
-        }
+        if(StringUtils.isNumeric(op1)){
+            moonMain += "addi " + TEMP_LOAD0 + ", " + ZERO + ", " + op1 + "\n";
+        }else
+            moonMain += "lw " + TEMP_LOAD0 + ", " + op1 + "("+ ZERO + ")\n";
+
+        if(StringUtils.isNumeric(op2)){
+            moonMain += "addi " + TEMP_LOAD1 + ", " + ZERO + ", " + op2 + "\n";
+        }else
+            moonMain += "lw " + TEMP_LOAD1 + ", " + op2 + "("+ ZERO + ")\n";
+
+        moonMain += operation +" " + TEMP_CALC + ", " + TEMP_LOAD0 + ", " + TEMP_LOAD1 + "\n";
+        moonMain += "sw " + var + "(" + ZERO + "), " + TEMP_CALC + "\n";
     }
 
     private String generateBranchTag(){
@@ -407,11 +433,15 @@ public class CodeGenerationVisitor extends Visitor {
         String currExprBranchTag = generateBranchTag();
         String endCurrExprBranchTag = currExprBranchTag + "_end";
 
-        moonMain += "lw " + TEMP_LOAD0 + ", " + operandId + "("+ ZERO + ")\n";
+        if(StringUtils.isNumeric(operandId))
+            moonMain += "addi " + TEMP_LOAD0 + ", " + ZERO + ", " + operandId + "\n";
+       else
+           moonMain += "lw " + TEMP_LOAD0 + ", " + operandId + "("+ ZERO + ")\n";
+
         moonMain += "not " + TEMP_CALC + ", " + TEMP_LOAD0 + "\n";
         moonMain += "bz " + TEMP_CALC + ", " + currExprBranchTag + "\n";
         moonMain += "addi " + TEMP_CALC + ", " + ZERO + ", 1\n";
-        moonMain += "sw " + exprTag + " (" + ZERO + "), " + TEMP_CALC + "\n";
+        moonMain += "sw " + exprTag + "(" + ZERO + "), " + TEMP_CALC + "\n";
         moonMain += "j " + endCurrExprBranchTag + "\n";
         moonMain += currExprBranchTag + " sw " + exprTag + " (" + ZERO + "), " + ZERO + "\n";
         moonMain += endCurrExprBranchTag + "\n";
@@ -422,7 +452,7 @@ public class CodeGenerationVisitor extends Visitor {
     private String allocateExpression(){
         String currExprTag = EXPR_TAG + exprNum;
         exprNum++;
-        moonInit += currExprTag + " res 4";
+        moonInit += currExprTag + " res 4\n";
         return currExprTag;
     }
 
@@ -435,15 +465,23 @@ public class CodeGenerationVisitor extends Visitor {
 
 
 
-    private void evaluateExpression(List<String> operands, List<String> operators) {
+    private void evaluateExpression(String var, List<String> operands, List<String> operators) {
         String currExprTag = allocateExpression();
         int currentOperand = 0;
         for(int i =0;i < operators.size();i++){
-            if(operators.get(i).equals("!")){
-                evaluateNot(operands.get(currentOperand), currExprTag);
-                currentOperand++;
+            if(currentOperand < operands.size()) {
+                if (operators.get(i).equals("!")) {
+                    evaluateNot(operands.get(currentOperand), currExprTag);
+                } else if (operators.get(i).equals("*") || operators.get(i).equals("/")) {
+                    evaluateMultOp(currExprTag, operands.get(currentOperand), operands.get(currentOperand+1), operators.get(i));
+                    currentOperand++;
+                }
             }
+            else
+                break;
         }
+        moonMain += "lw " + TEMP_CALC + ", " + currExprTag + "("+ ZERO + ")\n";
+        moonMain += "sw " + var + "(" + ZERO + "), " + TEMP_CALC + "\n";
     }
 
     //Not operand can be child of factor so list needed
