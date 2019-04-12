@@ -118,10 +118,11 @@ public class CodeGenerationVisitor extends Visitor {
                 //production guaranteed to produce int or float
                 generateAllocateCode(id, getBasicSize(variableType));
             }else if(head.getFirstChild().getValue().equals("statementNoId") && head.getFirstChild().getFirstChild().getValue().equals("write")){
-                //for loop variable
                 id = head.getFirstChild().getFirstChild().getRightSibling().getRightSibling().getFirstChild().getFirstChild().getFirstChild().getFirstChild().getFirstChild().getValue();
                 printInt(id);
 
+            } else if(head.getFirstChild().getValue().equals("statementNoId") && head.getFirstChild().getFirstChild().getValue().equals("if")){
+                generateIf(head.getFirstChild().getFirstChild());
             }
             else if(head.getFirstChild().getValue().equals("idProd") && head.getFirstChild().getFirstChild().getRightSibling().getFirstChild().getValue().equals("varDeclId")) {
                 //ID type
@@ -137,6 +138,26 @@ public class CodeGenerationVisitor extends Visitor {
                 verifyIdProdNotDeclaration(head.getFirstChild());
             }
             head = head.getFirstChild().getRightSibling();
+        }
+    }
+
+    private void verifyStatement(ASTNode statement){
+        ASTNode head =  statement;
+        if(!head.getValue().equals("EPSILON")) {
+            head = statement.getFirstChild();
+            String id;
+
+            while (head != null && !head.getValue().equals("EPSILON")) {
+                if (head.getValue().equals("statementNoId") && head.getFirstChild().getValue().equals("write")) {
+                    id = head.getFirstChild().getRightSibling().getRightSibling().getFirstChild().getFirstChild().getFirstChild().getFirstChild().getFirstChild().getValue();
+                    printInt(id);
+
+                } else if (head.getValue().equals("statementNoId") && head.getFirstChild().getValue().equals("if")) {
+                    generateIf(head.getFirstChild());
+                }
+                statement = statement.getRightSibling().getFirstChild();
+                head = statement.getFirstChild();
+            }
         }
     }
 
@@ -405,6 +426,15 @@ public class CodeGenerationVisitor extends Visitor {
         return currExprTag;
     }
 
+    private String allocateIf(){
+        String currExprTag = "IF" + exprNum;
+        exprNum++;
+        moonInit += currExprTag + " res 4\n";
+        return currExprTag;
+    }
+
+
+
     private void evaluateExpression(List<String> operands, List<String> operators) {
         String currExprTag = allocateExpression();
         int currentOperand = 0;
@@ -436,5 +466,24 @@ public class CodeGenerationVisitor extends Visitor {
             children.add(factor.getFirstChild().getFirstChild().getValue());
         }
         return children;
+    }
+
+    private void generateIf(ASTNode ifHead){
+        ASTNode expression = ifHead.getRightSibling().getFirstChild().getRightSibling();
+        ASTNode ifState = expression.getRightSibling().getRightSibling().getRightSibling().getFirstChild().getRightSibling().getFirstChild();
+        ASTNode elseState = expression.getRightSibling().getRightSibling().getRightSibling().getRightSibling().getRightSibling().getFirstChild().getRightSibling().getFirstChild();
+        String tag = allocateIf();
+        String tagElse = tag + "_else";
+        String tagEnd = tag + "_end";
+
+        generateExpression(expression,tag);
+        moonMain += "lw " + TEMP_LOAD0 + ", " + tag + "("+ ZERO + ")\n";
+        moonMain += "bz " + TEMP_LOAD0 + ", " + tagElse + "\n";
+        //if code
+        verifyStatement(ifState);
+        moonMain += "j " + tagEnd + "\n";
+        moonMain += tagElse + " ";
+        verifyStatement(elseState);
+        moonMain += tagEnd + "\n";
     }
 }
